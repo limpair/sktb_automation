@@ -6,6 +6,8 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+import sys
+import time
 from PyQt4 import QtCore, QtGui
 
 try:
@@ -25,9 +27,9 @@ except AttributeError:
 class Ui_mainWindow(object):
     def setupUi(self, mainWindow):
         mainWindow.setObjectName(_fromUtf8("mainWindow"))
-        mainWindow.resize(640, 474)
+        mainWindow.resize(643, 501)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8("main.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8("../ico/main.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         mainWindow.setWindowIcon(icon)
         self.centralwidget = QtGui.QWidget(mainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
@@ -124,6 +126,39 @@ class Ui_mainWindow(object):
         self.loginTaobao = QtGui.QPushButton(self.centralwidget)
         self.loginTaobao.setGeometry(QtCore.QRect(560, 160, 75, 51))
         self.loginTaobao.setObjectName(_fromUtf8("loginTaobao"))
+        self.tabWidget = QtGui.QTabWidget(self.centralwidget)
+        self.tabWidget.setGeometry(QtCore.QRect(0, 240, 643, 241))
+        self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
+        self.tab = QtGui.QWidget()
+        self.tab.setObjectName(_fromUtf8("tab"))
+        self.GetShikeeData = QtGui.QPushButton(self.tab)
+        self.GetShikeeData.setGeometry(QtCore.QRect(10, 110, 81, 31))
+        self.GetShikeeData.setObjectName(_fromUtf8("GetShikeeData"))
+        self.AddActivity = QtGui.QPushButton(self.tab)
+        self.AddActivity.setGeometry(QtCore.QRect(10, 70, 181, 31))
+        self.AddActivity.setObjectName(_fromUtf8("AddActivity"))
+        self.ActivityNumberLabel = QtGui.QLabel(self.tab)
+        self.ActivityNumberLabel.setGeometry(QtCore.QRect(10, 10, 51, 21))
+        self.ActivityNumberLabel.setObjectName(_fromUtf8("ActivityNumberLabel"))
+        self.PeopleNumberLabel = QtGui.QLabel(self.tab)
+        self.PeopleNumberLabel.setGeometry(QtCore.QRect(10, 40, 51, 21))
+        self.PeopleNumberLabel.setObjectName(_fromUtf8("PeopleNumberLabel"))
+        self.ActivityNumber = QtGui.QLineEdit(self.tab)
+        self.ActivityNumber.setGeometry(QtCore.QRect(80, 10, 113, 20))
+        self.ActivityNumber.setObjectName(_fromUtf8("ActivityNumber"))
+        self.PeopleNumber = QtGui.QLineEdit(self.tab)
+        self.PeopleNumber.setGeometry(QtCore.QRect(80, 40, 113, 20))
+        self.PeopleNumber.setObjectName(_fromUtf8("PeopleNumber"))
+        self.tableView = QtGui.QTableView(self.tab)
+        self.tableView.setGeometry(QtCore.QRect(205, 10, 431, 201))
+        self.tableView.setObjectName(_fromUtf8("tableView"))
+        self.ExecuteActivity = QtGui.QPushButton(self.tab)
+        self.ExecuteActivity.setGeometry(QtCore.QRect(110, 110, 81, 31))
+        self.ExecuteActivity.setObjectName(_fromUtf8("ExecuteActivity"))
+        self.tabWidget.addTab(self.tab, _fromUtf8(""))
+        self.tab_2 = QtGui.QWidget()
+        self.tab_2.setObjectName(_fromUtf8("tab_2"))
+        self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
         self.violationLabel.raise_()
         self.placeAnOrderLabel.raise_()
         self.abandonLabel.raise_()
@@ -153,12 +188,14 @@ class Ui_mainWindow(object):
         self.TaobaoPassword.raise_()
         self.loginShikee.raise_()
         self.loginTaobao.raise_()
+        self.tabWidget.raise_()
         mainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(mainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         mainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(mainWindow)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(mainWindow)
 
     def retranslateUi(self, mainWindow):
@@ -178,4 +215,54 @@ class Ui_mainWindow(object):
         self.taobaoPasswordLabel.setText(_translate("mainWindow", "密码", None))
         self.loginShikee.setText(_translate("mainWindow", "登陆", None))
         self.loginTaobao.setText(_translate("mainWindow", "登陆", None))
+        self.GetShikeeData.setText(_translate("mainWindow", "获取试客数据", None))
+        self.AddActivity.setText(_translate("mainWindow", "添加任务", None))
+        self.ActivityNumberLabel.setText(_translate("mainWindow", "活动编号", None))
+        self.PeopleNumberLabel.setText(_translate("mainWindow", "通过人数", None))
+        self.ExecuteActivity.setText(_translate("mainWindow", "执行任务", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("mainWindow", "任务", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("mainWindow", "开发中..", None))
 
+
+    def initTable(self):
+        self.model = QtGui.QStandardItemModel(self.tableView)
+        self.model.setRowCount(10)    
+        self.model.setColumnCount(3) 
+        self.model.setHeaderData(0, QtCore.Qt.Horizontal, _fromUtf8("活动编号"))
+        self.model.setHeaderData(1, QtCore.Qt.Horizontal, _fromUtf8("通过人数"))
+        self.model.setHeaderData(2, QtCore.Qt.Horizontal, _fromUtf8("添加时间"))
+        
+        self.tableView.setModel(self.model)
+        self.tableView.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignCenter) 
+        self.tableView.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.tableView.setColumnWidth(0, 120) 
+        self.tableView.setColumnWidth(1, 120) 
+        self.tableView.setColumnWidth(2, 150)
+
+class window(QtGui.QMainWindow):
+    def __init__(self):
+        super(window, self).__init__()
+        self.ui = Ui_mainWindow()
+        self.ui.setupUi(self)
+        self.ui.retranslateUi(self)
+        self.ui.initTable()
+        self.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint)
+        self.setFixedSize(self.width(), self.height())
+        self.tableNumber = 0
+        
+        self.ui.AddActivity.clicked.connect(self.addActive)
+    
+    def addActive(self):
+        a = self.ui.ActivityNumber.text()
+        b = self.ui.PeopleNumber.text()
+        self.ui.model.setItem(self.tableNumber, 0, QtGui.QStandardItem(_fromUtf8(a)))
+        self.ui.model.setItem(self.tableNumber, 1, QtGui.QStandardItem(_fromUtf8(b)))
+        self.ui.model.setItem(self.tableNumber, 2, QtGui.QStandardItem(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+        self.tableNumber = self.tableNumber + 1
+        self.ui.tableView.setModel(self.ui.model)
+        
+if __name__ == '__main__':
+    app = QtGui.QApplication(sys.argv)     
+    window = window()     
+    window.show()     
+    sys.exit(app.exec_())
