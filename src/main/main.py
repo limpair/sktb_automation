@@ -72,5 +72,4 @@ def saveTryList():
 	total = int(soup.find_all(id='total')[0].text)
 
 if __name__ == '__main__':
-	total = 97;
-	print page(total)
+	loginShikee()

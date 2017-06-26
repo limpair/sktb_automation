@@ -6,8 +6,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-import sys
-import time
+
 from PyQt4 import QtCore, QtGui
 
 try:
@@ -184,11 +183,13 @@ class Ui_mainWindow(object):
         self.line_3.raise_()
         self.ShikeeUserName.raise_()
         self.ShikeePassword.raise_()
-        self.TaobaoUserName.raise_()
+        self.TaobaoUserName.raise_()  
         self.TaobaoPassword.raise_()
         self.loginShikee.raise_()
         self.loginTaobao.raise_()
         self.tabWidget.raise_()
+        self.TaobaoPassword.setEchoMode(QtGui.QLineEdit.Password)
+        self.ShikeePassword.setEchoMode(QtGui.QLineEdit.Password)
         mainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(mainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -238,31 +239,3 @@ class Ui_mainWindow(object):
         self.tableView.setColumnWidth(0, 120) 
         self.tableView.setColumnWidth(1, 120) 
         self.tableView.setColumnWidth(2, 150)
-
-class window(QtGui.QMainWindow):
-    def __init__(self):
-        super(window, self).__init__()
-        self.ui = Ui_mainWindow()
-        self.ui.setupUi(self)
-        self.ui.retranslateUi(self)
-        self.ui.initTable()
-        self.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint)
-        self.setFixedSize(self.width(), self.height())
-        self.tableNumber = 0
-        
-        self.ui.AddActivity.clicked.connect(self.addActive)
-    
-    def addActive(self):
-        a = self.ui.ActivityNumber.text()
-        b = self.ui.PeopleNumber.text()
-        self.ui.model.setItem(self.tableNumber, 0, QtGui.QStandardItem(_fromUtf8(a)))
-        self.ui.model.setItem(self.tableNumber, 1, QtGui.QStandardItem(_fromUtf8(b)))
-        self.ui.model.setItem(self.tableNumber, 2, QtGui.QStandardItem(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-        self.tableNumber = self.tableNumber + 1
-        self.ui.tableView.setModel(self.ui.model)
-        
-if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)     
-    window = window()     
-    window.show()     
-    sys.exit(app.exec_())
