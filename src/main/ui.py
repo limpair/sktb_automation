@@ -127,7 +127,7 @@ class Ui_mainWindow(object):
         self.loginTaobao.setGeometry(QtCore.QRect(560, 160, 75, 51))
         self.loginTaobao.setObjectName(_fromUtf8("loginTaobao"))
         self.tabWidget = QtGui.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(0, 240, 643, 241))
+        self.tabWidget.setGeometry(QtCore.QRect(0, 230, 643, 241))
         self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
         self.tab = QtGui.QWidget()
         self.tab.setObjectName(_fromUtf8("tab"))
