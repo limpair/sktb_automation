@@ -49,11 +49,16 @@ def loginShikee(driver, username, password):
     time.sleep(5)
 
 def saveActiveList(driver):
-    li = {}
-    total = int(driver.find_element_by_id('total').text)
-    n = int(math.ceil(total / 10.0))
+    li = []
     listUrl = 'http://user.shikee.com/seller/tryings/try_list/'
     search = '?key=&search_type=try_name&state[]=3&state[]=4&is_block=&check_fail=&wait_check_out='
+    driver.get(listUrl + str(0) + search)
+    time.sleep(2)
+    if is_element_exist(driver, '#total'):
+        total = int(driver.find_element_by_id('total').text)
+        n = int(math.ceil(total / 10.0))
+    else:
+        n = 1
     for i in range(0, n):
         driver.get(listUrl + str(i * 10) + search)    
         time.sleep(2)
@@ -65,14 +70,68 @@ def saveActiveList(driver):
             title = t[0].find_all('img')[0].attrs['art'].encode('utf-8')
             num = re.sub("\D", "", t[4].text)
             link = t[6].find_all('a')[0].attrs['href'].split('?')[0]
-            li[link] = {'title':title, 'num':num, 'link':link}
+            li.append({'title':title, 'num':num, 'link':link})
     return li
 
-def saveTryList(driver, url):
-    driver.get(url)
-    time.sleep(5)
-    driver.find_element_by_id('chebox3').click()
-    driver.find_element_by_id('chebox4').click()
-    time.sleep(3)
-    soup = BeautifulSoup(driver.page_source)
-    total = int(soup.find_all(id='total')[0].text)
+def saveTryList(driver, try_list):
+    li = []
+    host = 'http://user.shikee.com'
+    for u in try_list:
+        url = host + u['link']
+        driver.get(url + '/0')
+        time.sleep(2)
+        if is_element_exist(driver, '#total'):
+            total = int(driver.find_element_by_id('total').text)
+            n = int(math.ceil(total / 20.0))
+        else:
+            n = 1
+        user = []
+        for i in range(0, n):
+            driver.get(url + '/' + str(i * 20))
+            time.sleep(2)
+            soup = BeautifulSoup(driver.page_source).find_all(id='load-buyer-list')[0].find_all('tr')
+            k = len(soup)
+            J = 0
+            for j in range(1, k):
+                time.sleep(1.8)
+                rows = soup[j].attrs['id'].split('_')[1]
+                try:
+                    driver.find_element_by_xpath("//div[@data-uid='" + rows + "']").click()
+                except:
+                    j = j - 1
+                    if J - j >= 3:
+                        continue
+                    else:
+                        J = J + 1
+                
+            time.sleep(1.5)
+            soup = BeautifulSoup(driver.page_source).find_all(id='load-buyer-list')[0].find_all('tr')
+            
+            for l in range(1, k):
+                rows = soup[l].attrs['id'].split('_')[1]
+                t = soup[l].find_all('td')
+                sp = t[3].find_all('span')
+                SP = {}
+                for x in sp:
+                    temp = re.findall(r'(\w*[0-9]+)\w*', x.text)
+                    ss = x.text.split('(')[0]
+                    if u'近30内填写订单号的平均时长' == ss:
+                        SP['AverageTime'] = int(temp[len(temp) - 1]);
+                    elif u'违规次数' == ss:
+                        SP['ViolationNumber'] = int(temp[len(temp) - 1]);
+                    elif u'近30日下单次数' == ss:
+                        SP['OrderNumber'] = int(temp[len(temp) - 1]);
+                    elif u'近30日获得试用次数' == ss:
+                        SP['TryNumber'] = int(temp[len(temp) - 1]);
+                    elif u'试客放弃试用次数' == ss:
+                        SP['AbandonNumber'] = int(temp[len(temp) - 1]);
+                    elif u'试客提交无效订单号次数' == ss:
+                        SP['InvalidNumber'] = int(temp[len(temp) - 1]);
+                    elif u'试客总参与试用次数' == ss:
+                        SP['TrySum'] = int(temp[len(temp) - 1]);
+                print SP
+                user.append({'id':int(rows), 'sys':SP, 'name':t[1].find_all('span')[0].attrs['title'], 'time':t[2].text})
+        u['user'] = user       
+        li.append(u)
+    return li
+    

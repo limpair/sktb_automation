@@ -31,6 +31,7 @@ class window(QtGui.QMainWindow):
         self.ui.AddActivity.clicked.connect(self.addActive)
         self.ui.loginTaobao.clicked.connect(self.loginTaobao)
         self.ui.loginShikee.clicked.connect(self.loginShikee)
+        self.ui.GetShikeeData.clicked.connect(self.getShikeeData)
     
     def initDriver(self):
         self.driver = webdriver.Chrome()
@@ -53,6 +54,14 @@ class window(QtGui.QMainWindow):
         name = self.ui.ShikeeUserName.text()
         pswd = self.ui.ShikeePassword.text()
         sktb.loginShikee(self.driver, unicode(name.toUtf8(), 'utf-8', 'ignore'), str(pswd))
+    
+    def getShikeeData(self):
+        a = time.time()
+        try_list = sktb.saveActiveList(self.driver)
+        self.try_list = sktb.saveTryList(self.driver, try_list)
+        print self.try_list
+        b = time.time()
+        print round(b - a, 2)
         
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)     

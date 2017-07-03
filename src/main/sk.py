@@ -35,7 +35,7 @@ for i in range(0, n):
 		li[link] = {'title':title, 'num':num, 'link':link}
 		
 
-loadlist = {}
+	loadlist = {}
 	driver.get('http://user.shikee.com' + link)
 	time.sleep(1)
 	looktotal = int(driver.find_element_by_id('total').text)
@@ -81,5 +81,5 @@ loadlist = {}
 			loadlist['name'] = t[1].find_all('span')[0].attrs['title']
 			loadlist['time'] = t[2].text
 	
-		#li[link] = {'title':title, 'num':num, 'link':link, 'user':loadlist}
+		# li[link] = {'title':title, 'num':num, 'link':link, 'user':loadlist}
 print li
