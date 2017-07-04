@@ -68,9 +68,11 @@ def saveActiveList(driver):
             t = soup[i].find_all('td')
             # 0,4,6
             title = t[0].find_all('img')[0].attrs['art'].encode('utf-8')
+            
+            ttt = time.mktime(time.strptime(t[0].find_all('p')[0].text, '%Y-%m-%d %H:%M:%S'))
             num = re.sub("\D", "", t[4].text)
             link = t[6].find_all('a')[0].attrs['href'].split('?')[0]
-            li.append({'title':title, 'num':num, 'link':link})
+            li.append({'title':title, 'num':num, 'link':link, 'time': ttt})
     return li
 
 def saveTryList(driver, try_list):
@@ -134,4 +136,7 @@ def saveTryList(driver, try_list):
         u['user'] = user       
         li.append(u)
     return li
+
+def executeActivity(driver, try_list, execute, t):
+    print 'hello'
     

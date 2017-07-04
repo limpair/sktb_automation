@@ -133,9 +133,15 @@ class Ui_mainWindow(object):
         self.GetShikeeData = QtGui.QPushButton(self.tab)
         self.GetShikeeData.setGeometry(QtCore.QRect(10, 110, 81, 31))
         self.GetShikeeData.setObjectName(_fromUtf8("GetShikeeData"))
+        
         self.AddActivity = QtGui.QPushButton(self.tab)
-        self.AddActivity.setGeometry(QtCore.QRect(10, 70, 181, 31))
+        self.AddActivity.setGeometry(QtCore.QRect(10, 70, 90, 31))
         self.AddActivity.setObjectName(_fromUtf8("AddActivity"))
+        
+        self.ClearActivity = QtGui.QPushButton(self.tab)
+        self.ClearActivity.setGeometry(QtCore.QRect(105, 70, 90, 31))
+        self.ClearActivity.setObjectName(_fromUtf8("ClearActivity"))
+        
         self.ActivityNumberLabel = QtGui.QLabel(self.tab)
         self.ActivityNumberLabel.setGeometry(QtCore.QRect(10, 10, 51, 21))
         self.ActivityNumberLabel.setObjectName(_fromUtf8("ActivityNumberLabel"))
@@ -216,8 +222,9 @@ class Ui_mainWindow(object):
         self.taobaoPasswordLabel.setText(_translate("mainWindow", "密码", None))
         self.loginShikee.setText(_translate("mainWindow", "登陆", None))
         self.loginTaobao.setText(_translate("mainWindow", "登陆", None))
-        self.GetShikeeData.setText(_translate("mainWindow", "获取试客数据", None))
+        self.GetShikeeData.setText(_translate("mainWindow", "获取试客活动", None))
         self.AddActivity.setText(_translate("mainWindow", "添加任务", None))
+        self.ClearActivity.setText(_translate("mainWindow", "清空任务", None))
         self.ActivityNumberLabel.setText(_translate("mainWindow", "活动编号", None))
         self.PeopleNumberLabel.setText(_translate("mainWindow", "通过人数", None))
         self.ExecuteActivity.setText(_translate("mainWindow", "执行任务", None))
