@@ -47,7 +47,7 @@ class window(QtGui.QMainWindow):
     
     def initDriver(self):
         self.taskList = []
-        self.driver = webdriver.Chrome('../driver/chromedriver.exe')
+        self.driver = webdriver.Chrome('E:\sktb_automation\src\driver\chromedriver.exe')
     
     def addActive(self):
         a = self.ui.ActivityNumber.text()
