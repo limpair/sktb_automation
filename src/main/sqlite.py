@@ -87,11 +87,3 @@ class DataBaseControl(object):
         # self.conn.commit()
         return result
 
-if __name__ == '__main__':
-    con=DataBaseControl()
-    con.open()
-    #obj['name'] + '", "' + obj['time'] + '", "' + obj['activity'] + '","' + obj['account']
-    #con.save({'name':u'我a是人','time':'2017-07-05 11:54:52','activity':'Y10','account':'11111'})
-    #print {'name': '我a是人','time':'2017-07-05 11:54:52','activity':'Y10','account':'11111'}
-    print len(con.getByName(u'我是aaa人','11111'))
-    con.close()

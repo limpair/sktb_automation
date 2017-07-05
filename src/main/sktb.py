@@ -199,6 +199,13 @@ def judgeSysData(t, sys):
     else:
         return False
 
+def judgeTaobao(driver,name):
+    driver.get('https://trade.taobao.com/trade/itemlist/list_sold_items.htm')
+    time.sleep(2)
+    driver.find_element_by_id('buyerNick').send_keys(name)
+    driver.find_element_by_class('button-mod__primary___-7N5o1').click()
+    driver.find_element_by_xpath()
+
 
 def executeActivity(driver, try_list, tasks, t):
     conn = sqlite.DataBaseControl()
@@ -263,13 +270,17 @@ def executeActivity(driver, try_list, tasks, t):
                     users.append({'id': int(rows), 'sys': SP, 'name': t[1].find_all(
                         'span')[0].attrs['title'], 'time': t[2].text})
 
+                
                 for user in users:
                     dbUsers = conn.getByName(user['name'], t['account'])
-                    if len(dbUsers) == 0 and judgeSysData(t, user['sys']) == False:
+                    if judgeSysData(t, user['sys']) == False:
                         continue
-                    elif dbUsers[0]['name'] == user['name']:
+                    if len(dbUsers) > 0:
+                        if dbUsers[0]['name'] == user['name']:
+                            nowtime=round((time.time()-dbUsers[0]['mktime'])/86400.0,4)
+                            if nowtime>=3.0:
+                                pass
+                            if t['time']!='' and t['time']>0 and (t['time']-nowtime)<0.0001:
+                                pass
+                    else:
                         pass
-
-
-if __name__ == '__main__':
-    print 'a'
