@@ -44,7 +44,7 @@ class window(QtGui.QMainWindow):
         self.ui.loginTaobao.clicked.connect(self.loginTaobao)
         self.ui.loginShikee.clicked.connect(self.loginShikee)
         self.ui.GetShikeeData.clicked.connect(self.getShikeeData)
-        self.ui.ClearActivity.clicked.connect(self.clearActive)
+        self.ui.resetActivity.clicked.connect(self.clearActive)
         self.ui.ExecuteActivity.clicked.connect(self.executeActivity)
 
     def initDriver(self):
