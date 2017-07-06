@@ -243,6 +243,8 @@ def executeActivity(driver, try_list, tasks, tri):
         count = 0
         name = task['name']
         num = task['num']
+        out = open(tri['account']+'.txt', 'a')
+        a = time.time()
         for tr in try_list:
             if name in tr['title']:
                 driver.get(host + tr['link'] + '/0')
@@ -254,7 +256,6 @@ def executeActivity(driver, try_list, tasks, tri):
                 else:
                     n = 1
                 users = []
-                a=time.time()
                 for i in range(0, n):
                     driver.get(host + tr['link'] + '/' + str(i * 20)+'?sysarrs%5B%5D=order_count&sysarrs%5B%5D=join_count&sysarrs%5B%5D=completion_count')
                     time.sleep(2)
@@ -290,8 +291,6 @@ def executeActivity(driver, try_list, tasks, tri):
                         users.append({'id': int(rows), 'sys': SP, 'name': t[1].find_all(
                             'span')[0].attrs['title'], 'time': t[2].text, 'skname':t[1].find_all('img')[0].attrs['art']})
 
-                b=time.time()
-                print u'获取'+name+u'活动用户使用的时间',b-a
                 for user in users:
                     dbUsers = conn.getByName(user['name'], tri['account'])
                     user['account'] = tri['account']
@@ -324,3 +323,6 @@ def executeActivity(driver, try_list, tasks, tri):
                 
             if count == num:
                 break
+        b = time.time()
+        out.write('活动' + name + u'，预计通过 ' + str(num) + u' 人，已通过 ' + str(count) + ' 人，用时 ' + str(b-a)+'\n')
+        print u'活动' + name + u'通过 ' + str(count) + u' 人，用时', b-a
