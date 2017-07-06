@@ -215,15 +215,13 @@ def judgeTaobao(driver, name):
     page = soup.find_all(attrs={"data-reactid": ".0.5"})[0]
     if u'没有符合条件的宝贝，请尝试其他搜索条件' in page.text:
         return True
-    l = len(soup.find_all(class_='pagination-disabled'))
-    if l == 2:
-        if (u'买家已付款' in page.text) and (u'卖家已发货' in page.text):
-            return False
-        else:
-            return True
+    #l = len(soup.find_all(class_='pagination-disabled'))
+    
+    if (u'买家已付款' in page.text) or (u'卖家已发货' in page.text) or (u'交易成功' in page.text):
+        return False
     else:
-        if (u'买家已付款' in page) and (u'卖家已发货' in page):
-            return False
+        return True
+    
 
 def passUser(driver, link, name):
     driver.get(link)
@@ -258,19 +256,9 @@ def executeActivity(driver, try_list, tasks, tri):
                 users = []
                 a=time.time()
                 for i in range(0, n):
-                    driver.get(host + tr['link'] + '/' + str(i * 20))
+                    driver.get(host + tr['link'] + '/' + str(i * 20)+'?sysarrs%5B%5D=order_count&sysarrs%5B%5D=join_count&sysarrs%5B%5D=completion_count')
                     time.sleep(2)
-                    if i==0:
-                        driver.find_element_by_id('J-select').click()
-                        time.sleep(1)
-                        driver.find_element_by_xpath('//*[@id="sortable"]/li[3]/input').click()
-                        time.sleep(0.5)
-                        driver.find_element_by_xpath('//*[@id="sortable"]/li[4]/input').click()
-                        time.sleep(0.5)
-                        driver.find_element_by_xpath('//*[@id="sortable"]/li[7]/input').click()
-                        time.sleep(0.5)
-                        driver.find_element_by_xpath('//*[@id="select-form"]/p/input[2]').click()
-                        time.sleep(2)
+                    
                     
                     soup = BeautifulSoup(driver.page_source).find_all(
                         id='load-buyer-list')[0].find_all('tr')
