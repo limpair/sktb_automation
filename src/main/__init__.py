@@ -103,19 +103,25 @@ class window(QtGui.QMainWindow):
                 break
 
     def executeActivity(self):
+        a=time.time()
+        trialsNumber = self.ui.TrialsNumber.text()  # 近30日获得试用次数
+        number = self.ui.Number.text()  # 近30天下单次数
+        
         invalidOrders = self.ui.InvalidOrders.text()  # 无效订单次数
         averageTime = self.ui.AverageTime.text()  # 填写订单号平均时长
         total = self.ui.Total.text()  # 参与试用总次数
-        trialsNumber = self.ui.TrialsNumber.text()  # 近30日获得试用次数
+        
         abandonNumber = self.ui.AbandonNumber.text()  # 放弃试用次数
-        number = self.ui.Number.text()  # 近30天下单次数
+        
         violationsNumber = self.ui.ViolationsNumber.text()  # 违规次数
         days = self.ui.Days.text()
+        bilv = self.ui.Days_2.text()
         account=self.ui.ShikeeUserName.text()
-        res = {'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(
+        res = {'bilv':str(bilv),'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(
             trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days),'account':str(account)}
         sktb.executeActivity(self.driver, self.try_list, self.taskList, res)
-
+        b=time.time()
+        print u'执行任务时间',b-a
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)

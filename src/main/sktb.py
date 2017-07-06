@@ -105,6 +105,7 @@ def saveTryList(driver, try_list):
         else:
             n = 1
         user = []
+        
         for i in range(0, n):
             driver.get(url + '/' + str(i * 20))
             time.sleep(2)
@@ -180,38 +181,42 @@ def judgeSys(c, a, b):
 def judgeSysData(t, sys):
     # invalid = toInt(t['invalidOrders']), average = toInt(t['averageTime']), total = toInt(t['total']), trials = toInt(t['trialsNumber'])
     # abandon = toInt(t['abandonNumber']), number = toInt(t['number']), violations = toInt(t['violationsNumber'])
-    invalid = toInt(t['invalidOrders'])
-    average = toInt(t['averageTime'])
+    #invalid = toInt(t['invalidOrders'])
+    #average = toInt(t['averageTime'])
     total = toInt(t['total'])
     trials = toInt(t['trialsNumber'])
-    abandon = toInt(t['abandonNumber'])
+    #abandon = toInt(t['abandonNumber'])
     number = toInt(t['number'])
-    violations = toInt(t['violationsNumber'])
+    #violations = toInt(t['violationsNumber'])
     count = 0
-    count = judgeSys(count, invalid, sys['InvalidNumber'])
-    count = judgeSys(count, average, sys['AverageTime'])
+    #count = judgeSys(count, invalid, sys['InvalidNumber'])
+    #count = judgeSys(count, average, sys['AverageTime'])
     count = judgeSys(count, total, sys['TrySum'])
     count = judgeSys(count, trials, sys['TryNumber'])
-    count = judgeSys(count, abandon, sys['AbandonNumber'])
+    #count = judgeSys(count, abandon, sys['AbandonNumber'])
     count = judgeSys(count, number, sys['OrderNumber'])
-    count = judgeSys(count, violations, sys['ViolationNumber'])
-    if count == 7:
+    #count = judgeSys(count, violations, sys['ViolationNumber'])
+    if t['bilv'] != '' and (sys['OrderNumber'] * 1.0 / sys['TryNumber'] * 1.0) > float(t['bilv']):
+        count = count + 1
+    elif t['bilv'] == '':
+        count = count +1
+    if count == 4:
         return True
     else:
         return False
 
-def judgeTaobao(driver,name):
+def judgeTaobao(driver, name):
     driver.get('https://trade.taobao.com/trade/itemlist/list_sold_items.htm')
     time.sleep(1)
     driver.find_element_by_id('buyerNick').send_keys(name)
     driver.find_element_by_xpath('//*[@id="sold_container"]/div/div[1]/div[1]/form/div[7]/div/div/button[1]').click()
     time.sleep(1)
     soup = BeautifulSoup(driver.page_source)
-    page=soup.find_all(attrs={"data-reactid": ".0.5"})[0]
+    page = soup.find_all(attrs={"data-reactid": ".0.5"})[0]
     if u'没有符合条件的宝贝，请尝试其他搜索条件' in page.text:
         return True
-    l=len(soup.find_all(class_='pagination-disabled'))
-    if l==2:
+    l = len(soup.find_all(class_='pagination-disabled'))
+    if l == 2:
         if (u'买家已付款' in page.text) and (u'卖家已发货' in page.text):
             return False
         else:
@@ -220,7 +225,7 @@ def judgeTaobao(driver,name):
         if (u'买家已付款' in page) and (u'卖家已发货' in page):
             return False
 
-def passUser(driver,link,name):
+def passUser(driver, link, name):
     driver.get(link)
     time.sleep(2)
     driver.find_element_by_id('key').send_keys(name)
@@ -244,34 +249,32 @@ def executeActivity(driver, try_list, tasks, tri):
             if name in tr['title']:
                 driver.get(host + tr['link'] + '/0')
                 time.sleep(2)
+                
                 if is_element_exist(driver, '#total'):
                     total = int(driver.find_element_by_id('total').text)
                     n = int(math.ceil(total / 20.0))
                 else:
                     n = 1
                 users = []
+                a=time.time()
                 for i in range(0, n):
                     driver.get(host + tr['link'] + '/' + str(i * 20))
                     time.sleep(2)
+                    if i==0:
+                        driver.find_element_by_id('J-select').click()
+                        time.sleep(1)
+                        driver.find_element_by_xpath('//*[@id="sortable"]/li[3]/input').click()
+                        time.sleep(0.5)
+                        driver.find_element_by_xpath('//*[@id="sortable"]/li[4]/input').click()
+                        time.sleep(0.5)
+                        driver.find_element_by_xpath('//*[@id="sortable"]/li[7]/input').click()
+                        time.sleep(0.5)
+                        driver.find_element_by_xpath('//*[@id="select-form"]/p/input[2]').click()
+                        time.sleep(2)
+                    
                     soup = BeautifulSoup(driver.page_source).find_all(
                         id='load-buyer-list')[0].find_all('tr')
                     k = len(soup)
-                    J = 0
-                    for j in range(1, k):
-                        time.sleep(1.8)
-                        rows = soup[j].attrs['id'].split('_')[1]
-                        try:
-                            driver.find_element_by_xpath(
-                                "//div[@data-uid='" + rows + "']").click()
-                        except:
-                            j = j - 1
-                            if J - j >= 3:
-                                continue
-                            else:
-                                J = J + 1
-                    time.sleep(1.8)
-                    soup = BeautifulSoup(driver.page_source).find_all(
-                        id='load-buyer-list')[0].find_all('tr')
     
                     for l in range(1, k):
                         rows = soup[l].attrs['id'].split('_')[1]
@@ -297,38 +300,39 @@ def executeActivity(driver, try_list, tasks, tri):
                                 SP['TrySum'] = int(temp[len(temp) - 1])
                         
                         users.append({'id': int(rows), 'sys': SP, 'name': t[1].find_all(
-                            'span')[0].attrs['title'], 'time': t[2].text,'skname':t[1].find_all('img')[0].attrs['art']})
+                            'span')[0].attrs['title'], 'time': t[2].text, 'skname':t[1].find_all('img')[0].attrs['art']})
 
-                
+                b=time.time()
+                print u'获取'+name+u'活动用户使用的时间',b-a
                 for user in users:
                     dbUsers = conn.getByName(user['name'], tri['account'])
-                    user['account']=tri['account']
-                    user['activity']=name
+                    user['account'] = tri['account']
+                    user['activity'] = name
                     if judgeSysData(tri, user['sys']) == False:
                         continue
                     if len(dbUsers) > 0:
                         if dbUsers[0]['name'] == user['name']:
-                            nowtime=round((time.time()-dbUsers[0]['mktime'])/86400.0,4)
-                            if nowtime>=3.0:
-                                if judgeTaobao(driver,user['name']):
-                                    if passUser(driver,host + tr['link'],user['skname']):
-                                        count=count+1
-                                        user['passtime']=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                            nowtime = round((time.time() - dbUsers[0]['mktime']) / 86400.0, 4)
+                            if nowtime >= 3.0:
+                                if judgeTaobao(driver, user['name']):
+                                    if passUser(driver, host + tr['link'], user['skname']):
+                                        count = count + 1
+                                        user['passtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                                         conn.save(user)
                                 continue
-                            if tri['time']!='' and tri['time']>0 and (tri['time']-nowtime)<0.0001:
-                                if passUser(driver,host + tr['link'],user['skname']):
-                                    count=count+1
-                                    user['passtime']=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                            if tri['time'] != '' and tri['time'] > 0 and (tri['time'] - nowtime) < 0.0001:
+                                if passUser(driver, host + tr['link'], user['skname']):
+                                    count = count + 1
+                                    user['passtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                                     conn.save(user)
-                    elif judgeTaobao(driver,user['name']):
-                        if passUser(driver,host + tr['link'],user['skname']):
-                            count=count+1
-                            user['passtime']=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    elif judgeTaobao(driver, user['name']):
+                        if passUser(driver, host + tr['link'], user['skname']):
+                            count = count + 1
+                            user['passtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                             conn.save(user)
                     
-                    if count==tr['num'] or count == num:
+                    if count == tr['num'] or count == num:
                         break
                 
-            if count==num:
+            if count == num:
                 break
