@@ -27,13 +27,13 @@ class window(QtGui.QMainWindow):
         self.ui.ShikeeUserName.setText('13794728078')
         self.ui.ShikeePassword.setText('kyd0920')
 
-        self.ui.InvalidOrders.setText('1')
-        self.ui.AverageTime.setText('2')
-        self.ui.Total.setText('3')
-        self.ui.TrialsNumber.setText('4')
-        self.ui.AbandonNumber.setText('5')
-        self.ui.Number.setText('6')
-        self.ui.ViolationsNumber.setText('7')
+        self.ui.InvalidOrders.setText('')
+        self.ui.AverageTime.setText('')
+        self.ui.Total.setText('')
+        self.ui.TrialsNumber.setText('')
+        self.ui.AbandonNumber.setText('')
+        self.ui.Number.setText('')
+        self.ui.ViolationsNumber.setText('')
 
     def closeEvent(self, event):
         self.driver.close()
@@ -46,10 +46,11 @@ class window(QtGui.QMainWindow):
         self.ui.GetShikeeData.clicked.connect(self.getShikeeData)
         self.ui.resetActivity.clicked.connect(self.clearActive)
         self.ui.ExecuteActivity.clicked.connect(self.executeActivity)
+        self.ui.clearLink.clicked.connect(self.deleteTryList)
 
     def initDriver(self):
         self.taskList = []
-        self.driver = webdriver.Chrome('E:\sktb_automation\src\driver\chromedriver.exe')
+        self.driver = webdriver.Chrome('..\driver\chromedriver.exe')
 
     def addActive(self):
         a = self.ui.ActivityNumber.text()
@@ -95,7 +96,7 @@ class window(QtGui.QMainWindow):
         # print round(b - a, 2)
 
     def deleteTryList(self):
-        url = ''
+        url = str(self.ui.Link.text())
         for t in self.try_list:
             if t['link'] in url:
                 self.try_list.remove(t)
@@ -109,9 +110,11 @@ class window(QtGui.QMainWindow):
         abandonNumber = self.ui.AbandonNumber.text()  # 放弃试用次数
         number = self.ui.Number.text()  # 近30天下单次数
         violationsNumber = self.ui.ViolationsNumber.text()  # 违规次数
+        days = self.ui.Days.text()
+        account=self.ui.ShikeeUserName.text()
         res = {'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(
-            trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber)}
-        print res
+            trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days),'account':str(account)}
+        sktb.executeActivity(self.driver, self.try_list, self.taskList, res)
 
 
 if __name__ == '__main__':

@@ -36,7 +36,7 @@ class DataBaseControl(object):
             self.open()
         
         for obj in objs:
-            self.conn.execute('insert into osm (name,time,activity,account) values("' + obj['name'] + '", "' + obj['time'] + '", "' + obj['activity'] + '","' + obj['account'] + '")')
+            self.conn.execute('insert into osm (skname,name,time,activity,account) values("' + obj['skname'] + '","' + obj['name'] + '", "' + obj['passtime'] + '", "' + obj['activity'] + '","' + obj['account'] + '")')
         
         self.conn.commit()
     

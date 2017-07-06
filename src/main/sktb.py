@@ -5,6 +5,7 @@ import sqlite
 import time
 import math
 import re
+import datetime
 
 host = 'http://user.shikee.com'
 
@@ -201,17 +202,42 @@ def judgeSysData(t, sys):
 
 def judgeTaobao(driver,name):
     driver.get('https://trade.taobao.com/trade/itemlist/list_sold_items.htm')
-    time.sleep(2)
+    time.sleep(1)
     driver.find_element_by_id('buyerNick').send_keys(name)
-    driver.find_element_by_class('button-mod__primary___-7N5o1').click()
-    driver.find_element_by_xpath()
+    driver.find_element_by_xpath('//*[@id="sold_container"]/div/div[1]/div[1]/form/div[7]/div/div/button[1]').click()
+    time.sleep(1)
+    soup = BeautifulSoup(driver.page_source)
+    page=soup.find_all(attrs={"data-reactid": ".0.5"})[0]
+    if u'没有符合条件的宝贝，请尝试其他搜索条件' in page.text:
+        return True
+    l=len(soup.find_all(class_='pagination-disabled'))
+    if l==2:
+        if (u'买家已付款' in page.text) and (u'卖家已发货' in page.text):
+            return False
+        else:
+            return True
+    else:
+        if (u'买家已付款' in page) and (u'卖家已发货' in page):
+            return False
+
+def passUser(driver,link,name):
+    driver.get(link)
+    time.sleep(2)
+    driver.find_element_by_id('key').send_keys(name)
+    time.sleep(1)
+    driver.find_element_by_xpath('//input[@type="submit"]').click()
+    time.sleep(1)
+    driver.find_element_by_xpath('//*[@id="load-buyer-list"]/tbody/tr[2]/td[5]/a[1]').click()
+    return True
+    
 
 
-def executeActivity(driver, try_list, tasks, t):
+def executeActivity(driver, try_list, tasks, tri):
     conn = sqlite.DataBaseControl()
     for task in tasks:
         count = 0
-        name = task['name'], num = task['num']
+        name = task['name']
+        num = task['num']
         for tr in try_list:
             if name in tr['title']:
                 driver.get(host + tr['link'] + '/0')
@@ -242,45 +268,65 @@ def executeActivity(driver, try_list, tasks, t):
                             else:
                                 J = J + 1
                     time.sleep(1.8)
-                soup = BeautifulSoup(driver.page_source).find_all(
-                    id='load-buyer-list')[0].find_all('tr')
-
-                for l in range(1, k):
-                    rows = soup[l].attrs['id'].split('_')[1]
-                    t = soup[l].find_all('td')
-                    sp = t[3].find_all('span')
-                    SP = {}
-                    for x in sp:
-                        temp = re.findall(r'(\w*[0-9]+)\w*', x.text)
-                        ss = x.text.split('(')[0]
-                        if u'近30内填写订单号的平均时长' == ss:
-                            SP['AverageTime'] = int(temp[len(temp) - 1])
-                        elif u'违规次数' == ss:
-                            SP['ViolationNumber'] = int(temp[len(temp) - 1])
-                        elif u'近30日下单次数' == ss:
-                            SP['OrderNumber'] = int(temp[len(temp) - 1])
-                        elif u'近30日获得试用次数' == ss:
-                            SP['TryNumber'] = int(temp[len(temp) - 1])
-                        elif u'试客放弃试用次数' == ss:
-                            SP['AbandonNumber'] = int(temp[len(temp) - 1])
-                        elif u'试客提交无效订单号次数' == ss:
-                            SP['InvalidNumber'] = int(temp[len(temp) - 1])
-                        elif u'试客总参与试用次数' == ss:
-                            SP['TrySum'] = int(temp[len(temp) - 1])
-                    users.append({'id': int(rows), 'sys': SP, 'name': t[1].find_all(
-                        'span')[0].attrs['title'], 'time': t[2].text})
+                    soup = BeautifulSoup(driver.page_source).find_all(
+                        id='load-buyer-list')[0].find_all('tr')
+    
+                    for l in range(1, k):
+                        rows = soup[l].attrs['id'].split('_')[1]
+                        t = soup[l].find_all('td')
+                        sp = t[3].find_all('span')
+                        SP = {}
+                        for x in sp:
+                            temp = re.findall(r'(\w*[0-9]+)\w*', x.text)
+                            ss = x.text.split('(')[0]
+                            if u'近30内填写订单号的平均时长' == ss:
+                                SP['AverageTime'] = int(temp[len(temp) - 1])
+                            elif u'违规次数' == ss:
+                                SP['ViolationNumber'] = int(temp[len(temp) - 1])
+                            elif u'近30日下单次数' == ss:
+                                SP['OrderNumber'] = int(temp[len(temp) - 1])
+                            elif u'近30日获得试用次数' == ss:
+                                SP['TryNumber'] = int(temp[len(temp) - 1])
+                            elif u'试客放弃试用次数' == ss:
+                                SP['AbandonNumber'] = int(temp[len(temp) - 1])
+                            elif u'试客提交无效订单号次数' == ss:
+                                SP['InvalidNumber'] = int(temp[len(temp) - 1])
+                            elif u'试客总参与试用次数' == ss:
+                                SP['TrySum'] = int(temp[len(temp) - 1])
+                        
+                        users.append({'id': int(rows), 'sys': SP, 'name': t[1].find_all(
+                            'span')[0].attrs['title'], 'time': t[2].text,'skname':t[1].find_all('img')[0].attrs['art']})
 
                 
                 for user in users:
-                    dbUsers = conn.getByName(user['name'], t['account'])
-                    if judgeSysData(t, user['sys']) == False:
+                    dbUsers = conn.getByName(user['name'], tri['account'])
+                    user['account']=tri['account']
+                    user['activity']=name
+                    if judgeSysData(tri, user['sys']) == False:
                         continue
                     if len(dbUsers) > 0:
                         if dbUsers[0]['name'] == user['name']:
                             nowtime=round((time.time()-dbUsers[0]['mktime'])/86400.0,4)
                             if nowtime>=3.0:
-                                pass
-                            if t['time']!='' and t['time']>0 and (t['time']-nowtime)<0.0001:
-                                pass
-                    else:
-                        pass
+                                if judgeTaobao(driver,user['name']):
+                                    #if passUser(driver,host + tr['link'],user['skname']):
+                                    count=count+1
+                                    user['passtime']=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                                    conn.save(user)
+                                continue
+                            if tri['time']!='' and tri['time']>0 and (tri['time']-nowtime)<0.0001:
+                                #if passUser(driver,host + tr['link'],user['skname']):
+                                count=count+1
+                                user['passtime']=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                                conn.save(user)
+                    elif judgeTaobao(driver,user['name']):
+                        #if passUser(driver,host + tr['link'],user['skname']):
+                        count=count+1
+                        user['passtime']=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        conn.save(user)
+                    
+                    if count==tr['num'] or count == num:
+                        break
+                
+            if count==num:
+                break
