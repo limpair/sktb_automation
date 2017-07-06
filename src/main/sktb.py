@@ -226,8 +226,10 @@ def passUser(driver,link,name):
     driver.find_element_by_id('key').send_keys(name)
     time.sleep(1)
     driver.find_element_by_xpath('//input[@type="submit"]').click()
-    time.sleep(1)
+    time.sleep(1.5)
     driver.find_element_by_xpath('//*[@id="load-buyer-list"]/tbody/tr[2]/td[5]/a[1]').click()
+    time.sleep(1)
+    driver.find_element_by_xpath('/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/div/div/p[2]/input[1]').click()
     return True
     
 
@@ -309,21 +311,21 @@ def executeActivity(driver, try_list, tasks, tri):
                             nowtime=round((time.time()-dbUsers[0]['mktime'])/86400.0,4)
                             if nowtime>=3.0:
                                 if judgeTaobao(driver,user['name']):
-                                    #if passUser(driver,host + tr['link'],user['skname']):
+                                    if passUser(driver,host + tr['link'],user['skname']):
+                                        count=count+1
+                                        user['passtime']=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                                        conn.save(user)
+                                continue
+                            if tri['time']!='' and tri['time']>0 and (tri['time']-nowtime)<0.0001:
+                                if passUser(driver,host + tr['link'],user['skname']):
                                     count=count+1
                                     user['passtime']=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                                     conn.save(user)
-                                continue
-                            if tri['time']!='' and tri['time']>0 and (tri['time']-nowtime)<0.0001:
-                                #if passUser(driver,host + tr['link'],user['skname']):
-                                count=count+1
-                                user['passtime']=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                                conn.save(user)
                     elif judgeTaobao(driver,user['name']):
-                        #if passUser(driver,host + tr['link'],user['skname']):
-                        count=count+1
-                        user['passtime']=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        conn.save(user)
+                        if passUser(driver,host + tr['link'],user['skname']):
+                            count=count+1
+                            user['passtime']=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                            conn.save(user)
                     
                     if count==tr['num'] or count == num:
                         break
