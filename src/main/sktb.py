@@ -170,7 +170,7 @@ def executeActivity(driver, try_list, tasks, tri):
         out = open(tri['account'] + '.txt', 'a')
         a = time.time()
         for tr in try_list:
-            if name in tr['title']:
+            if name in tr['title'].upper():
                 driver.get(host + tr['link'] + '/0')
                 time.sleep(2)
                 
