@@ -244,4 +244,4 @@ def executeActivity(driver, try_list, tasks, tri):
                 break
         b = time.time()
         out.write('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(round(b - a, 2)) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
-        print u'活动' + name + u'通过 ' + str(count) + u' 人，用时' + str(round(b - a, 2)) + '，' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print u'活动' + name + u'通过 ' + str(count) + u' 人，用时' + str(round(b - a, 2)) + u'，' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
