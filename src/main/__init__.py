@@ -23,7 +23,10 @@ class window(QtGui.QMainWindow):
 
         self.ui.TaobaoUserName.setText(u'starry_sky品牌企业店:盘满钵满')
         self.ui.TaobaoPassword.setText('qqh983468869')
-
+        
+        self.ui.TaobaoPassword.setEchoMode(QtGui.QLineEdit.Password) 
+        self.ui.ShikeePassword.setEchoMode(QtGui.QLineEdit.Password) 
+        
         self.ui.ShikeeUserName.setText('13794728078')
         self.ui.ShikeePassword.setText('kyd0920')
 
