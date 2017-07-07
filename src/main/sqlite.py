@@ -62,11 +62,12 @@ class DataBaseControl(object):
         for row in cursor:
             result = {}
             result['id'] = row[0]
-            result['name'] = row[1]
-            result['time'] = row[2]
-            result['activity'] = row[3]
-            result['account'] = row[4]
-            result['mktime'] = time.mktime(time.strptime(row[2], '%Y-%m-%d %H:%M:%S'))
+            result['skname'] = row[1]
+            result['name'] = row[2]
+            result['time'] = row[3]
+            result['activity'] = row[4]
+            result['account'] = row[5]
+            result['mktime'] = time.mktime(time.strptime(row[3], '%Y-%m-%d %H:%M:%S'))
             res.append(result)
         # self.conn.commit()
         return res
@@ -78,11 +79,12 @@ class DataBaseControl(object):
         for row in cursor:
             res = {}
             res['id'] = row[0]
-            res['name'] = row[1]
-            res['time'] = row[2]
-            res['activity'] = row[3]
-            res['account'] = row[4]
-            res['mktime'] = time.mktime(time.strptime(row[2], '%Y-%m-%d %H:%M:%S'))
+            res['skname'] = row[1]
+            res['name'] = row[2]
+            res['time'] = row[3]
+            res['activity'] = row[4]
+            res['account'] = row[5]
+            res['mktime'] = time.mktime(time.strptime(row[3], '%Y-%m-%d %H:%M:%S'))
             result.append(res)
         # self.conn.commit()
         return result

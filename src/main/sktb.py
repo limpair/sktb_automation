@@ -30,31 +30,23 @@ def is_element_exist(driver, css):
 def loginTaobao(driver, username, password):
     print username + '\n' + password
     driver.get('https://login.taobao.com/member/login.jhtml')
+    time.sleep(1.5)
     if is_element_exist(driver, '.module-quick'):
         driver.find_element_by_id('J_Quick2Static').click()
-    time.sleep(4)
+    time.sleep(3)
     driver.find_element_by_id('TPL_username_1').send_keys(username)
-    time.sleep(4)
+    time.sleep(3)
     driver.find_element_by_id('TPL_password_1').send_keys(password)
 
     if is_element_exist(driver, '#nc_1_n1z'):
-        print "huakuai"
-        # actions = ActionChains(driver)
-        huakuai = driver.find_element_by_id('nc_1_n1z')
-        loc = huakuai.location
-        print loc
-        time.sleep(5)
-        # ActionChains(driver).drag_and_drop_by_offset(huakuai,258,0).perform()
-        print "wait"
-        time.sleep(5)
-        print driver.find_element_by_id('nc_1_n1z').location
+        print u'滑块验证中'
+        time.sleep(8)
     driver.find_element_by_id('J_SubmitStatic').click()
-    time.sleep(10)
-
+    time.sleep(5)
 
 def loginShikee(driver, username, password):
     driver.get('http://login.shikee.com/')
-    time.sleep(10)
+    time.sleep(5)
     driver.find_element_by_xpath('//i[@class="iconimg pc"]').click()
     driver.find_element_by_id('J_userName').send_keys(username)
     driver.find_element_by_id('J_pwd').send_keys(password)
@@ -92,73 +84,6 @@ def saveActiveList(driver):
             li.append({'title': title, 'num': num, 'link': link, 'time': ttt})
     return li
 
-
-def saveTryList(driver, try_list):
-    li = []
-    for u in try_list:
-        url = host + u['link']
-        driver.get(url + '/0')
-        time.sleep(2)
-        if is_element_exist(driver, '#total'):
-            total = int(driver.find_element_by_id('total').text)
-            n = int(math.ceil(total / 20.0))
-        else:
-            n = 1
-        user = []
-        
-        for i in range(0, n):
-            driver.get(url + '/' + str(i * 20))
-            time.sleep(2)
-            soup = BeautifulSoup(driver.page_source).find_all(
-                id='load-buyer-list')[0].find_all('tr')
-            k = len(soup)
-            J = 0
-            for j in range(1, k):
-                time.sleep(1.8)
-                rows = soup[j].attrs['id'].split('_')[1]
-                try:
-                    driver.find_element_by_xpath(
-                        "//div[@data-uid='" + rows + "']").click()
-                except:
-                    j = j - 1
-                    if J - j >= 3:
-                        continue
-                    else:
-                        J = J + 1
-
-            time.sleep(1.8)
-            soup = BeautifulSoup(driver.page_source).find_all(
-                id='load-buyer-list')[0].find_all('tr')
-
-            for l in range(1, k):
-                rows = soup[l].attrs['id'].split('_')[1]
-                t = soup[l].find_all('td')
-                sp = t[3].find_all('span')
-                SP = {}
-                for x in sp:
-                    temp = re.findall(r'(\w*[0-9]+)\w*', x.text)
-                    ss = x.text.split('(')[0]
-                    if u'近30内填写订单号的平均时长' == ss:
-                        SP['AverageTime'] = int(temp[len(temp) - 1])
-                    elif u'违规次数' == ss:
-                        SP['ViolationNumber'] = int(temp[len(temp) - 1])
-                    elif u'近30日下单次数' == ss:
-                        SP['OrderNumber'] = int(temp[len(temp) - 1])
-                    elif u'近30日获得试用次数' == ss:
-                        SP['TryNumber'] = int(temp[len(temp) - 1])
-                    elif u'试客放弃试用次数' == ss:
-                        SP['AbandonNumber'] = int(temp[len(temp) - 1])
-                    elif u'试客提交无效订单号次数' == ss:
-                        SP['InvalidNumber'] = int(temp[len(temp) - 1])
-                    elif u'试客总参与试用次数' == ss:
-                        SP['TrySum'] = int(temp[len(temp) - 1])
-                print SP
-                user.append({'id': int(rows), 'sys': SP, 'name': t[1].find_all(
-                    'span')[0].attrs['title'], 'time': t[2].text})
-        u['user'] = user
-        li.append(u)
-    return li
-
 # {'title': title, 'num': num, 'link': link, 'time': ttt}
 # invalidOrders    # 无效订单次数
 # averageTime      # 填写订单号平均时长
@@ -179,33 +104,23 @@ def judgeSys(c, a, b):
 
 
 def judgeSysData(t, sys):
-    # invalid = toInt(t['invalidOrders']), average = toInt(t['averageTime']), total = toInt(t['total']), trials = toInt(t['trialsNumber'])
-    # abandon = toInt(t['abandonNumber']), number = toInt(t['number']), violations = toInt(t['violationsNumber'])
-    #invalid = toInt(t['invalidOrders'])
-    #average = toInt(t['averageTime'])
     total = toInt(t['total'])
     trials = toInt(t['trialsNumber'])
-    #abandon = toInt(t['abandonNumber'])
     number = toInt(t['number'])
-    #violations = toInt(t['violationsNumber'])
     count = 0
-    #count = judgeSys(count, invalid, sys['InvalidNumber'])
-    #count = judgeSys(count, average, sys['AverageTime'])
     count = judgeSys(count, total, sys['TrySum'])
     count = judgeSys(count, trials, sys['TryNumber'])
-    #count = judgeSys(count, abandon, sys['AbandonNumber'])
     count = judgeSys(count, number, sys['OrderNumber'])
-    #count = judgeSys(count, violations, sys['ViolationNumber'])
     if t['bilv'] != '' and (sys['OrderNumber'] * 1.0 / sys['TryNumber'] * 1.0) > float(t['bilv']):
         count = count + 1
     elif t['bilv'] == '':
-        count = count +1
+        count = count + 1
     if count == 4:
         return True
     else:
         return False
 
-def judgeTaobao(driver, name):
+def judgeTaobao(driver, name, day):
     driver.get('https://trade.taobao.com/trade/itemlist/list_sold_items.htm')
     time.sleep(1)
     driver.find_element_by_id('buyerNick').send_keys(name)
@@ -213,14 +128,25 @@ def judgeTaobao(driver, name):
     time.sleep(1)
     soup = BeautifulSoup(driver.page_source)
     page = soup.find_all(attrs={"data-reactid": ".0.5"})[0]
-    if u'没有符合条件的宝贝，请尝试其他搜索条件' in page.text:
-        return True
-    #l = len(soup.find_all(class_='pagination-disabled'))
-    
-    if (u'买家已付款' in page.text) or (u'卖家已发货' in page.text) or (u'交易成功' in page.text):
-        return False
+    if day == '':
+        if u'没有符合条件的宝贝，请尝试其他搜索条件' in page.text:
+            return True
+        if (u'买家已付款' in page.text) or (u'卖家已发货' in page.text) or (u'交易成功' in page.text) or (u'资金保护中' in page.text):
+            return False
+        else:
+            return True
     else:
-        return True
+        if u'没有符合条件的宝贝，请尝试其他搜索条件' in page.text:
+            return True
+        divs = page.find_all(class_='item-mod__trade-order___2LnGB')
+        for div in divs:
+            if (u'买家已付款' in div.text) or (u'卖家已发货' in div.text) or (u'交易成功' in div.text) or (u'资金保护中' in div.text):
+                tt = div.find_all('label')[0].find_all('span')[5].text
+                old = time.mktime(time.strptime(tt, '%Y-%m-%d %H:%M:%S'))
+                now = time.time()
+                if round((now - old) / 86400.0, 4) - float(day) > 0:
+                    return True
+        return False
     
 
 def passUser(driver, link, name):
@@ -235,15 +161,13 @@ def passUser(driver, link, name):
     driver.find_element_by_xpath('/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/div/div/p[2]/input[1]').click()
     return True
     
-
-
 def executeActivity(driver, try_list, tasks, tri):
     conn = sqlite.DataBaseControl()
     for task in tasks:
         count = 0
         name = task['name']
         num = task['num']
-        out = open(tri['account']+'.txt', 'a')
+        out = open(tri['account'] + '.txt', 'a')
         a = time.time()
         for tr in try_list:
             if name in tr['title']:
@@ -257,7 +181,7 @@ def executeActivity(driver, try_list, tasks, tri):
                     n = 1
                 users = []
                 for i in range(0, n):
-                    driver.get(host + tr['link'] + '/' + str(i * 20)+'?sysarrs%5B%5D=order_count&sysarrs%5B%5D=join_count&sysarrs%5B%5D=completion_count')
+                    driver.get(host + tr['link'] + '/' + str(i * 20) + '?sysarrs%5B%5D=order_count&sysarrs%5B%5D=join_count&sysarrs%5B%5D=completion_count')
                     time.sleep(2)
                     
                     
@@ -301,18 +225,13 @@ def executeActivity(driver, try_list, tasks, tri):
                         if dbUsers[0]['name'] == user['name']:
                             nowtime = round((time.time() - dbUsers[0]['mktime']) / 86400.0, 4)
                             if nowtime >= 3.0:
-                                if judgeTaobao(driver, user['name']):
+                                if judgeTaobao(driver, user['name'], ''.join(tri['days'].split())):
                                     if passUser(driver, host + tr['link'], user['skname']):
                                         count = count + 1
                                         user['passtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                                         conn.save(user)
                                 continue
-                            if tri['time'] != '' and tri['time'] > 0 and (tri['time'] - nowtime) < 0.0001:
-                                if passUser(driver, host + tr['link'], user['skname']):
-                                    count = count + 1
-                                    user['passtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                                    conn.save(user)
-                    elif judgeTaobao(driver, user['name']):
+                    elif judgeTaobao(driver, user['name'], ''.join(tri['days'].split())):
                         if passUser(driver, host + tr['link'], user['skname']):
                             count = count + 1
                             user['passtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -324,5 +243,5 @@ def executeActivity(driver, try_list, tasks, tri):
             if count == num:
                 break
         b = time.time()
-        out.write('活动' + name + u'，预计通过 ' + str(num) + u' 人，已通过 ' + str(count) + ' 人，用时 ' + str(b-a)+'\n')
-        print u'活动' + name + u'通过 ' + str(count) + u' 人，用时', b-a
+        out.write('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(round(b - a, 2)) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
+        print u'活动' + name + u'通过 ' + str(count) + u' 人，用时' + str(round(b - a, 2)) + '，' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
