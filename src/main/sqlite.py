@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 import sqlite3, time
+import datetime
 
 class DataBaseControl(object):
     def __init__(self):
@@ -88,6 +89,12 @@ class DataBaseControl(object):
             result.append(res)
         # self.conn.commit()
         return result
-
-
+    def saveRemark(self,obj,TYPE):
+        if(self.conn == None):
+            self.open()
+        if TYPE==0:
+            self.conn.execute('INSERT INTO tb_remarks(taskId,title,link,order_num,time,account,tbuser) VALUES("'+obj['taskId']+'","'+obj['title']+'","'+obj['link']+'","'+obj['order_num']+'","'+obj['time']+'","'+obj['account']+'","'+obj['tbuser']+'")')
+        elif TYPE==1:
+            self.conn.execute('INSERT INTO remarks(taskId,title,link,order_num,time,account,tbuser) VALUES("'+obj['taskId']+'","'+obj['title']+'","'+obj['link']+'","'+obj['order_num']+'","'+obj['time']+'","'+obj['account']+'","'+obj['tbuser']+'")')
+        self.conn.commit()
     

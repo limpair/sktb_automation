@@ -19,6 +19,7 @@ class window(QtGui.QMainWindow):
         self.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint)
         self.setFixedSize(self.width(), self.height())
         self.tableNumber = 0
+        self.tableNumber1 = 0
         self.initButton()
         self.initDriver()
 
@@ -139,11 +140,13 @@ class window(QtGui.QMainWindow):
         gift = self.ui.Gift.text()
         
         self.giftList.append(unicode(gift.toUtf8(), 'utf-8', 'ignore'))
-        self.ui.giftmodel.setItem(self.tableNumber, 0,
+        self.ui.giftmodel.setItem(self.tableNumber1, 0,
                               QtGui.QStandardItem(unicode(gift.toUtf8(), 'utf-8', 'ignore')))
+        self.tableNumber1 = self.tableNumber1 + 1
     def clearGift(self):
         print self.giftList
         self.giftList = []
+        self.tableNumber1 = 0
         self.ui.giftmodel.removeRows(0, self.ui.model.rowCount())
         self.ui.tableView.setModel(self.ui.giftmodel)
         self.ui.initTable()

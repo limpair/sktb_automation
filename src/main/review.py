@@ -4,7 +4,7 @@ import time
 import math
 import os
 import datetime
-import sktb
+import sktb,sqlite
 
 skhost = 'http://user.shikee.com'
 state = '?state[]=&state[]=&state[]=&report_state[]=&trade_state[]=2&key=&trade_no='
@@ -12,7 +12,7 @@ tbhost = 'https://trade.taobao.com/trade/itemlist/list_sold_items.htm'
 tb = 'https://trade.taobao.com'
 
 def getOrderNumber(driver, trs):
-    print u'开始获取订单:',datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print u'开始获取订单:', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     a = time.time()
     result = []
     count = 0
@@ -41,7 +41,7 @@ def getOrderNumber(driver, trs):
         tr['order'] = order
         result.append(tr)
     b = time.time()
-    print u'结束获取订单:',datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print u'结束获取订单:', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print u'获取所有任务需要审核的订单的时间为：', b - a
     print u'一共：', count
     return result
@@ -67,10 +67,10 @@ def verify(driver, url, order, flag):
     return True
 
 def addRemarks(driver, trs, color):
+    conn = sqlite.DataBaseControl()
     if not os.path.exists(color['account']):
         os.makedirs(color['account'])
-    
-        fp = open(color['account']+'/'+color['tbuser'].replace(u':',u'：'),'w')
+        fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
         fp.write('1')
         fp.close()
     out = open(color['account'] + u'/error.txt', 'a')
@@ -136,23 +136,28 @@ def addRemarks(driver, trs, color):
                     href = page.find_all(id='flag')[0].get('href')
                     driver.get(tb + href)
                     time.sleep(1)
-                    if u'买家已付款' in status:    
+                    if u'买家已付款' in status:
+                        obj = {'taskId':title, 'title':tr['title'], 'link':tr['passlink'], 'order_num':i, 'time':datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'account':color['account'], 'tbuser':color['tbuser']}   
                         driver.find_element_by_id('flag1').click()
-                        time.sleep(0.5)
+                        time.sleep(1)
                         for cc in color['list']:
                             if cc.encode('utf-8') in tr['title']:
                                 colorCount[cc] = colorCount[cc] + 1
                                 driver.find_element_by_id('memo').send_keys(u'送' + cc)
                                 break
-                        time.sleep(0.5)
-                        driver.find_element_by_xpath('//*[@id="form1"]/table[2]/tbody/tr[3]/td/div/button').click()
-                        time.sleep(0.5)
+                        time.sleep(1)
+                        try:
+                            driver.find_element_by_xpath('//*[@id="form1"]/table[2]/tbody/tr[3]/td/div/button').click()
+                        except:
+                            continue
+                        time.sleep(1)
                         driver.switch_to_alert().accept()
                         time.sleep(0.5)
+                        conn.saveRemark(obj, 0)
                         if verify(driver, skhost + tr['passlink'], i, True):
+                            conn.saveRemark(obj, 1)
                             count[title + tr['passlink']] = count[title + tr['passlink']] + 1
                             countSum[title] = countSum[title] + 1
-                            
                             if title not in everyDay[orderTime[0:10]]['sum'].keys():
                                 everyDay[orderTime[0:10]]['sum'][title] = 0
                                 everyDay[orderTime[0:10]]['count'][title + tr['passlink']] = 0
@@ -164,16 +169,16 @@ def addRemarks(driver, trs, color):
                         
                     if u'等待买家付款' in status:
                         driver.find_element_by_id('flag1').click()
-                        time.sleep(0.5)
+                        time.sleep(1)
                         driver.find_element_by_xpath('//*[@id="form1"]/table[2]/tbody/tr[3]/td/div/button').click()
-                        time.sleep(0.5)
+                        time.sleep(1)
                         driver.switch_to_alert().accept()
-                        time.sleep(0.5)
+                        time.sleep(1)
                     out2.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '订单号：' + i.encode('utf-8') + '\n')
             else:
                 if verify(driver, skhost + tr['passlink'], i, True):
                     print u'订单错误'
-    
+    conn.close()
     for i in count:
         if  count[i] > 0:
             out1.write(i.encode('utf-8') + ':' + str(count[i]).encode('utf-8') + '\n')
