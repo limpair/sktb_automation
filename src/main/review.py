@@ -2,7 +2,7 @@
 from bs4 import BeautifulSoup
 import time
 import math
-import re
+import os
 import datetime
 import sktb
 
@@ -67,21 +67,18 @@ def verify(driver, url, order, flag):
     return True
 
 def addRemarks(driver, trs, color):
+    if not os.path.exists(color['account']):
+        os.makedirs(color['account'])
     
-    if sktb.exists(color['tbuser']):
-        out = open(color['tbuser'] + u'/error.txt', 'a')
-        out1 = open(color['tbuser'] + u'/remark.txt', 'a')
-        out2 = open(color['tbuser'] + u'/flag.txt', 'a')
-        out3 = open(color['tbuser'] + u'/count.txt', 'a')
-        out4 = open(color['tbuser'] + u'/loaddata_time.txt', 'a')
-        # out2 = open(color['account']+'/error_order.txt')
-    else:
-        out = open(color['tbuser'] + u'_error.txt', 'a')
-        out1 = open(color['tbuser'] + u'_remark.txt', 'a')
-        out2 = open(color['tbuser'] + u'_flag.txt', 'a')
-        out3 = open(color['tbuser'] + u'_count.txt', 'a')
-        out4 = open(color['tbuser'] + u'_loaddata_time.txt', 'a')
-        # out2 = open(color['account']+'_error_order.txt')
+        fp = open(color['account']+'/'+color['tbuser'].replace(u':',u'：'),'w')
+        fp.write('1')
+        fp.close()
+    out = open(color['account'] + u'/error.txt', 'a')
+    out1 = open(color['account'] + u'/remark.txt', 'a')
+    out2 = open(color['account'] + u'/flag.txt', 'a')
+    out3 = open(color['account'] + u'/count.txt', 'a')
+    out4 = open(color['account'] + u'/loaddata_time.txt', 'a')
+    
     out4.write('开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
     trs = getOrderNumber(driver, trs)
     out4.write('结束获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
