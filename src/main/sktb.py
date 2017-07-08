@@ -111,7 +111,7 @@ def judgeSysData(t, sys):
     count = judgeSys(count, total, sys['TrySum'])
     count = judgeSys(count, trials, sys['TryNumber'])
     count = judgeSys(count, number, sys['OrderNumber'])
-    if t['bilv'] != '' and (sys['OrderNumber'] * 1.0 / sys['TryNumber'] * 1.0) > float(t['bilv']):
+    if t['bilv'] != '' and sys['TryNumber'] != 0 and (sys['OrderNumber'] * 1.0 / sys['TryNumber'] * 1.0) > float(t['bilv']):
         count = count + 1
     elif t['bilv'] == '':
         count = count + 1
@@ -170,7 +170,7 @@ def executeActivity(driver, try_list, tasks, tri):
         out = open(tri['account'] + '.txt', 'a')
         a = time.time()
         for tr in try_list:
-            if name in tr['title'].upper():
+            if name.upper() in tr['title'].upper():
                 driver.get(host + tr['link'] + '/0')
                 time.sleep(2)
                 
