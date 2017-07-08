@@ -184,6 +184,28 @@ class Ui_mainWindow(object):
         self.Days_2.setGeometry(QtCore.QRect(580, 10, 51, 20))
         self.Days_2.setText(_fromUtf8(""))
         self.Days_2.setObjectName(_fromUtf8("Days_2"))
+        
+        self.executeRemarks = QtGui.QPushButton(self.tab_2)
+        self.executeRemarks.setGeometry(QtCore.QRect(450, 30, 75, 23))
+        self.executeRemarks.setObjectName(_fromUtf8("executeRemarks"))
+        self.addGift = QtGui.QPushButton(self.tab_2)
+        self.addGift.setGeometry(QtCore.QRect(450, 0, 75, 23))
+        self.addGift.setObjectName(_fromUtf8("addGift"))
+        
+        self.resetGift = QtGui.QPushButton(self.tab_2)
+        self.resetGift.setGeometry(QtCore.QRect(450, 60, 75, 23))
+        self.resetGift.setObjectName(_fromUtf8("addGift"))
+        
+        self.GiftTable = QtGui.QTableView(self.tab_2)
+        self.GiftTable.setGeometry(QtCore.QRect(530, 0, 101, 211))
+        self.GiftTable.setObjectName(_fromUtf8("GiftTable"))
+        self.Gift = QtGui.QLineEdit(self.tab_2)
+        self.Gift.setGeometry(QtCore.QRect(330, 0, 113, 20))
+        self.Gift.setObjectName(_fromUtf8("Gift"))
+        self.label = QtGui.QLabel(self.tab_2)
+        self.label.setGeometry(QtCore.QRect(300, 0, 21, 21))
+        self.label.setObjectName(_fromUtf8("label"))
+        
         self.violationLabel.raise_()
         self.placeAnOrderLabel.raise_()
         self.abandonLabel.raise_()
@@ -230,7 +252,7 @@ class Ui_mainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(mainWindow)
 
     def retranslateUi(self, mainWindow):
-        mainWindow.setWindowTitle(_translate("mainWindow", "自动化工具 V1.0", None))
+        mainWindow.setWindowTitle(_translate("mainWindow", "自动化工具 V1.0.5", None))
         self.violationLabel.setText(_translate("mainWindow", "违规次数", None))
         self.placeAnOrderLabel.setText(_translate("mainWindow", "近30日下单次数", None))
         self.abandonLabel.setText(_translate("mainWindow", "试客放弃试用次数", None))
@@ -254,6 +276,10 @@ class Ui_mainWindow(object):
         self.resetActivity.setText(_translate("mainWindow", "重置任务", None))
         self.clearLink.setText(_translate("mainWindow", "清除无效链接", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("mainWindow", "任务", None))
+        self.executeRemarks.setText(_translate("mainWindow", "执行", None))
+        self.addGift.setText(_translate("mainWindow", "添加送啥", None))
+        self.resetGift.setText(_translate("mainWindow", "不送了", None))
+        self.label.setText(_translate("mainWindow", "送", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("mainWindow", "备注", None))
         self.DayLabel.setText(_translate("mainWindow", "天", None))
         self.DayLabel_2.setText(_translate("mainWindow", "下单/获得（比率）", None))
@@ -272,3 +298,16 @@ class Ui_mainWindow(object):
         self.tableView.setColumnWidth(0, 120) 
         self.tableView.setColumnWidth(1, 120) 
         self.tableView.setColumnWidth(2, 150)
+        
+        self.giftmodel = QtGui.QStandardItemModel(self.GiftTable)
+        
+        self.giftmodel.setRowCount(10)    
+        self.giftmodel.setColumnCount(1)
+        self.giftmodel.setHeaderData(0, QtCore.Qt.Horizontal, _fromUtf8("啥"))
+        
+        self.GiftTable.setModel(self.giftmodel)
+        self.GiftTable.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignCenter) 
+        self.GiftTable.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        
+        self.GiftTable.setColumnWidth(0, 80) 
+        

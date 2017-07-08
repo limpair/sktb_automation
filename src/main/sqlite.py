@@ -16,7 +16,7 @@ class DataBaseControl(object):
     def save(self, obj):
         if(self.conn == None):
             self.open()
-        self.conn.execute('insert into osm (skname,name,time,activity,account) values("' + obj['skname'] + '","' + obj['name'] + '", "' + obj['time'] + '", "' + obj['activity'] + '","' + obj['account'] + '")')
+        self.conn.execute('insert into osm (skname,name,time,activity,account) values("' + obj['skname'] + '","' + obj['name'] + '", "' + obj['passtime'] + '", "' + obj['activity'] + '","' + obj['account'] + '")')
         self.conn.commit()
     
     def update(self, obj):

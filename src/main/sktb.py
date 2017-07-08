@@ -6,6 +6,7 @@ import time
 import math
 import re
 import datetime
+import os
 
 host = 'http://user.shikee.com'
 
@@ -26,6 +27,14 @@ def is_element_exist(driver, css):
         print "Find %s element: %s" % (len(s), css)
         return False
 
+def exists(Path):
+    if os.path.exists(Path):
+        return True
+    else:
+        os.makedirs(Path)
+        if os.path.exists(Path):
+            return True
+    return False
 
 def loginTaobao(driver, username, password):
     print username + '\n' + password
@@ -53,7 +62,6 @@ def loginShikee(driver, username, password):
     time.sleep(2)
     driver.find_element_by_id('J_submit').click()
     time.sleep(5)
-
 
 def saveActiveList(driver):
     li = []
@@ -111,54 +119,63 @@ def judgeSysData(t, sys):
     count = judgeSys(count, total, sys['TrySum'])
     count = judgeSys(count, trials, sys['TryNumber'])
     count = judgeSys(count, number, sys['OrderNumber'])
-    if t['bilv'] != '' and sys['TryNumber'] != 0 and (sys['OrderNumber'] * 1.0 / sys['TryNumber'] * 1.0) > float(t['bilv']):
-        count = count + 1
-    elif t['bilv'] == '':
-        count = count + 1
+    try:
+        if t['bilv'] != '' and sys['TryNumber'] != 0 and (sys['OrderNumber'] * 1.0 / sys['TryNumber'] * 1.0) > float(t['bilv']):
+            count = count + 1
+        elif t['bilv'] == '':
+            count = count + 1
+    except:
+        print u'判断有误调过此账号' 
     if count == 4:
         return True
     else:
         return False
 
 def judgeTaobao(driver, name, day):
-    driver.get('https://trade.taobao.com/trade/itemlist/list_sold_items.htm')
-    time.sleep(1)
-    driver.find_element_by_id('buyerNick').send_keys(name)
-    driver.find_element_by_xpath('//*[@id="sold_container"]/div/div[1]/div[1]/form/div[7]/div/div/button[1]').click()
-    time.sleep(1)
-    soup = BeautifulSoup(driver.page_source)
-    page = soup.find_all(attrs={"data-reactid": ".0.5"})[0]
-    if day == '':
-        if u'没有符合条件的宝贝，请尝试其他搜索条件' in page.text:
-            return True
-        if (u'买家已付款' in page.text) or (u'卖家已发货' in page.text) or (u'交易成功' in page.text) or (u'资金保护中' in page.text):
-            return False
+    try:
+        driver.get('https://trade.taobao.com/trade/itemlist/list_sold_items.htm')
+        time.sleep(1.5)
+        driver.find_element_by_id('buyerNick').send_keys(name)
+        driver.find_element_by_xpath('//*[@id="sold_container"]/div/div[1]/div[1]/form/div[7]/div/div/button[1]').click()
+        time.sleep(1)
+        soup = BeautifulSoup(driver.page_source)
+        page = soup.find_all(attrs={"data-reactid": ".0.5"})[0]
+        if day == '':
+            if u'没有符合条件的宝贝，请尝试其他搜索条件' in page.text:
+                return True
+            if (u'买家已付款' in page.text) or (u'卖家已发货' in page.text) or (u'交易成功' in page.text) or (u'资金保护中' in page.text):
+                return False
+            else:
+                return True
         else:
-            return True
-    else:
-        if u'没有符合条件的宝贝，请尝试其他搜索条件' in page.text:
-            return True
-        divs = page.find_all(class_='item-mod__trade-order___2LnGB')
-        for div in divs:
-            if (u'买家已付款' in div.text) or (u'卖家已发货' in div.text) or (u'交易成功' in div.text) or (u'资金保护中' in div.text):
-                tt = div.find_all('label')[0].find_all('span')[5].text
-                old = time.mktime(time.strptime(tt, '%Y-%m-%d %H:%M:%S'))
-                now = time.time()
-                if round((now - old) / 86400.0, 4) - float(day) > 0:
-                    return True
+            if u'没有符合条件的宝贝，请尝试其他搜索条件' in page.text:
+                return True
+            divs = page.find_all(class_='item-mod__trade-order___2LnGB')
+            for div in divs:
+                if (u'买家已付款' in div.text) or (u'卖家已发货' in div.text) or (u'交易成功' in div.text) or (u'资金保护中' in div.text):
+                    tt = div.find_all('label')[0].find_all('span')[5].text
+                    old = time.mktime(time.strptime(tt, '%Y-%m-%d %H:%M:%S'))
+                    now = time.time()
+                    if round((now - old) / 86400.0, 4) - float(day) > 0:
+                        return True
+            return False
+    except:
         return False
     
 
 def passUser(driver, link, name):
-    driver.get(link)
-    time.sleep(2)
-    driver.find_element_by_id('key').send_keys(name)
-    time.sleep(1)
-    driver.find_element_by_xpath('//input[@type="submit"]').click()
-    time.sleep(1.5)
-    driver.find_element_by_xpath('//*[@id="load-buyer-list"]/tbody/tr[2]/td[5]/a[1]').click()
-    time.sleep(1)
-    driver.find_element_by_xpath('/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/div/div/p[2]/input[1]').click()
+    try:
+        driver.get(link)
+        time.sleep(2)
+        driver.find_element_by_id('key').send_keys(name)
+        time.sleep(1)
+        driver.find_element_by_xpath('//input[@type="submit"]').click()
+        time.sleep(1.5)
+        driver.find_element_by_xpath('//*[@id="load-buyer-list"]/tbody/tr[2]/td[5]/a[1]').click()
+        time.sleep(1)
+        driver.find_element_by_xpath('/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/div/div/p[2]/input[1]').click()
+    except:
+        return False
     return True
     
 def executeActivity(driver, try_list, tasks, tri):
@@ -167,9 +184,16 @@ def executeActivity(driver, try_list, tasks, tri):
         count = 0
         name = task['name']
         num = task['num']
-        out = open(tri['account'] + '.txt', 'a')
+        if exists(tri['account']):
+            out = open(tri['account'] + '/log.txt', 'a')
+        else:
+            out = open(tri['account'] + '.txt', 'a')
         a = time.time()
         for tr in try_list:
+            if tr['num'] == 0:
+                continue
+            if count == num:
+                break
             if name.upper() in tr['title'].upper():
                 driver.get(host + tr['link'] + '/0')
                 time.sleep(2)
@@ -183,8 +207,6 @@ def executeActivity(driver, try_list, tasks, tri):
                 for i in range(0, n):
                     driver.get(host + tr['link'] + '/' + str(i * 20) + '?sysarrs%5B%5D=order_count&sysarrs%5B%5D=join_count&sysarrs%5B%5D=completion_count')
                     time.sleep(2)
-                    
-                    
                     soup = BeautifulSoup(driver.page_source).find_all(
                         id='load-buyer-list')[0].find_all('tr')
                     k = len(soup)
@@ -216,6 +238,8 @@ def executeActivity(driver, try_list, tasks, tri):
                             'span')[0].attrs['title'], 'time': t[2].text, 'skname':t[1].find_all('img')[0].attrs['art']})
 
                 for user in users:
+                    if count == tr['num'] or count == num:
+                        break
                     dbUsers = conn.getByName(user['name'], tri['account'])
                     user['account'] = tri['account']
                     user['activity'] = name
@@ -236,12 +260,7 @@ def executeActivity(driver, try_list, tasks, tri):
                             count = count + 1
                             user['passtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                             conn.save(user)
-                    
-                    if count == tr['num'] or count == num:
-                        break
-                
-            if count == num:
-                break
         b = time.time()
         out.write('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(round(b - a, 2)) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
         print u'活动' + name + u'通过 ' + str(count) + u' 人，用时' + str(round(b - a, 2)) + u'，' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    conn.close()

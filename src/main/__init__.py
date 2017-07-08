@@ -3,9 +3,10 @@
 from selenium import webdriver
 from PyQt4 import QtCore, QtGui
 import ui
-import sktb
 import sys
 import time
+import sktb
+import review
 
 
 class window(QtGui.QMainWindow):
@@ -21,13 +22,13 @@ class window(QtGui.QMainWindow):
         self.initButton()
         self.initDriver()
 
-        self.ui.TaobaoUserName.setText(u'starry_sky品牌企业店:盘满钵满')
+        self.ui.TaobaoUserName.setText(u'tb22765774:毛毛')
         self.ui.TaobaoPassword.setText('qqh983468869')
         
         self.ui.TaobaoPassword.setEchoMode(QtGui.QLineEdit.Password) 
         self.ui.ShikeePassword.setEchoMode(QtGui.QLineEdit.Password) 
         
-        self.ui.ShikeeUserName.setText('13794728078')
+        self.ui.ShikeeUserName.setText('18814726078')
         self.ui.ShikeePassword.setText('kyd0920')
 
         self.ui.InvalidOrders.setText('')
@@ -50,9 +51,15 @@ class window(QtGui.QMainWindow):
         self.ui.resetActivity.clicked.connect(self.clearActive)
         self.ui.ExecuteActivity.clicked.connect(self.executeActivity)
         self.ui.clearLink.clicked.connect(self.deleteTryList)
+        self.ui.addGift.clicked.connect(self.addGift)
+        self.ui.resetGift.clicked.connect(self.clearGift)
+        self.ui.executeRemarks.clicked.connect(self.executeRemarks)
+        
+        
 
     def initDriver(self):
         self.taskList = []
+        self.giftList = []
         self.driver = webdriver.Chrome('..\driver\chromedriver.exe')
 
     def addActive(self):
@@ -90,12 +97,12 @@ class window(QtGui.QMainWindow):
             name.toUtf8(), 'utf-8', 'ignore'), str(pswd))
 
     def getShikeeData(self):
-        #a = time.time()
+        # a = time.time()
         self.try_list = sktb.saveActiveList(self.driver)
         self.try_list.sort(key=lambda obj: obj.get('time'), reverse=True)
-        #self.try_list = sktb.saveTryList(self.driver, try_list)
+        # self.try_list = sktb.saveTryList(self.driver, try_list)
         # print self.try_list
-        #b = time.time()
+        # b = time.time()
         # print round(b - a, 2)
 
     def deleteTryList(self):
@@ -106,7 +113,7 @@ class window(QtGui.QMainWindow):
                 break
 
     def executeActivity(self):
-        a=time.time()
+        a = time.time()
         trialsNumber = self.ui.TrialsNumber.text()  # 近30日获得试用次数
         number = self.ui.Number.text()  # 近30天下单次数
         
@@ -119,13 +126,29 @@ class window(QtGui.QMainWindow):
         violationsNumber = self.ui.ViolationsNumber.text()  # 违规次数
         days = self.ui.Days.text()
         bilv = self.ui.Days_2.text()
-        account=self.ui.ShikeeUserName.text()
-        res = {'bilv':str(bilv),'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(
-            trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days),'account':str(account)}
+        account = self.ui.ShikeeUserName.text()
+        res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(
+            trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':str(account)}
         sktb.executeActivity(self.driver, self.try_list, self.taskList, res)
-        b=time.time()
-        print u'执行任务时间',b-a
-
+        b = time.time()
+        print u'执行任务时间', b - a
+    def addGift(self):
+        gift = self.ui.Gift.text()
+        
+        self.giftList.append(unicode(gift.toUtf8(), 'utf-8', 'ignore'))
+        self.ui.giftmodel.setItem(self.tableNumber, 0,
+                              QtGui.QStandardItem(unicode(gift.toUtf8(), 'utf-8', 'ignore')))
+    def clearGift(self):
+        print self.giftList
+        self.giftList = []
+        self.ui.giftmodel.removeRows(0, self.ui.model.rowCount())
+        self.ui.tableView.setModel(self.ui.giftmodel)
+        self.ui.initTable()
+    
+    def executeRemarks(self):
+        account = self.ui.ShikeeUserName.text()
+        color = {'list':self.giftList, 'account':str(account)}
+        review.addRemarks(self.driver, self.try_list, color)
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     window = window()
