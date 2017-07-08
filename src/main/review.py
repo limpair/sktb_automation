@@ -68,19 +68,19 @@ def verify(driver, url, order, flag):
 
 def addRemarks(driver, trs, color):
     
-    if sktb.exists(color['account']):
-        out = open('./' + color['account'] + '/error.txt', 'a')
-        out1 = open('./' + color['account'] + '/remark.txt', 'a')
-        out2 = open('./' + color['account'] + '/flag.txt', 'a')
-        out3 = open('./' + color['account'] + '/count.txt', 'a')
-        out4 = open('./' + color['account'] + '/loaddata_time.txt', 'a')
+    if sktb.exists(color['tbuser']):
+        out = open(color['tbuser'] + u'/error.txt', 'a')
+        out1 = open(color['tbuser'] + u'/remark.txt', 'a')
+        out2 = open(color['tbuser'] + u'/flag.txt', 'a')
+        out3 = open(color['tbuser'] + u'/count.txt', 'a')
+        out4 = open(color['tbuser'] + u'/loaddata_time.txt', 'a')
         # out2 = open(color['account']+'/error_order.txt')
     else:
-        out = open(color['account'] + '_error.txt', 'a')
-        out1 = open(color['account'] + '_remark.txt', 'a')
-        out2 = open(color['account'] + '_flag.txt', 'a')
-        out3 = open(color['account'] + '_count.txt', 'a')
-        out4 = open('' + color['account'] + '_loaddata_time.txt', 'a')
+        out = open(color['tbuser'] + u'_error.txt', 'a')
+        out1 = open(color['tbuser'] + u'_remark.txt', 'a')
+        out2 = open(color['tbuser'] + u'_flag.txt', 'a')
+        out3 = open(color['tbuser'] + u'_count.txt', 'a')
+        out4 = open(color['tbuser'] + u'_loaddata_time.txt', 'a')
         # out2 = open(color['account']+'_error_order.txt')
     out4.write('开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
     trs = getOrderNumber(driver, trs)

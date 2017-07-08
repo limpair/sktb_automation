@@ -31,7 +31,7 @@ def exists(Path):
     if os.path.exists(Path):
         return True
     else:
-        os.makedirs(Path)
+        os.mkdir(Path)
         if os.path.exists(Path):
             return True
     return False
@@ -184,10 +184,10 @@ def executeActivity(driver, try_list, tasks, tri):
         count = 0
         name = task['name']
         num = task['num']
-        if exists(tri['account']):
-            out = open(tri['account'] + '/log.txt', 'a')
+        if exists(tri['tbuser']):
+            out = open(tri['tbuser'] + '/log.txt', 'a')
         else:
-            out = open(tri['account'] + '.txt', 'a')
+            out = open(tri['tbuser'] + '_log.txt', 'a')
         a = time.time()
         for tr in try_list:
             if tr['num'] == 0:
@@ -264,3 +264,7 @@ def executeActivity(driver, try_list, tasks, tri):
         out.write('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(round(b - a, 2)) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
         print u'活动' + name + u'通过 ' + str(count) + u' 人，用时' + str(round(b - a, 2)) + u'，' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     conn.close()
+
+if __name__ == '__main__':
+    exists('tb22765774:毛毛')
+

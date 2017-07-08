@@ -127,8 +127,10 @@ class window(QtGui.QMainWindow):
         days = self.ui.Days.text()
         bilv = self.ui.Days_2.text()
         account = self.ui.ShikeeUserName.text()
+        name = self.ui.TaobaoUserName.text()
         res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(
-            trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':str(account)}
+            trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':str(account),'tbuser':unicode(
+            name.toUtf8(), 'utf-8', 'ignore')}
         sktb.executeActivity(self.driver, self.try_list, self.taskList, res)
         b = time.time()
         print u'执行任务时间', b - a
@@ -147,7 +149,9 @@ class window(QtGui.QMainWindow):
     
     def executeRemarks(self):
         account = self.ui.ShikeeUserName.text()
-        color = {'list':self.giftList, 'account':str(account)}
+        name = self.ui.TaobaoUserName.text()
+        color = {'list':self.giftList, 'account':str(account),'tbuser':unicode(
+            name.toUtf8(), 'utf-8', 'ignore')}
         review.addRemarks(self.driver, self.try_list, color)
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
