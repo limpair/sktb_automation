@@ -67,6 +67,9 @@ def verify(driver, url, order, flag):
     return True
 
 def addRemarks(driver, trs, color):
+    if len(color['list'])==0:
+        return False
+    
     conn = sqlite.DataBaseControl()
     if not os.path.exists(color['account']):
         os.makedirs(color['account'])

@@ -197,7 +197,8 @@ def executeActivity(driver, try_list, tasks, tri):
                 continue
             if count == num:
                 break
-            if name.upper() in tr['title'].upper():
+            title = ''.join(tr['title'][0:3].split())
+            if name.upper() == title.upper():
                 driver.get(host + tr['link'] + '/0')
                 time.sleep(2)
                 

@@ -23,13 +23,13 @@ class window(QtGui.QMainWindow):
         self.initButton()
         self.initDriver()
 
-        self.ui.TaobaoUserName.setText(u'starry_sky品牌企业店:毛毛')
+        self.ui.TaobaoUserName.setText(u'tb22765774:毛毛')
         self.ui.TaobaoPassword.setText('qqh983468869')
         
         self.ui.TaobaoPassword.setEchoMode(QtGui.QLineEdit.Password) 
         self.ui.ShikeePassword.setEchoMode(QtGui.QLineEdit.Password) 
         
-        self.ui.ShikeeUserName.setText('15307620521')
+        self.ui.ShikeeUserName.setText('18814726078')
         self.ui.ShikeePassword.setText('kyd0920')
 
         self.ui.InvalidOrders.setText('')

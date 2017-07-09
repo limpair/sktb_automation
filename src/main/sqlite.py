@@ -93,8 +93,8 @@ class DataBaseControl(object):
         if(self.conn == None):
             self.open()
         if TYPE==0:
-            self.conn.execute('INSERT INTO tb_remarks(taskId,title,link,order_num,time,account,tbuser) VALUES("'+obj['taskId']+'","'+obj['title']+'","'+obj['link']+'","'+obj['order_num']+'","'+obj['time']+'","'+obj['account']+'","'+obj['tbuser']+'")')
+            self.conn.execute('INSERT INTO tb_remarks(taskId,title,link,order_num,time,account,tbuser) VALUES("'+obj['taskId']+'","'+obj['title']+'","'+obj['link'].encode('utf-8')+'","'+obj['order_num'].encode('utf-8')+'","'+obj['time']+'","'+obj['account']+'","'+obj['tbuser'].encode('utf-8')+'")')
         elif TYPE==1:
-            self.conn.execute('INSERT INTO remarks(taskId,title,link,order_num,time,account,tbuser) VALUES("'+obj['taskId']+'","'+obj['title']+'","'+obj['link']+'","'+obj['order_num']+'","'+obj['time']+'","'+obj['account']+'","'+obj['tbuser']+'")')
+            self.conn.execute('INSERT INTO remarks(taskId,title,link,order_num,time,account,tbuser) VALUES("'+obj['taskId']+'","'+obj['title']+'","'+obj['link'].encode('utf-8')+'","'+obj['order_num'].encode('utf-8')+'","'+obj['time']+'","'+obj['account']+'","'+obj['tbuser'].encode('utf-8')+'")')
         self.conn.commit()
     
