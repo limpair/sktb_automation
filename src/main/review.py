@@ -81,9 +81,10 @@ def addRemarks(driver, trs, color):
     out2 = open(color['account'] + u'/flag.txt', 'a')
     out3 = open(color['account'] + u'/count.txt', 'a')
     out4 = open(color['account'] + u'/loaddata_time.txt', 'a')
-    
+    text = '开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n'
     out4.write('开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
     trs = getOrderNumber(driver, trs)
+    text = text + '结束获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n'
     out4.write('结束获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
     out4.close()
     count = {}
@@ -117,12 +118,12 @@ def addRemarks(driver, trs, color):
             soup = BeautifulSoup(driver.page_source)
             page = soup.find_all(attrs={"data-reactid": ".0.5"})[0]
             div = page.find_all(class_='suborder-mod__order-table___2SEhF')
-            di1 = page.find_all(class_='item-mod__trade-order___2LnGB')
-            orderTime = di1[0].find_all('label')[0].find_all('span')[5].text
-            if orderTime[0:10] not in everyDay.keys():
-                everyDay[orderTime[0:10]] = {'sum':{}, 'order':[], 'count':{}}
             llen = len(div)
             if llen > 0:
+                di1 = page.find_all(class_='item-mod__trade-order___2LnGB')
+                orderTime = di1[0].find_all('label')[0].find_all('span')[5].text
+                if orderTime[0:10] not in everyDay.keys():
+                    everyDay[orderTime[0:10]] = {'sum':{}, 'order':[], 'count':{}}
                 td = div[0].find_all('td')
                 status = td[5].text
                 if ''.join(td[3].text.split()) != '':
@@ -143,10 +144,12 @@ def addRemarks(driver, trs, color):
                         obj = {'taskId':title, 'title':tr['title'], 'link':tr['passlink'], 'order_num':i, 'time':datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'account':color['account'], 'tbuser':color['tbuser']}   
                         driver.find_element_by_id('flag1').click()
                         time.sleep(1)
+                        FLAG = False
                         for cc in color['list']:
-                            if cc.encode('utf-8') in tr['title']:
+                            if cc.encode('utf-8').upper() in tr['title'].upper():
                                 colorCount[cc] = colorCount[cc] + 1
                                 driver.find_element_by_id('memo').send_keys(u'送' + cc)
+                                FLAG = True
                                 break
                         time.sleep(1)
                         try:
@@ -163,13 +166,14 @@ def addRemarks(driver, trs, color):
                             countSum[title] = countSum[title] + 1
                             if title not in everyDay[orderTime[0:10]]['sum'].keys():
                                 everyDay[orderTime[0:10]]['sum'][title] = 0
+                            if (title + tr['passlink']) not in everyDay[orderTime[0:10]]['count']:
                                 everyDay[orderTime[0:10]]['count'][title + tr['passlink']] = 0
-                            
                             everyDay[orderTime[0:10]]['sum'][title] = everyDay[orderTime[0:10]]['sum'][title] + 1
                             everyDay[orderTime[0:10]]['count'][title + tr['passlink']] = everyDay[orderTime[0:10]]['count'][title + tr['passlink']] + 1
                             everyDay[orderTime[0:10]]['order'].append('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '订单号：' + i.encode('utf-8'))   
                             out1.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '订单号：' + i.encode('utf-8') + '\n')
-                        
+                            if not FLAG:
+                                out1.write('订单号：' + i.encode('utf-8') + '审核过了但没备注\n')
                     if u'等待买家付款' in status:
                         driver.find_element_by_id('flag1').click()
                         time.sleep(1)
@@ -189,16 +193,17 @@ def addRemarks(driver, trs, color):
         if  countSum[i] > 0:
             out1.write(i.encode('utf-8') + ':' + str(countSum[i]).encode('utf-8') + '\n')
     out3.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
+    out3.write(text)
     for i in everyDay:
         out3.write(i.encode('utf-8') + '\n')
         for j in everyDay[i]['order']:
             out3.write(j + '\n')
-        
-        for k in everyDay[i]['count']:
+        kk = sorted(everyDay[i]['count'].keys())
+        for k in kk:
             if everyDay[i]['count'][k] > 0:
                 out3.write(k.encode('utf-8') + ':' + str(everyDay[i]['count'][k]) + '\n')
-        
-        for l in everyDay[i]['sum']:
+        ll = sorted(everyDay[i]['sum'].keys())
+        for l in ll:
             if everyDay[i]['sum'][l] > 0:
                 out3.write(l.encode('utf-8') + ':' + str(everyDay[i]['sum'][l]) + '\n')
     

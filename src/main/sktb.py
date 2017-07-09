@@ -36,6 +36,7 @@ def exists(Path):
         if os.path.exists(Path):
             return True
     return False
+   
 
 def loginTaobao(driver, username, password):
     print username + '\n' + password
@@ -268,9 +269,3 @@ def executeActivity(driver, try_list, tasks, tri):
         out.write('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(round(b - a, 2)) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
         print u'活动' + name + u'通过 ' + str(count) + u' 人，用时' + str(round(b - a, 2)) + u'，' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     conn.close()
-    
-if __name__ == '__main__':
-    path=u'晚间家'
-    out=open(path+'/a.txt','a')
-    out.write('a')
-    out.close()
