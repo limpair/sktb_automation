@@ -7,6 +7,7 @@ import sys
 import time
 import sktb
 import review
+import user
 
 
 class window(QtGui.QMainWindow):
@@ -56,7 +57,23 @@ class window(QtGui.QMainWindow):
         self.ui.resetGift.clicked.connect(self.clearGift)
         self.ui.executeRemarks.clicked.connect(self.executeRemarks)
         
+        self.ui.autoAccount.clicked.connect(self.saveAccount)
+        self.ui.autoLogin.clicked.connect(self.autoLogin)
         
+    def saveAccount(self):
+        tname = unicode(self.ui.TaobaoUserName.text().toUtf8(), 'utf-8', 'ignore')
+        tpswd = str(self.ui.TaobaoPassword.text())
+        sname = unicode(self.ui.ShikeeUserName.text().toUtf8(), 'utf-8', 'ignore')
+        spswd = str(self.ui.ShikeePassword.text())
+        obj = {'su':sname,'sp':spswd,'tu':tname,'tp':tpswd}
+        user.saveAccount(obj)
+    def autoLogin(self):
+        
+        tname = unicode(self.ui.TaobaoUserName.text().toUtf8(), 'utf-8', 'ignore')
+        sname = unicode(self.ui.ShikeeUserName.text().toUtf8(), 'utf-8', 'ignore')
+        obj = {'su':sname,'tu':tname}
+        account=user.getAccount(obj)[0]
+        user.autoLogin(self.driver, account)
 
     def initDriver(self):
         self.taskList = []

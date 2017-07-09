@@ -121,6 +121,16 @@ class Ui_mainWindow(object):
         self.loginShikee = QtGui.QPushButton(self.centralwidget)
         self.loginShikee.setGeometry(QtCore.QRect(560, 70, 75, 51))
         self.loginShikee.setObjectName(_fromUtf8("loginShikee"))
+        
+        self.autoLogin = QtGui.QPushButton(self.centralwidget)
+        self.autoLogin.setGeometry(QtCore.QRect(560, 45, 80, 25))
+        self.autoLogin.setObjectName(_fromUtf8("autoLogin"))
+        
+        self.autoAccount = QtGui.QPushButton(self.centralwidget)
+        self.autoAccount.setGeometry(QtCore.QRect(480, 45, 80, 25))
+        self.autoAccount.setObjectName(_fromUtf8("autoAccount"))
+        
+        
         self.loginTaobao = QtGui.QPushButton(self.centralwidget)
         self.loginTaobao.setGeometry(QtCore.QRect(560, 160, 75, 51))
         self.loginTaobao.setObjectName(_fromUtf8("loginTaobao"))
@@ -267,6 +277,8 @@ class Ui_mainWindow(object):
         self.taobaoUsernameLabel.setText(_translate("mainWindow", "账号", None))
         self.taobaoPasswordLabel.setText(_translate("mainWindow", "密码", None))
         self.loginShikee.setText(_translate("mainWindow", "登陆", None))
+        self.autoLogin.setText(_translate("mainWindow", "自动登陆登陆", None))
+        self.autoAccount.setText(_translate("mainWindow", "保存账号密码", None))
         self.loginTaobao.setText(_translate("mainWindow", "登陆", None))
         self.GetShikeeData.setText(_translate("mainWindow", "获取试客数据", None))
         self.AddActivity.setText(_translate("mainWindow", "添加任务", None))
