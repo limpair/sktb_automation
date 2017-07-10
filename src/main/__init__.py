@@ -17,10 +17,14 @@ class window(QtGui.QMainWindow):
         self.ui.setupUi(self)
         self.ui.retranslateUi(self)
         self.ui.initTable()
+        self.ui.initOrderTable()
+        self.ui.initGiftTable()
+        
         self.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint)
         self.setFixedSize(self.width(), self.height())
         self.tableNumber = 0
         self.tableNumber1 = 0
+        self.tableorder = 0
         self.initButton()
         self.initDriver()
         self.AUTOLogin = False
@@ -61,7 +65,22 @@ class window(QtGui.QMainWindow):
         self.ui.autoLogin.clicked.connect(self.autoLogin)
         self.ui.rectifyRemarks.clicked.connect(self.rectifyRemarks)
         
+        self.ui.addOrder.clicked.connect(self.addOrder)
+        self.ui.resetOrder.clicked.connect(self.clearOrder)
         
+    
+    def addOrder(self):
+        order = self.ui.orderLine.text()
+        self.orders.append(unicode(order.toUtf8(), 'utf-8', 'ignore'))
+        self.ui.orderModel.setItem(self.tableorder, 0, QtGui.QStandardItem(order))
+        self.ui.orderTable.setModel(self.ui.orderModel)
+        self.tableorder = self.tableorder + 1
+    def clearOrder(self):
+        self.tableorder = 0
+        self.orders = []
+        self.ui.orderModel.removeRows(0, self.ui.orderModel.rowCount())
+        self.ui.orderTable.setModel(self.ui.orderModel)
+        self.ui.initOrderTable()
 #     def saveAccount(self):
 #         tname = unicode(self.ui.TaobaoUserName.text().toUtf8(), 'utf-8', 'ignore')
 #         tpswd = str(self.ui.TaobaoPassword.text())
@@ -82,10 +101,11 @@ class window(QtGui.QMainWindow):
             print u'数据库没存账号密码吧！'
 
     def initDriver(self):
+        self.orders = []
         self.taskList = []
         self.giftList = []
         self.try_list = []
-        self.driver = webdriver.Chrome('..\driver\chromedriver.exe')
+        #self.driver = webdriver.Chrome('..\driver\chromedriver.exe')
 
     def addActive(self):
         a = self.ui.ActivityNumber.text()
@@ -173,8 +193,9 @@ class window(QtGui.QMainWindow):
         self.giftList = []
         self.tableNumber1 = 0
         self.ui.giftmodel.removeRows(0, self.ui.model.rowCount())
-        self.ui.tableView.setModel(self.ui.giftmodel)
-        self.ui.initTable()
+        self.ui.GiftTable.setModel(self.ui.giftmodel)
+        self.ui.initGiftTable()
+        #self.ui.initTable()
     
     def executeRemarks(self):
         account = self.ui.ShikeeUserName.text()

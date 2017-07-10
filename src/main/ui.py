@@ -196,30 +196,47 @@ class Ui_mainWindow(object):
         self.Days_2.setObjectName(_fromUtf8("Days_2"))
         
         self.executeRemarks = QtGui.QPushButton(self.tab_2)
-        self.executeRemarks.setGeometry(QtCore.QRect(450, 30, 75, 23))
+        self.executeRemarks.setGeometry(QtCore.QRect(410, 40, 75, 24))
         self.executeRemarks.setObjectName(_fromUtf8("executeRemarks"))
         
         self.rectifyRemarks = QtGui.QPushButton(self.tab_2)
-        self.rectifyRemarks.setGeometry(QtCore.QRect(450, 90, 75, 23))
+        self.rectifyRemarks.setGeometry(QtCore.QRect(410, 70, 75, 24))
         self.rectifyRemarks.setObjectName(_fromUtf8("rectifyRemarks"))
         
         self.addGift = QtGui.QPushButton(self.tab_2)
-        self.addGift.setGeometry(QtCore.QRect(450, 0, 75, 23))
+        self.addGift.setGeometry(QtCore.QRect(410, 10, 75, 24))
         self.addGift.setObjectName(_fromUtf8("addGift"))
         
         self.resetGift = QtGui.QPushButton(self.tab_2)
-        self.resetGift.setGeometry(QtCore.QRect(450, 60, 75, 23))
-        self.resetGift.setObjectName(_fromUtf8("addGift"))
+        self.resetGift.setGeometry(QtCore.QRect(410, 100, 75, 24))
+        self.resetGift.setObjectName(_fromUtf8("resetGift"))
         
         self.GiftTable = QtGui.QTableView(self.tab_2)
-        self.GiftTable.setGeometry(QtCore.QRect(530, 0, 101, 211))
+        self.GiftTable.setGeometry(QtCore.QRect(300, 40, 100, 170))
         self.GiftTable.setObjectName(_fromUtf8("GiftTable"))
         self.Gift = QtGui.QLineEdit(self.tab_2)
-        self.Gift.setGeometry(QtCore.QRect(330, 0, 113, 20))
+        self.Gift.setGeometry(QtCore.QRect(300, 10, 100, 24))
         self.Gift.setObjectName(_fromUtf8("Gift"))
-        self.label = QtGui.QLabel(self.tab_2)
-        self.label.setGeometry(QtCore.QRect(300, 0, 21, 21))
-        self.label.setObjectName(_fromUtf8("label"))
+        #self.label = QtGui.QLabel(self.tab_2)
+        #self.label.setGeometry(QtCore.QRect(300, 0, 21, 21))
+        #self.label.setObjectName(_fromUtf8("label"))
+        
+        self.orderTable = QtGui.QTableView(self.tab_2)
+        self.orderTable.setGeometry(QtCore.QRect(0, 40, 290, 170))
+        self.orderTable.setObjectName(_fromUtf8("orderTable"))
+        self.addOrder = QtGui.QPushButton(self.tab_2)
+        self.addOrder.setGeometry(QtCore.QRect(180, 10, 41, 24))
+        self.addOrder.setObjectName(_fromUtf8("addOrder"))
+        self.orderLine = QtGui.QLineEdit(self.tab_2)
+        self.orderLine.setGeometry(QtCore.QRect(0, 10, 180, 24))
+        self.orderLine.setObjectName(_fromUtf8("orderLine"))
+        self.Execute0 = QtGui.QPushButton(self.tab_2)
+        self.Execute0.setGeometry(QtCore.QRect(220, 10, 41, 24))
+        self.Execute0.setObjectName(_fromUtf8("Execute0"))
+        
+        self.resetOrder = QtGui.QPushButton(self.tab_2)
+        self.resetOrder.setGeometry(QtCore.QRect(260, 10, 41, 24))
+        self.resetOrder.setObjectName(_fromUtf8("resetOrder"))
         
         self.violationLabel.raise_()
         self.placeAnOrderLabel.raise_()
@@ -297,10 +314,13 @@ class Ui_mainWindow(object):
         self.rectifyRemarks.setText(_translate("mainWindow", "纠正", None))
         self.addGift.setText(_translate("mainWindow", "添加送啥", None))
         self.resetGift.setText(_translate("mainWindow", "不送了", None))
-        self.label.setText(_translate("mainWindow", "送", None))
+        #self.label.setText(_translate("mainWindow", "送", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("mainWindow", "备注", None))
         self.DayLabel.setText(_translate("mainWindow", "天", None))
         self.DayLabel_2.setText(_translate("mainWindow", "下单/获得（比率）", None))
+        self.addOrder.setText(_translate("mainWindow", "添加", None))
+        self.Execute0.setText(_translate("mainWindow", "执行", None))
+        self.resetOrder.setText(_translate("mainWindow", "重置", None))
 
     def initTable(self):
         self.model = QtGui.QStandardItemModel(self.tableView)
@@ -316,7 +336,7 @@ class Ui_mainWindow(object):
         self.tableView.setColumnWidth(0, 120) 
         self.tableView.setColumnWidth(1, 120) 
         self.tableView.setColumnWidth(2, 150)
-        
+    def initGiftTable(self):
         self.giftmodel = QtGui.QStandardItemModel(self.GiftTable)
         
         self.giftmodel.setRowCount(10)    
@@ -327,5 +347,20 @@ class Ui_mainWindow(object):
         self.GiftTable.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignCenter) 
         self.GiftTable.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
         
-        self.GiftTable.setColumnWidth(0, 80) 
+        self.GiftTable.setColumnWidth(0, 80)
+    def initOrderTable(self):
+        self.orderModel = QtGui.QStandardItemModel(self.orderTable)
+        
+        self.orderModel.setRowCount(10)    
+        self.orderModel.setColumnCount(1)
+        self.orderModel.setHeaderData(0, QtCore.Qt.Horizontal, _fromUtf8("订单编号"))
+        
+        self.orderTable.setModel(self.orderModel)
+        self.orderTable.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignCenter) 
+        self.orderTable.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        
+        self.orderTable.setColumnWidth(0, 250)
+        
+        
+        
         
