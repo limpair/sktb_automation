@@ -338,3 +338,23 @@ def correct(driver, color):
             time.sleep(0.5)
     out.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
     out.close()
+
+
+def artificial(driver,orders,color):
+    if not os.path.exists(color['account']):
+        os.makedirs(color['account'])
+        fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
+        fp.write('1')
+        fp.close()
+    
+    out = open(color['account'] + u'/artificial_order.txt', 'a')
+    out.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
+    
+    for order in orders:
+        driver.get(tbhost)
+        driver.find_element_by_id('bizOrderId').clear()
+        driver.find_element_by_id('bizOrderId').send_keys(order)
+        time.sleep(1.5)
+        driver.find_element_by_css_selector('button.button-mod__button___2JAs3.button-mod__primary___3N5o1').click()
+        time.sleep(1.5)
+        soup = BeautifulSoup(driver.page_source)

@@ -105,7 +105,7 @@ class window(QtGui.QMainWindow):
         self.taskList = []
         self.giftList = []
         self.try_list = []
-        #self.driver = webdriver.Chrome('..\driver\chromedriver.exe')
+        self.driver = webdriver.Chrome('..\driver\chromedriver.exe')
 
     def addActive(self):
         a = self.ui.ActivityNumber.text()
