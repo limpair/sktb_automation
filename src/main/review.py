@@ -289,6 +289,12 @@ def correct(driver, color):
     orders = conn.getRemarks(color['account'])
     conn.close()
     driver.get(tbhost)
+    if not os.path.exists(color['account']):
+        os.makedirs(color['account'])
+        fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
+        fp.write('1')
+        fp.close()
+    
     out = open(color['account'] + u'/rectify_order.txt', 'a')
     out.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
     for order in orders:
