@@ -23,7 +23,7 @@ class window(QtGui.QMainWindow):
         self.tableNumber1 = 0
         self.initButton()
         self.initDriver()
-
+        self.AUTOLogin = False
         self.ui.TaobaoUserName.setText(u'tb22765774:毛毛')
         self.ui.TaobaoPassword.setText('qqh983468869')
         
@@ -65,15 +65,19 @@ class window(QtGui.QMainWindow):
         tpswd = str(self.ui.TaobaoPassword.text())
         sname = unicode(self.ui.ShikeeUserName.text().toUtf8(), 'utf-8', 'ignore')
         spswd = str(self.ui.ShikeePassword.text())
-        obj = {'su':sname,'sp':spswd,'tu':tname,'tp':tpswd}
+        obj = {'su':sname, 'sp':spswd, 'tu':tname, 'tp':tpswd}
         user.saveAccount(obj)
     def autoLogin(self):
-        
         tname = unicode(self.ui.TaobaoUserName.text().toUtf8(), 'utf-8', 'ignore')
         sname = unicode(self.ui.ShikeeUserName.text().toUtf8(), 'utf-8', 'ignore')
-        obj = {'su':sname,'tu':tname}
-        account=user.getAccount(obj)[0]
-        user.autoLogin(self.driver, account)
+        obj = {'su':sname, 'tu':tname}
+        account=user.getAccount(obj)
+        if account==1:
+            self.Account = account[0]
+            user.autoLogin(self.driver, self.Account)
+            self.AUTOLogin = True
+        else:
+            print u'没保存账号密码吧？'
 
     def initDriver(self):
         self.taskList = []
@@ -147,9 +151,11 @@ class window(QtGui.QMainWindow):
         bilv = self.ui.Days_2.text()
         account = self.ui.ShikeeUserName.text()
         name = self.ui.TaobaoUserName.text()
-        res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(
-            trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':str(account),'tbuser':unicode(
-            name.toUtf8(), 'utf-8', 'ignore')}
+        if self.AUTOLogin:
+            res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
+        else:
+            res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':str(account), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
+        
         sktb.executeActivity(self.driver, self.try_list, self.taskList, res)
         b = time.time()
         print u'执行任务时间', b - a
@@ -171,8 +177,10 @@ class window(QtGui.QMainWindow):
     def executeRemarks(self):
         account = self.ui.ShikeeUserName.text()
         name = self.ui.TaobaoUserName.text()
-        color = {'list':self.giftList, 'account':str(account),'tbuser':unicode(
-            name.toUtf8(), 'utf-8', 'ignore')}
+        if self.AUTOLogin:
+            color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
+        else:
+            color = {'list':self.giftList, 'account':str(account), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
         review.addRemarks(self.driver, self.try_list, color)
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)

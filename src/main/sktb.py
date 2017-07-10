@@ -7,7 +7,6 @@ import math
 import re
 import datetime
 import os
-from mhlib import PATH
 
 host = 'http://user.shikee.com'
 

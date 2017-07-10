@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 import sqlite3, time
-import datetime
 
 class DataBaseControl(object):
     def __init__(self):
@@ -8,11 +7,12 @@ class DataBaseControl(object):
         self.open()
 
     def open(self):
-        self.conn = sqlite3.connect('E:\sktb_automation\src\main\oms.db')
+        self.conn = sqlite3.connect('oms.db')
     
     def close(self):
         if(self.conn != None):
             self.conn.close()
+            print 'close'
     
     def save(self, obj):
         if(self.conn == None):
