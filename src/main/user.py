@@ -39,7 +39,7 @@ def saveAccount(obj):
     cont = sqlite.DataBaseControl()
     res = getByName(obj)
     if len(res) == 1:
-        cont.conn.execute('UPDATE account SET tbpassword="'+obj['tp']+'",skpassword="'+obj['sp']+'" WHERE where tbusername="' + obj['tu'].encode('utf-8') + '" and skusername="' + obj['su'].encode('utf-8') + '"')
+        cont.conn.execute('UPDATE account SET tbpassword="'+obj['tp']+'",skpassword="'+obj['sp']+'" WHERE tbusername="' + obj['tu'].encode('utf-8') + '" and skusername="' + obj['su'].encode('utf-8') + '"')
     else:
         cont.conn.execute('INSERT INTO account(tbusername,tbpassword,skusername,skpassword) VALUES("' + obj['tu'].encode('utf-8') + '","' + obj['tp'] + '","' + obj['su'].encode('utf-8') + '","' + obj['sp'] + '")')
     cont.conn.commit()

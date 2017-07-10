@@ -25,13 +25,13 @@ class window(QtGui.QMainWindow):
         self.initDriver()
         self.AUTOLogin = False
         self.ui.TaobaoUserName.setText(u'tb22765774:毛毛')
-        self.ui.TaobaoPassword.setText('qqh983468869')
+        #self.ui.TaobaoPassword.setText('qqh983468869')
         
-        self.ui.TaobaoPassword.setEchoMode(QtGui.QLineEdit.Password) 
-        self.ui.ShikeePassword.setEchoMode(QtGui.QLineEdit.Password) 
+        #self.ui.TaobaoPassword.setEchoMode(QtGui.QLineEdit.Password) 
+        #self.ui.ShikeePassword.setEchoMode(QtGui.QLineEdit.Password) 
         
         self.ui.ShikeeUserName.setText('18814726078')
-        self.ui.ShikeePassword.setText('kyd0920')
+        #self.ui.ShikeePassword.setText('kyd0920')
 
         self.ui.InvalidOrders.setText('')
         self.ui.AverageTime.setText('')
@@ -47,8 +47,8 @@ class window(QtGui.QMainWindow):
 
     def initButton(self):
         self.ui.AddActivity.clicked.connect(self.addActive)
-        self.ui.loginTaobao.clicked.connect(self.loginTaobao)
-        self.ui.loginShikee.clicked.connect(self.loginShikee)
+        #self.ui.loginTaobao.clicked.connect(self.loginTaobao)
+        #self.ui.loginShikee.clicked.connect(self.loginShikee)
         self.ui.GetShikeeData.clicked.connect(self.getShikeeData)
         self.ui.resetActivity.clicked.connect(self.clearActive)
         self.ui.ExecuteActivity.clicked.connect(self.executeActivity)
@@ -57,27 +57,29 @@ class window(QtGui.QMainWindow):
         self.ui.resetGift.clicked.connect(self.clearGift)
         self.ui.executeRemarks.clicked.connect(self.executeRemarks)
         
-        self.ui.autoAccount.clicked.connect(self.saveAccount)
+        #self.ui.autoAccount.clicked.connect(self.saveAccount)
         self.ui.autoLogin.clicked.connect(self.autoLogin)
+        self.ui.rectifyRemarks.clicked.connect(self.rectifyRemarks)
         
-    def saveAccount(self):
-        tname = unicode(self.ui.TaobaoUserName.text().toUtf8(), 'utf-8', 'ignore')
-        tpswd = str(self.ui.TaobaoPassword.text())
-        sname = unicode(self.ui.ShikeeUserName.text().toUtf8(), 'utf-8', 'ignore')
-        spswd = str(self.ui.ShikeePassword.text())
-        obj = {'su':sname, 'sp':spswd, 'tu':tname, 'tp':tpswd}
-        user.saveAccount(obj)
+        
+#     def saveAccount(self):
+#         tname = unicode(self.ui.TaobaoUserName.text().toUtf8(), 'utf-8', 'ignore')
+#         tpswd = str(self.ui.TaobaoPassword.text())
+#         sname = unicode(self.ui.ShikeeUserName.text().toUtf8(), 'utf-8', 'ignore')
+#         spswd = str(self.ui.ShikeePassword.text())
+#         obj = {'su':sname, 'sp':spswd, 'tu':tname, 'tp':tpswd}
+#         user.saveAccount(obj)
     def autoLogin(self):
         tname = unicode(self.ui.TaobaoUserName.text().toUtf8(), 'utf-8', 'ignore')
         sname = unicode(self.ui.ShikeeUserName.text().toUtf8(), 'utf-8', 'ignore')
         obj = {'su':sname, 'tu':tname}
         account=user.getAccount(obj)
-        if account==1:
+        if len(account) == 1:
             self.Account = account[0]
             user.autoLogin(self.driver, self.Account)
             self.AUTOLogin = True
         else:
-            print u'没保存账号密码吧？'
+            print u'数据库没存账号密码吧！'
 
     def initDriver(self):
         self.taskList = []
@@ -107,17 +109,17 @@ class window(QtGui.QMainWindow):
         self.ui.tableView.setModel(self.ui.model)
         self.ui.initTable()
 
-    def loginTaobao(self):
-        name = self.ui.TaobaoUserName.text()
-        pswd = self.ui.TaobaoPassword.text()
-        sktb.loginTaobao(self.driver, unicode(
-            name.toUtf8(), 'utf-8', 'ignore'), str(pswd))
+#     def loginTaobao(self):
+#         name = self.ui.TaobaoUserName.text()
+#         pswd = self.ui.TaobaoPassword.text()
+#         sktb.loginTaobao(self.driver, unicode(
+#             name.toUtf8(), 'utf-8', 'ignore'), str(pswd))
 
-    def loginShikee(self):
-        name = self.ui.ShikeeUserName.text()
-        pswd = self.ui.ShikeePassword.text()
-        sktb.loginShikee(self.driver, unicode(
-            name.toUtf8(), 'utf-8', 'ignore'), str(pswd))
+#     def loginShikee(self):
+#         name = self.ui.ShikeeUserName.text()
+#         pswd = self.ui.ShikeePassword.text()
+#         sktb.loginShikee(self.driver, unicode(
+#             name.toUtf8(), 'utf-8', 'ignore'), str(pswd))
 
     def getShikeeData(self):
         # a = time.time()
@@ -154,7 +156,7 @@ class window(QtGui.QMainWindow):
         if self.AUTOLogin:
             res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
         else:
-            res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':str(account), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
+            res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':unicode(account.toUtf8(), 'utf-8', 'ignore'), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
         
         sktb.executeActivity(self.driver, self.try_list, self.taskList, res)
         b = time.time()
@@ -180,8 +182,12 @@ class window(QtGui.QMainWindow):
         if self.AUTOLogin:
             color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
         else:
-            color = {'list':self.giftList, 'account':str(account), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
+            color = {'list':self.giftList, 'account':unicode(account.toUtf8(), 'utf-8', 'ignore'), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
         review.addRemarks(self.driver, self.try_list, color)
+        
+    def rectifyRemarks(self):
+        color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
+        review.correct(self.driver, color)
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     window = window()

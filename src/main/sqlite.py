@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-import sqlite3, time
+import sqlite3, time, datetime
 
 class DataBaseControl(object):
     def __init__(self):
@@ -89,12 +89,22 @@ class DataBaseControl(object):
             result.append(res)
         # self.conn.commit()
         return result
-    def saveRemark(self,obj,TYPE):
+    def saveRemark(self, obj, TYPE):
         if(self.conn == None):
             self.open()
-        if TYPE==0:
-            self.conn.execute('INSERT INTO tb_remarks(taskId,title,link,order_num,time,account,tbuser) VALUES("'+obj['taskId']+'","'+obj['title']+'","'+obj['link'].encode('utf-8')+'","'+obj['order_num'].encode('utf-8')+'","'+obj['time']+'","'+obj['account']+'","'+obj['tbuser'].encode('utf-8')+'")')
-        elif TYPE==1:
-            self.conn.execute('INSERT INTO remarks(taskId,title,link,order_num,time,account,tbuser) VALUES("'+obj['taskId']+'","'+obj['title']+'","'+obj['link'].encode('utf-8')+'","'+obj['order_num'].encode('utf-8')+'","'+obj['time']+'","'+obj['account']+'","'+obj['tbuser'].encode('utf-8')+'")')
+        if TYPE == 0:
+            self.conn.execute('INSERT INTO tb_remarks(taskId,title,link,order_num,time,account,tbuser) VALUES("' + obj['taskId'] + '","' + obj['title'] + '","' + obj['link'].encode('utf-8') + '","' + obj['order_num'].encode('utf-8') + '","' + obj['time'] + '","' + obj['account'].encode('utf-8') + '","' + obj['tbuser'].encode('utf-8') + '")')
+        elif TYPE == 1:
+            self.conn.execute('INSERT INTO remarks(taskId,title,link,order_num,time,account,tbuser) VALUES("' + obj['taskId'] + '","' + obj['title'] + '","' + obj['link'].encode('utf-8') + '","' + obj['order_num'].encode('utf-8') + '","' + obj['time'] + '","' + obj['account'].encode('utf-8') + '","' + obj['tbuser'].encode('utf-8') + '")')
         self.conn.commit()
+    
+    def getRemarks(self, account):
+        orders=[]
+        cursor = self.conn.execute('SELECT * FROM tb_remarks WHERE account="' + account.encode('utf-8') + '" AND time like "%' + datetime.datetime.now().strftime('%Y-%m-%d') + '%"')
+        for row in cursor:
+            orders.append({'link':row[3],'order':row[4],'title':row[2]})
+        return orders
+        
+        
+    
     

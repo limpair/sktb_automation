@@ -18,13 +18,13 @@ def toInt(s):
 def is_element_exist(driver, css):
     s = driver.find_elements_by_css_selector(css_selector=css)
     if len(s) == 0:
-        print "Not find the element: %s" % css
+        #print "Not find the element: %s" % css
         return False
     elif len(s) == 1:
         return True
-        print "Find the element: %s" % css
+        #print "Find the element: %s" % css
     else:
-        print "Find %s element: %s" % (len(s), css)
+        #print "Find %s element: %s" % (len(s), css)
         return False
 
 def exists(Path):
