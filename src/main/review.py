@@ -1,10 +1,12 @@
 # coding=utf-8
 from bs4 import BeautifulSoup
+from selenium.webdriver.support.select import Select
 import time
 import math
 import os
 import datetime
 import sktb, sqlite
+
 
 skhost = 'http://user.shikee.com'
 state = '?state[]=&state[]=&state[]=&report_state[]=&trade_state[]=2&key=&trade_no='
@@ -38,7 +40,7 @@ def getOrderNumber(driver, trs, account):
         order = []
         for i in range(0, n):
             driver.get(skhost + link + '/' + str(i * 10) + state)
-            time.sleep(1)
+            time.sleep(0.5)
             soup = BeautifulSoup(driver.page_source).find_all(id='load_list')[0].find_all('tr')
             Len = len(soup)
             if Len > 2:
@@ -75,6 +77,7 @@ def verify(driver, url, order, flag):
             driver.find_element_by_xpath('/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/form/table/tbody/tr[2]/td[3]/input[3]').click()
         time.sleep(0.5)
         driver.find_element_by_id('sub_trade_number').click()
+        time.sleep(1)
     except:
         return False
     return True
@@ -160,21 +163,25 @@ def addRemarks(driver, trs, color):
                     everyDay[orderTime[0:10]] = {'sum':{}, 'order':[], 'count':{}}
                 td = div[0].find_all('td')
                 status = td[5].text
-                if ''.join(td[3].text.split()) != '':
+                caveat = ''.join(td[3].text.split())
+                if caveat != '' and caveat != u'退款关闭':
                     if u'买家已付款' in status:
-                        out.write('活动 ' + title + ' 链接：' + tr['passlink'] + '已付款订单号:' + i + '\n')
+                        out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '已付款订单号:' + i + '\n')
                     elif u'卖家已发货' in status:
-                        out.write('活动 ' + title + ' 链接：' + tr['passlink'] + '已发货订单号:' + i + '\n')
+                        out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '已发货订单号:' + i + '\n')
                     elif u'交易成功' in status:
-                        out.write('活动 ' + title + ' 链接：' + tr['passlink'] + '已完成订单号:' + i + '\n')
+                        out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '已完成订单号:' + i + '\n')
                     elif u'资金保护中' in status:
-                        out.write('活动 ' + title + ' 链接：' + tr['passlink'] + '资金保订单号:' + i + '\n')
+                        out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '资金保订单号:' + i + '\n')
+                    elif u'交易关闭' in status:
+                        if verify(driver, skhost + tr['passlink'], i, False):
+                            print 'error-----------'
+                        out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '退款成功且交易关闭单号:' + i + '\n')
                 else:
-                    # driver.find_element_by_id('flag')
                     href = page.find_all(id='flag')[0].get('href')
                     driver.get(tb + href)
                     time.sleep(2)
-                    if u'买家已付款' in status:
+                    if u'买家已付款' in status:                        
                         obj = {'taskId':title, 'title':tr['title'], 'link':tr['passlink'], 'order_num':i, 'time':datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'account':color['account'], 'tbuser':color['tbuser']}   
                         driver.find_element_by_id('flag1').click()
                         time.sleep(1)
@@ -224,6 +231,7 @@ def addRemarks(driver, trs, color):
                     if u'交易关闭' in status:
                         if verify(driver, skhost + tr['passlink'], i, False):
                             print u'订单错误'
+                        out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '交易关闭单号:' + i + '\n')
                     out2.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '订单号：' + i.encode('utf-8') + '\n')
             else:
                 if verify(driver, skhost + tr['passlink'], i, False):
@@ -280,6 +288,7 @@ def correct_verify(driver, url, order, flag):
             driver.find_element_by_xpath('/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/form/table/tbody/tr[2]/td[3]/input[3]').click()
         time.sleep(0.5)
         driver.find_element_by_id('sub_trade_number').click()
+        time.sleep(1)
     except:
         return False
     return True
@@ -321,7 +330,7 @@ def correct(driver, color):
             driver.find_element_by_id('flag1').click()
             if u'买家已付款' in status:
                 for cc in color['list']:
-                    if cc.encode('utf-8').upper() in order['title'].upper():
+                    if cc.upper() in order['title'].upper():
                         driver.find_element_by_id('memo').clear()
                         driver.find_element_by_id('memo').send_keys(u'送' + cc)
                         break
@@ -340,7 +349,39 @@ def correct(driver, color):
     out.close()
 
 
-def artificial(driver,orders,color):
+def artificial_verify(driver, order, FLAG):
+    try:
+        driver.get('http://user.shikee.com/seller/tryings/try_list/')
+        time.sleep(0.5)
+        select = Select(driver.find_element_by_name('search_type'))
+        select.select_by_value('order_id')
+        time.sleep(0.5)
+        driver.find_element_by_id('key').clear()
+        driver.find_element_by_id('key').send_keys(order)
+        time.sleep(0.5)
+        driver.find_element_by_id('go_search').click()
+        time.sleep(0.5)
+        
+        page = BeautifulSoup(driver.page_source)
+        table = page.find_all(id='search_order')[0]
+        trs = table.find_all('tr')
+        td = trs[1].find_all('td')
+        title = td[0].text                
+        driver.find_element_by_id('J_checkno').click()
+        time.sleep(0.5)
+        if FLAG:      
+            driver.find_element_by_xpath('/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/form/table/tbody/tr[2]/td[3]/input[2]').click()
+        else:            
+            driver.find_element_by_xpath('/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/form/table/tbody/tr[2]/td[3]/input[3]').click()            
+        time.sleep(0.5)
+        driver.find_element_by_id('asub_trade_number').click()
+        time.sleep(1)
+    except:
+        return ''
+    return title
+    
+
+def artificial(driver, orders, color):
     if not os.path.exists(color['account']):
         os.makedirs(color['account'])
         fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
@@ -348,13 +389,114 @@ def artificial(driver,orders,color):
         fp.close()
     
     out = open(color['account'] + u'/artificial_order.txt', 'a')
+    error = open(color['account'] + u'/artificial_error.txt', 'a')
     out.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
+    error.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
+    try:
+        count = {}
+        skcount = {}
+        for order in orders:
+            driver.get(tbhost)
+            driver.find_element_by_id('bizOrderId').clear()
+            driver.find_element_by_id('bizOrderId').send_keys(order)
+            time.sleep(1.5)
+            driver.find_element_by_css_selector('button.button-mod__button___2JAs3.button-mod__primary___3N5o1').click()
+            time.sleep(1.5)
+            soup = BeautifulSoup(driver.page_source)
+            page = soup.find_all(attrs={"data-reactid": ".0.5"})[0]
+            div = page.find_all(class_='suborder-mod__order-table___2SEhF')
+            llen = len(div)
+            if llen > 0:
+                td = div[0].find_all('td')
+                status = td[5].text
+                caveat = ''.join(td[3].text.split())
+                if caveat != '' and caveat != u'退款关闭':
+                    if u'买家已付款' in status:
+                        out.write(caveat.encode('utf-8') + '已付款订单号:' + order + '\n')
+                    elif u'卖家已发货' in status:
+                        out.write(caveat.encode('utf-8') + '已发货订单号:' + order + '\n')
+                    elif u'交易成功' in status:
+                        out.write(caveat.encode('utf-8') + '已完成订单号:' + order + '\n')
+                    elif u'资金保护中' in status:
+                        out.write(caveat.encode('utf-8') + '资金保订单号:' + order + '\n')
+                    elif u'交易关闭' in status:
+                        if verify(driver, skhost + tr['passlink'], order, False):
+                            print 'error-----------'
+                        out.write(caveat.encode('utf-8') + '退款成功且交易关闭单号:' + order + '\n')
+                else:
+                    href = page.find_all(id='flag')[0].get('href')
+                    if u'买家已付款' in status:
+                        title = artificial_verify(driver, order, True)
+                        if title == '':
+                            out.write('427行错误，跳过了订单：' + order.encode('utf-8') + '\n\n')
+                            continue
+                        
+                        title_text = ''.join(title[0:3].split())
+                        if len(title_text) == 2:
+                            title_text = title_text[0] + '0' + title_text[1]
+                        count[title_text] = 0
+                        skcount[title_text] = 0
+                        
+                        out.write('活动标题：' + title.encode('utf-8') + '，订单号：' + order.encode('utf-8') + '\n')
+                        
+                        out.write('联盟通过了\n')
+                        skcount[title_text] = skcount[title_text] + 1
+                        driver.get(tb + href)
+                        time.sleep(1)
+                        driver.find_element_by_id('flag1').click()
+                        time.sleep(1)
+                        driver.find_element_by_id('flag1').click()
+                        FLAG = False
+                        for cc in color['list']:
+                            if cc.upper() in title.upper():
+                                driver.find_element_by_id('memo').clear()
+                                driver.find_element_by_id('memo').send_keys(u'送' + cc)
+                                FLAG = True
+                                break
+                        time.sleep(1)
+                        try:
+                            driver.find_element_by_xpath('//*[@id="form1"]/table[2]/tbody/tr[3]/td/div/button').click()
+                        except:
+                            out.write('445行错误，跳过了订单：' + order.encode('utf-8') + '\n\n')
+                            continue
+                        time.sleep(1)
+                        driver.switch_to_alert().accept()
+                        time.sleep(1)
+                        if FLAG:
+                            out.write('淘宝备注了订单\n\n')
+                        else:
+                            out.write('淘宝插旗了订单\n\n')
+                        count[title_text] = count[title_text] + 1
+                    if u'等待买家付款' in status:
+                        try:
+                            driver.find_element_by_id('flag1').click()
+                            time.sleep(1)
+                            driver.find_element_by_xpath('//*[@id="form1"]/table[2]/tbody/tr[3]/td/div/button').click()
+                            time.sleep(1)
+                            driver.switch_to_alert().accept()
+                            time.sleep(1)
+                            out.write('等待买家付款的单号:' + order.encode('utf-8') + '\n\n')
+                        except:
+                            continue
+                    if u'交易关闭' in status:
+                        title = artificial_verify(driver, order, False)
+                        out.write('交易关闭单号:' + order.encode('utf-8') + '\n\n')
+            else:
+                title = artificial_verify(driver, order, False)
+                out.write('淘宝没找到单号:' + order.encode('utf-8') + '\n\n')
+        out.write('联盟审核统计\n')
+        cc = sorted(skcount.keys())
+        for i in cc:
+            out.write(i.encode('utf-8') + '：' + skcount[i] + '\n')
+        out.write('淘宝备注统计\n')    
+        cc = sorted(count.keys())
+        for i in cc:
+            out.write(i.encode('utf-8') + '：' + count[i] + '\n')
+        
     
-    for order in orders:
-        driver.get(tbhost)
-        driver.find_element_by_id('bizOrderId').clear()
-        driver.find_element_by_id('bizOrderId').send_keys(order)
-        time.sleep(1.5)
-        driver.find_element_by_css_selector('button.button-mod__button___2JAs3.button-mod__primary___3N5o1').click()
-        time.sleep(1.5)
-        soup = BeautifulSoup(driver.page_source)
+    except Exception, e:
+        error.write(e.message + '\n')
+    out.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
+    error.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
+    out.close()
+    error.close()

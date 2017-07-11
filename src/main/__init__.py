@@ -29,13 +29,13 @@ class window(QtGui.QMainWindow):
         self.initDriver()
         self.AUTOLogin = False
         self.ui.TaobaoUserName.setText(u'tb22765774:毛毛')
-        #self.ui.TaobaoPassword.setText('qqh983468869')
+        # self.ui.TaobaoPassword.setText('qqh983468869')
         
-        #self.ui.TaobaoPassword.setEchoMode(QtGui.QLineEdit.Password) 
-        #self.ui.ShikeePassword.setEchoMode(QtGui.QLineEdit.Password) 
+        # self.ui.TaobaoPassword.setEchoMode(QtGui.QLineEdit.Password) 
+        # self.ui.ShikeePassword.setEchoMode(QtGui.QLineEdit.Password) 
         
         self.ui.ShikeeUserName.setText('18814726078')
-        #self.ui.ShikeePassword.setText('kyd0920')
+        # self.ui.ShikeePassword.setText('kyd0920')
 
         self.ui.InvalidOrders.setText('')
         self.ui.AverageTime.setText('')
@@ -51,8 +51,8 @@ class window(QtGui.QMainWindow):
 
     def initButton(self):
         self.ui.AddActivity.clicked.connect(self.addActive)
-        #self.ui.loginTaobao.clicked.connect(self.loginTaobao)
-        #self.ui.loginShikee.clicked.connect(self.loginShikee)
+        # self.ui.loginTaobao.clicked.connect(self.loginTaobao)
+        # self.ui.loginShikee.clicked.connect(self.loginShikee)
         self.ui.GetShikeeData.clicked.connect(self.getShikeeData)
         self.ui.resetActivity.clicked.connect(self.clearActive)
         self.ui.ExecuteActivity.clicked.connect(self.executeActivity)
@@ -61,13 +61,22 @@ class window(QtGui.QMainWindow):
         self.ui.resetGift.clicked.connect(self.clearGift)
         self.ui.executeRemarks.clicked.connect(self.executeRemarks)
         
-        #self.ui.autoAccount.clicked.connect(self.saveAccount)
+        # self.ui.autoAccount.clicked.connect(self.saveAccount)
         self.ui.autoLogin.clicked.connect(self.autoLogin)
         self.ui.rectifyRemarks.clicked.connect(self.rectifyRemarks)
         
         self.ui.addOrder.clicked.connect(self.addOrder)
         self.ui.resetOrder.clicked.connect(self.clearOrder)
+        self.ui.Execute0.clicked.connect(self.artificial)
         
+    def artificial(self):
+        account = self.ui.ShikeeUserName.text()
+        name = self.ui.TaobaoUserName.text()
+        if self.AUTOLogin:
+            color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
+        else:
+            color = {'list':self.giftList, 'account':unicode(account.toUtf8(), 'utf-8', 'ignore'), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
+        review.artificial(self.driver, self.orders, color)
     
     def addOrder(self):
         order = self.ui.orderLine.text()
@@ -92,7 +101,7 @@ class window(QtGui.QMainWindow):
         tname = unicode(self.ui.TaobaoUserName.text().toUtf8(), 'utf-8', 'ignore')
         sname = unicode(self.ui.ShikeeUserName.text().toUtf8(), 'utf-8', 'ignore')
         obj = {'su':sname, 'tu':tname}
-        account=user.getAccount(obj)
+        account = user.getAccount(obj)
         if len(account) == 1:
             self.Account = account[0]
             user.autoLogin(self.driver, self.Account)
@@ -195,7 +204,7 @@ class window(QtGui.QMainWindow):
         self.ui.giftmodel.removeRows(0, self.ui.model.rowCount())
         self.ui.GiftTable.setModel(self.ui.giftmodel)
         self.ui.initGiftTable()
-        #self.ui.initTable()
+        # self.ui.initTable()
     
     def executeRemarks(self):
         account = self.ui.ShikeeUserName.text()
