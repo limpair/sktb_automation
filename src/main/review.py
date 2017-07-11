@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.support.select import Select
 import time
 import math
-import os
+import os, sys
 import datetime
 import sktb, sqlite
 
@@ -487,15 +487,15 @@ def artificial(driver, orders, color):
         out.write('联盟审核统计\n')
         cc = sorted(skcount.keys())
         for i in cc:
-            out.write(i.encode('utf-8') + '：' + skcount[i] + '\n')
+            out.write(i.encode('utf-8') + '：' + str(skcount[i]) + '\n')
         out.write('淘宝备注统计\n')    
         cc = sorted(count.keys())
         for i in cc:
-            out.write(i.encode('utf-8') + '：' + count[i] + '\n')
+            out.write(i.encode('utf-8') + '：' + str(count[i]) + '\n')
         
     
     except Exception, e:
-        error.write(e.message + '\n')
+        error.write(str(sys.exc_info()[2].tb_lineno) + e.message + '\n')
     out.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
     error.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
     out.close()
