@@ -99,12 +99,47 @@ class DataBaseControl(object):
         self.conn.commit()
     
     def getRemarks(self, account):
-        orders=[]
+        orders = []
         cursor = self.conn.execute('SELECT * FROM tb_remarks WHERE account="' + account.encode('utf-8') + '" AND time like "%' + datetime.datetime.now().strftime('%Y-%m-%d') + '%"')
         for row in cursor:
-            orders.append({'link':row[3],'order':row[4],'title':row[2]})
+            orders.append({'link':row[3], 'order':row[4], 'title':row[2]})
         return orders
-        
-        
     
-    
+    def getOrder(self, account, order):
+        if(self.conn == None):
+            self.open()
+        cursor = self.conn.execute('select * from orders where account = "' + account + '" and order_num = "' + order + '"')
+        res = []
+        for row in cursor:
+            result = {}
+            result['id'] = row[0]
+            result['title'] = row[1]
+            result['link'] = row[2]
+            result['order'] = row[3]
+            result['time'] = row[4]
+            result['account'] = row[5]
+            res.append(result)
+        return res
+    def listOrder(self, account):
+        if(self.conn == None):
+            self.open()
+        cursor = self.conn.execute('select * from orders where account = "' + account + '"')
+        res = []
+        for row in cursor:
+            result = {}
+            result['id'] = row[0]
+            result['title'] = row[1]
+            result['link'] = row[2]
+            result['order_num'] = row[3]
+            result['time'] = row[4]
+            result['account'] = row[5]
+            res.append(result)
+        return res
+    def saveOrder(self, obj, TYPE):
+        if(self.conn == None):
+            self.open()
+        if TYPE == 0:
+            self.conn.execute('INSERT INTO orders (title,link,order_num,time,account) VALUES("' + obj['title'] + '","' + obj['link'] + '","' + obj['order_num'] + '","' + obj['time'] + '","' + obj['account'] + '")')
+        elif TYPE == 1:
+            self.conn.execute('UPDATE orders SET time="' + obj['time'] + '" WHERE id=' + str(obj['id']))
+        self.conn.commit()

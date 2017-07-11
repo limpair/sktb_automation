@@ -18,13 +18,13 @@ def toInt(s):
 def is_element_exist(driver, css):
     s = driver.find_elements_by_css_selector(css_selector=css)
     if len(s) == 0:
-        #print "Not find the element: %s" % css
+        # print "Not find the element: %s" % css
         return False
     elif len(s) == 1:
         return True
-        #print "Find the element: %s" % css
+        # print "Find the element: %s" % css
     else:
-        #print "Find %s element: %s" % (len(s), css)
+        # print "Find %s element: %s" % (len(s), css)
         return False
 
 def exists(Path):
@@ -168,6 +168,11 @@ def passUser(driver, link, name):
     try:
         driver.get(link)
         time.sleep(2)
+        page = BeautifulSoup(driver.page_source)
+        bs = page.find_all(class_='ParList_top')[0].find_all('b')
+        l = len(bs)
+        if int(''.join(bs[l - 1].text.split())) == 0:
+            return False
         driver.find_element_by_id('key').send_keys(name)
         time.sleep(1)
         driver.find_element_by_xpath('//input[@type="submit"]').click()
@@ -178,7 +183,15 @@ def passUser(driver, link, name):
     except:
         return False
     return True
-    
+
+def judgeNum(driver):
+    page = BeautifulSoup(driver.page_source)
+    bs = page.find_all(class_='ParList_top')[0].find_all('b')
+    l = len(bs)
+    if int(''.join(bs[l - 1].text.split())) == 0:
+        return True
+    return False
+
 def executeActivity(driver, try_list, tasks, tri):
     conn = sqlite.DataBaseControl()
     for task in tasks:
@@ -187,7 +200,7 @@ def executeActivity(driver, try_list, tasks, tri):
         num = task['num']
         if not os.path.exists(tri['account']):
             os.makedirs(tri['account'])
-            fp = open(tri['account']+'/'+tri['tbuser'].replace(u':',u'：'),'w')
+            fp = open(tri['account'] + '/' + tri['tbuser'].replace(u':', u'：'), 'w')
             fp.write('1')
             fp.close()
         out = open(tri['account'] + '/log.txt', 'a')
@@ -195,13 +208,14 @@ def executeActivity(driver, try_list, tasks, tri):
         for tr in try_list:
             if tr['num'] == 0:
                 continue
-            if count == num:
+            if count >= num:
                 break
             title = ''.join(tr['title'][0:3].split())
             if name.upper() == title.upper():
                 driver.get(host + tr['link'] + '/0')
                 time.sleep(2)
-                
+                if judgeNum(driver):
+                    break
                 if is_element_exist(driver, '#total'):
                     total = int(driver.find_element_by_id('total').text)
                     n = int(math.ceil(total / 20.0))
@@ -242,7 +256,7 @@ def executeActivity(driver, try_list, tasks, tri):
                             'span')[0].attrs['title'], 'time': t[2].text, 'skname':t[1].find_all('img')[0].attrs['art']})
 
                 for user in users:
-                    if count == tr['num'] or count == num:
+                    if count == tr['num'] or count >= num:
                         break
                     dbUsers = conn.getByName(user['name'], tri['account'])
                     user['account'] = tri['account']

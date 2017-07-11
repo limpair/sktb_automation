@@ -16,6 +16,7 @@ tb = 'https://trade.taobao.com'
 style = 'height:17px;width:1px;padding-left:17px;overflow:hidden;vertical-align:middle;font-size:0px;display:inline-block;visibility:visible;background:url(//img.alicdn.com/tps/i1/TB1heyGFVXXXXXpXXXXR3Ey7pXX-550-260.png) no-repeat -100px -207px;'
 
 def getOrderNumber(driver, trs, account):
+    cont = sqlite.DataBaseControl()
     outx = open(account + u'/order_data.txt', 'a')
     outx.write('开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
     print u'开始获取订单:', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -46,11 +47,21 @@ def getOrderNumber(driver, trs, account):
             if Len > 2:
                 for j in range(1, Len - 1):
                     count = count + 1
-                    order.append(''.join(soup[j].find_all(class_='trade_number')[0].text.split()))
+                    order_num = ''.join(soup[j].find_all(class_='trade_number')[0].text.split())
+                    order.append(order_num)
+                    obj = {'title':tr['title'], 'link':link.encode('utf-8'), 'order_num':order_num.encode('utf-8'), 'time':datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'account':account.encode('utf-8')}
+                    dborder = cont.getOrder(account.encode('utf-8'), order_num.encode('utf-8'))
+                    if len(dborder) == 1:
+                        obj['id'] = dborder[0]['id']
+                        cont.saveOrder(obj, 1)
+                    else:
+                        cont.saveOrder(obj, 0)
         tr['passlink'] = link
         tr['order'] = order
         result.append(tr)
+    cont.close()
     b = time.time()
+    
     outx.write('一共 ' + str(count) + '订单\n')
     for i in result:
         outx.write(str(i['order']).encode('utf-8') + '\n')
