@@ -66,7 +66,8 @@ def getOrderNumber(driver, trs, account):
         
         outx.write('一共 ' + str(count) + '订单\n')
         for i in result:
-            outx.write(str(i['order']).encode('utf-8') + '\n')
+            for j in i['order']:
+                outx.write(j.encode('utf-8') + '\n')
         debug.message('获取订单所用时间：' + str(b - a), os.path.basename(__file__))
         # print u'结束获取订单:', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         # print u'获取所有任务需要审核的订单的时间为：', b - a
