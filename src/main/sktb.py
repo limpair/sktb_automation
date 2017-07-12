@@ -39,6 +39,7 @@ def exists(Path):
    
 
 def loginTaobao(driver, username, password):
+    result = True
     try:
         driver.get('https://login.taobao.com/member/login.jhtml')
         time.sleep(1.5)
@@ -55,10 +56,12 @@ def loginTaobao(driver, username, password):
         driver.find_element_by_id('J_SubmitStatic').click()
         time.sleep(5)
     except Exception, e:
+        result = False
         info = sys.exc_info()
         debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
-
+    return result
 def loginShikee(driver, username, password):
+    result = True
     try:
         driver.get('http://login.shikee.com/')
         time.sleep(5)
@@ -69,9 +72,12 @@ def loginShikee(driver, username, password):
         driver.find_element_by_id('J_submit').click()
         time.sleep(5)
     except Exception, e:
+        result = False
         info = sys.exc_info()
         debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
+    return  result
 def saveActiveList(driver):
+    result = True
     try:
         li = []
         listUrl = 'http://user.shikee.com/seller/tryings/try_list/'
@@ -100,9 +106,10 @@ def saveActiveList(driver):
                 link = t[6].find_all('a')[0].attrs['href'].split('?')[0]
                 li.append({'title': title, 'num': num, 'link': link, 'time': ttt})
     except Exception, e:
+        result = False
         info = sys.exc_info()
         debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
-    return li
+    return li, result
 
 # {'title': title, 'num': num, 'link': link, 'time': ttt}
 # invalidOrders    # 无效订单次数
@@ -208,6 +215,7 @@ def judgeNum(driver):
     return False
 
 def executeActivity(driver, try_list, tasks, tri):
+    result = True
     conn = sqlite.DataBaseControl()
     for task in tasks:
         try:
@@ -295,10 +303,12 @@ def executeActivity(driver, try_list, tasks, tri):
                                 user['passtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                                 conn.save(user)
         except Exception, e:
+            result = False
             info = sys.exc_info()
             debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
         b = time.time()
         out.write('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(round(b - a, 2)) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
         debug.message('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(round(b - a, 2)) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), os.path.basename(__file__))
-        #print u'活动' + name + u'通过 ' + str(count) + u' 人，用时' + str(round(b - a, 2)) + u'，' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        # print u'活动' + name + u'通过 ' + str(count) + u' 人，用时' + str(round(b - a, 2)) + u'，' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     conn.close()
+    return result

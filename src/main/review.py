@@ -102,9 +102,10 @@ def verify(driver, url, order, flag):
     return True
 
 def addRemarks(driver, trs, color):
+    result = True
+    
     if len(color['list']) == 0:
         return False
-    
     conn = sqlite.DataBaseControl()
     if not os.path.exists(color['account']):
         os.makedirs(color['account'])
@@ -201,7 +202,6 @@ def addRemarks(driver, trs, color):
                             out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '资金保订单号:' + i.encode('utf-8') + '\n')
                         elif u'交易关闭' in status:
                             if verify(driver, skhost + tr['passlink'], i, False):
-                                #print 'error----------
                                 debug.message('退款成功且关闭的交易：' + i.encode('utf-8'), os.path.basename(__file__))
                                 
                             out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '退款成功且交易关闭单号:' + i.encode('utf-8') + '\n')
@@ -296,12 +296,14 @@ def addRemarks(driver, trs, color):
         
         out3.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
     except Exception, e:
+        result = False
         info = sys.exc_info()
         debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))   
     out.close()
     out1.close()
     out2.close()    
     out3.close()
+    return result
 
 def correct_verify(driver, url, order, flag):
     try:
@@ -331,6 +333,7 @@ def correct_verify(driver, url, order, flag):
     return True
 
 def correct(driver, color, FLAG):
+    result = True
     try:
         conn = sqlite.DataBaseControl()
         if FLAG:
@@ -400,10 +403,12 @@ def correct(driver, color, FLAG):
         for i in cc:
             out.write(i.encode('utf-8') + ':' + str(count[i]) + '\n')
     except  Exception, e:
+        result = False
         info = sys.exc_info()
         debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
     out.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
     out.close()
+    return result
 
 def artificial_verify(driver, order, FLAG):
     try:
@@ -440,6 +445,7 @@ def artificial_verify(driver, order, FLAG):
     
 
 def artificial(driver, orders, color):
+    result = True
     try:
         if not os.path.exists(color['account']):
             os.makedirs(color['account'])
@@ -484,7 +490,7 @@ def artificial(driver, orders, color):
                     if u'买家已付款' in status:
                         title = artificial_verify(driver, order, True)
                         if title == '':
-                            out.write('427行错误，跳过了订单：' + order.encode('utf-8') + '\n\n')
+                            out.write(str(sys.exc_info()[2].tb_lineno) + '行错误，跳过了订单：' + order.encode('utf-8') + '\n\n')
                             continue
                         
                         title_text = ''.join(title[0:3].split())
@@ -515,7 +521,7 @@ def artificial(driver, orders, color):
                         except Exception, e:
                             info = sys.exc_info()
                             debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
-                            out.write('445行错误，跳过了订单：' + order.encode('utf-8') + '\n\n')
+                            out.write(str(sys.exc_info()[2].tb_lineno) + '行错误，跳过了订单：' + order.encode('utf-8') + '\n\n')
                             continue
                         time.sleep(1)
                         driver.switch_to_alert().accept()
@@ -553,8 +559,10 @@ def artificial(driver, orders, color):
         for i in cc:
             out.write(i.encode('utf-8') + '：' + str(count[i]) + '\n')
     except Exception, e:
+        result = False
         info = sys.exc_info()
         debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
     out.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
     out.close()
+    return result
     

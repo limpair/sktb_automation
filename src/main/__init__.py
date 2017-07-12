@@ -68,15 +68,6 @@ class window(QtGui.QMainWindow):
         self.ui.addOrder.clicked.connect(self.addOrder)
         self.ui.resetOrder.clicked.connect(self.clearOrder)
         self.ui.Execute0.clicked.connect(self.artificial)
-        
-    def artificial(self):
-        account = self.ui.ShikeeUserName.text()
-        name = self.ui.TaobaoUserName.text()
-        if self.AUTOLogin:
-            color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
-        else:
-            color = {'list':self.giftList, 'account':unicode(account.toUtf8(), 'utf-8', 'ignore'), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
-        review.artificial(self.driver, self.orders, color)
     
     def addOrder(self):
         order = self.ui.orderLine.text()
@@ -104,7 +95,10 @@ class window(QtGui.QMainWindow):
         account = user.getAccount(obj)
         if len(account) == 1:
             self.Account = account[0]
-            user.autoLogin(self.driver, self.Account)
+            if user.autoLogin(self.driver, self.Account):
+                QtGui.QMessageBox.information(self, u'登录提示', u'登录成功')
+            else:
+                QtGui.QMessageBox.critical(self, u'登录提示', u'登录失败 ')
             self.AUTOLogin = True
         else:
             # info = sys.exc_info()
@@ -154,8 +148,14 @@ class window(QtGui.QMainWindow):
 
     def getShikeeData(self):
         # a = time.time()
-        self.try_list = sktb.saveActiveList(self.driver)
-        self.try_list.sort(key=lambda obj: obj.get('time'), reverse=True)
+        self.try_list 
+        res = sktb.saveActiveList(self.driver)
+        if res[1]:
+            self.try_list = res[0]
+            self.try_list.sort(key=lambda obj: obj.get('time'), reverse=True)    
+            QtGui.QMessageBox.information(self, u'获取试客活动数据提示', u'获取数据成功')
+        else:
+            QtGui.QMessageBox.critical(self, u'获取试客活动数据提示', u'获取数据失败')
         # self.try_list = sktb.saveTryList(self.driver, try_list)
         # print self.try_list
         # b = time.time()
@@ -168,6 +168,23 @@ class window(QtGui.QMainWindow):
                 self.try_list.remove(t)
                 break
 
+    
+    def addGift(self):
+        gift = self.ui.Gift.text()
+        
+        self.giftList.append(unicode(gift.toUtf8(), 'utf-8', 'ignore'))
+        self.ui.giftmodel.setItem(self.tableNumber1, 0,
+                              QtGui.QStandardItem(unicode(gift.toUtf8(), 'utf-8', 'ignore')))
+        self.tableNumber1 = self.tableNumber1 + 1
+    def clearGift(self):
+        # print self.giftList
+        self.giftList = []
+        self.tableNumber1 = 0
+        self.ui.giftmodel.removeRows(0, self.ui.model.rowCount())
+        self.ui.GiftTable.setModel(self.ui.giftmodel)
+        self.ui.initGiftTable()
+        # self.ui.initTable()
+    
     def executeActivity(self):
         # a = time.time()
         trialsNumber = self.ui.TrialsNumber.text()  # 近30日获得试用次数
@@ -189,24 +206,12 @@ class window(QtGui.QMainWindow):
         else:
             res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':unicode(account.toUtf8(), 'utf-8', 'ignore'), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
         
-        sktb.executeActivity(self.driver, self.try_list, self.taskList, res)
+        if sktb.executeActivity(self.driver, self.try_list, self.taskList, res):
+            QtGui.QMessageBox.information(self, u'通过结果提示', u'通过完成')
+        else:
+            QtGui.QMessageBox.critical(self, u'通过结果提示', u'过程出错')
         # b = time.time()
         # print u'执行任务时间', b - a
-    def addGift(self):
-        gift = self.ui.Gift.text()
-        
-        self.giftList.append(unicode(gift.toUtf8(), 'utf-8', 'ignore'))
-        self.ui.giftmodel.setItem(self.tableNumber1, 0,
-                              QtGui.QStandardItem(unicode(gift.toUtf8(), 'utf-8', 'ignore')))
-        self.tableNumber1 = self.tableNumber1 + 1
-    def clearGift(self):
-        # print self.giftList
-        self.giftList = []
-        self.tableNumber1 = 0
-        self.ui.giftmodel.removeRows(0, self.ui.model.rowCount())
-        self.ui.GiftTable.setModel(self.ui.giftmodel)
-        self.ui.initGiftTable()
-        # self.ui.initTable()
     
     def executeRemarks(self):
         account = self.ui.ShikeeUserName.text()
@@ -215,18 +220,39 @@ class window(QtGui.QMainWindow):
             color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
         else:
             color = {'list':self.giftList, 'account':unicode(account.toUtf8(), 'utf-8', 'ignore'), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
-        review.addRemarks(self.driver, self.try_list, color)
+        if review.addRemarks(self.driver, self.try_list, color):
+            QtGui.QMessageBox.information(self, u'备注结果提示', u'备注完成')
+        else:
+            QtGui.QMessageBox.critical(self, u'备注结果提示', u'过程出错')
         
     def rectifyRemarks(self):
         try:
             color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
             if self.ui.allData.isChecked():
-                review.correct(self.driver, color, True)
+                if review.correct(self.driver, color, True):
+                    QtGui.QMessageBox.information(self, u'纠正全部备注提示', u'纠正完成')
+                else:
+                    QtGui.QMessageBox.critical(self, u'纠正全部备注提示', u'过程出错')
             elif self.ui.partData.isChecked():
-                review.correct(self.driver, color, False)
+                if review.correct(self.driver, color, False):
+                    QtGui.QMessageBox.information(self, u'纠正部分备注提示', u'纠正完成')
+                else:
+                    QtGui.QMessageBox.critical(self, u'纠正部分备注提示', u'过程出错')
         except Exception, e:
             info = sys.exc_info()
             debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
+            
+    def artificial(self):
+        account = self.ui.ShikeeUserName.text()
+        name = self.ui.TaobaoUserName.text()
+        if self.AUTOLogin:
+            color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
+        else:
+            color = {'list':self.giftList, 'account':unicode(account.toUtf8(), 'utf-8', 'ignore'), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
+        if review.artificial(self.driver, self.orders, color):
+            QtGui.QMessageBox.information(self, u'手动添加订单备注提示', u'备注完成')
+        else:
+            QtGui.QMessageBox.critical(self, u'手动添加订单备注提示', u'过程出错')
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     window = window()

@@ -38,13 +38,15 @@ def saveAccount(obj):
     cont = sqlite.DataBaseControl()
     res = getByName(obj)
     if len(res) == 1:
-        cont.conn.execute('UPDATE account SET tbpassword="'+obj['tp']+'",skpassword="'+obj['sp']+'" WHERE tbusername="' + obj['tu'].encode('utf-8') + '" and skusername="' + obj['su'].encode('utf-8') + '"')
+        cont.conn.execute('UPDATE account SET tbpassword="' + obj['tp'] + '",skpassword="' + obj['sp'] + '" WHERE tbusername="' + obj['tu'].encode('utf-8') + '" and skusername="' + obj['su'].encode('utf-8') + '"')
     else:
         cont.conn.execute('INSERT INTO account(tbusername,tbpassword,skusername,skpassword) VALUES("' + obj['tu'].encode('utf-8') + '","' + obj['tp'] + '","' + obj['su'].encode('utf-8') + '","' + obj['sp'] + '")')
     cont.conn.commit()
     cont.close()
     
-def autoLogin(driver,obj):
-    sktb.loginShikee(driver, obj['skusername'], obj['skpassword'])
+def autoLogin(driver, obj):
+    result = False
+    result = sktb.loginShikee(driver, obj['skusername'], obj['skpassword'])
     time.sleep(2)
-    sktb.loginTaobao(driver, obj['tbusername'], obj['tbpassword'])
+    result = sktb.loginTaobao(driver, obj['tbusername'], obj['tbpassword'])
+    return result
