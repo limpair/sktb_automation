@@ -200,6 +200,7 @@ def passUser(driver, link, name):
         driver.find_element_by_xpath('//*[@id="load-buyer-list"]/tbody/tr[2]/td[5]/a[1]').click()
         time.sleep(1)
         driver.find_element_by_xpath('/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/div/div/p[2]/input[1]').click()
+        time.sleep(0.2)
     except Exception, e:
         info = sys.exc_info()
         debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
@@ -222,12 +223,13 @@ def executeActivity(driver, try_list, tasks, tri):
             count = 0
             name = task['name']
             num = task['num']
-            if not os.path.exists(tri['account']):
-                os.makedirs(tri['account'])
-                fp = open(tri['account'] + '/' + tri['tbuser'].replace(u':', u'：'), 'w')
-                fp.write('1')
-                fp.close()
-            out = open(tri['account'] + '/log.txt', 'a')
+            tbname = tri['tbuser'].replace(u':', u'：')
+            if not os.path.exists(tbname):
+                os.makedirs(tbname)
+                #fp = open(tri['account'] + '/' + tri['tbuser'].replace(u':', u'：'), 'w')
+                #fp.write('1')
+                #fp.close()
+            out = open(tbname + u'/10.审批会员统计.txt', 'a')
             a = time.time()
             for tr in try_list:
                 if tr['num'] == 0:

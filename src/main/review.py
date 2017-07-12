@@ -19,7 +19,7 @@ style = 'height:17px;width:1px;padding-left:17px;overflow:hidden;vertical-align:
 def getOrderNumber(driver, trs, account):
     try:
         cont = sqlite.DataBaseControl()
-        outx = open(account + u'/order_data.txt', 'a')
+        outx = open(account + u'/1.每次获取的订单数据.txt', 'a')
         outx.write('开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
         # print u'开始获取订单:', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         a = time.time()
@@ -108,18 +108,19 @@ def addRemarks(driver, trs, color):
     if len(color['list']) == 0:
         return False
     conn = sqlite.DataBaseControl()
-    if not os.path.exists(color['account']):
-        os.makedirs(color['account'])
-        fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
-        fp.write('1')
-        fp.close()
+    tbname = color['tbuser'].replace(u':', u'：')
+    if not os.path.exists(tbname):
+        os.makedirs(tbname)
+        # fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
+        # fp.write('1')
+        # fp.close()
     
-    process = open(color['account'] + u'/process_error.txt', 'a')
-    out = open(color['account'] + u'/error.txt', 'a')
-    out1 = open(color['account'] + u'/remark.txt', 'a')
-    out2 = open(color['account'] + u'/flag.txt', 'a')
-    out3 = open(color['account'] + u'/count.txt', 'a')
-    out4 = open(color['account'] + u'/loaddata_time.txt', 'a')
+    process = open(tbname + u'/2.程序错误调过的订单统计.txt', 'a')
+    out = open(tbname + u'/3.存在退款之类订单统计.txt', 'a')
+    out1 = open(tbname + u'/4.备注且审核订单统计.txt', 'a')
+    out2 = open(tbname + u'/5.备注订单统计.txt', 'a')
+    out3 = open(tbname + u'/6.备注订单统计汇总.txt', 'a')
+    out4 = open(tbname + u'/7.获取订单所需要时间统计.txt', 'a')
     try:
         text = '开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n'
         out4.write('开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
@@ -343,12 +344,13 @@ def correct(driver, color, FLAG):
             orders = conn.getRemarks(color['account'])
         conn.close()
         driver.get(tbhost)
-        if not os.path.exists(color['account']):
-            os.makedirs(color['account'])
-            fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
-            fp.write('1')
-            fp.close()
-        out = open(color['account'] + u'/rectify_order.txt', 'a')
+        tbname = color['tbuser'].replace(u':', u'：')
+        if not os.path.exists(tbname):
+            os.makedirs(tbname)
+            # fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
+            # fp.write('1')
+            # fp.close()
+        out = open(tbname + u'/8.纠正备注统计.txt', 'a')
         out.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
         count = {}
         for order in orders:
@@ -448,13 +450,14 @@ def artificial_verify(driver, order, FLAG):
 def artificial(driver, orders, color):
     result = True
     try:
-        if not os.path.exists(color['account']):
-            os.makedirs(color['account'])
-            fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
-            fp.write('1')
-            fp.close()
+        tbname = color['tbuser'].replace(u':', u'：')
+        if not os.path.exists(tbname):
+            os.makedirs(tbname)
+            #fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
+            #fp.write('1')
+            #fp.close()
         
-        out = open(color['account'] + u'/artificial_order.txt', 'a')
+        out = open(tbname + u'/9.手动添加订单备注统计.txt', 'a')
         out.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')    
         count = {}
         skcount = {}
