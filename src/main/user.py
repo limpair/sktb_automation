@@ -1,7 +1,7 @@
 import sqlite
 import sktb
 import time
-
+import os
 
 def getByName(obj):
     cont = sqlite.DataBaseControl()
@@ -49,4 +49,3 @@ def autoLogin(driver,obj):
     sktb.loginShikee(driver, obj['skusername'], obj['skpassword'])
     time.sleep(2)
     sktb.loginTaobao(driver, obj['tbusername'], obj['tbpassword'])
-    

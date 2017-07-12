@@ -123,14 +123,14 @@ class DataBaseControl(object):
     def listOrder(self, account):
         if(self.conn == None):
             self.open()
-        cursor = self.conn.execute('select * from orders where account = "' + account + '"')
+        cursor = self.conn.execute('select * from orders where account = "' + account + '" AND time like "%' + datetime.datetime.now().strftime('%Y-%m-%d') + '%"')
         res = []
         for row in cursor:
             result = {}
             result['id'] = row[0]
             result['title'] = row[1]
             result['link'] = row[2]
-            result['order_num'] = row[3]
+            result['order'] = row[3]
             result['time'] = row[4]
             result['account'] = row[5]
             res.append(result)

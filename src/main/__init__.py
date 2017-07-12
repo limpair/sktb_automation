@@ -3,12 +3,12 @@
 from selenium import webdriver
 from PyQt4 import QtCore, QtGui
 import ui
-import sys
+import sys, os
 import time
 import sktb
 import review
 import user
-
+import debug
 
 class window(QtGui.QMainWindow):
     def __init__(self):
@@ -216,8 +216,15 @@ class window(QtGui.QMainWindow):
         review.addRemarks(self.driver, self.try_list, color)
         
     def rectifyRemarks(self):
-        color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
-        review.correct(self.driver, color)
+        try:
+            color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
+            if self.ui.allData.isChecked():
+                review.correct(self.driver, color, True)
+            elif self.ui.partData.isChecked():
+                review.correct(self.driver, color, False)
+        except Exception, e:
+            info = sys.exc_info()
+            debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     window = window()

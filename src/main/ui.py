@@ -211,6 +211,15 @@ class Ui_mainWindow(object):
         self.resetGift.setGeometry(QtCore.QRect(410, 100, 75, 24))
         self.resetGift.setObjectName(_fromUtf8("resetGift"))
         
+        
+        self.allData = QtGui.QRadioButton(self.tab_2)
+        self.allData.setGeometry(QtCore.QRect(400, 130, 50, 24))
+        self.allData.setObjectName(_fromUtf8("allData"))
+        self.partData = QtGui.QRadioButton(self.tab_2)
+        self.partData.setGeometry(QtCore.QRect(450, 130, 75, 24))
+        self.partData.setObjectName(_fromUtf8("partData"))
+        
+        
         self.GiftTable = QtGui.QTableView(self.tab_2)
         self.GiftTable.setGeometry(QtCore.QRect(300, 40, 100, 170))
         self.GiftTable.setObjectName(_fromUtf8("GiftTable"))
@@ -284,7 +293,7 @@ class Ui_mainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(mainWindow)
 
     def retranslateUi(self, mainWindow):
-        mainWindow.setWindowTitle(_translate("mainWindow", "自动化工具 V1.3.0", None))
+        mainWindow.setWindowTitle(_translate("mainWindow", "自动化工具 V1.3.2", None))
         self.violationLabel.setText(_translate("mainWindow", "违规次数", None))
         self.placeAnOrderLabel.setText(_translate("mainWindow", "近30日下单次数", None))
         self.abandonLabel.setText(_translate("mainWindow", "试客放弃试用次数", None))
@@ -321,7 +330,11 @@ class Ui_mainWindow(object):
         self.addOrder.setText(_translate("mainWindow", "添加", None))
         self.Execute0.setText(_translate("mainWindow", "执行", None))
         self.resetOrder.setText(_translate("mainWindow", "重置", None))
-
+        self.allData.setText(_translate("mainWindow", "全部", None))
+        self.partData.setText(_translate("mainWindow", "部分", None))
+        
+        self.partData.click()
+        
     def initTable(self):
         self.model = QtGui.QStandardItemModel(self.tableView)
         self.model.setRowCount(10)    
