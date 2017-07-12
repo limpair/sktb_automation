@@ -21,7 +21,7 @@ def getOrderNumber(driver, trs, account):
         cont = sqlite.DataBaseControl()
         outx = open(account + u'/order_data.txt', 'a')
         outx.write('开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
-        print u'开始获取订单:', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        # print u'开始获取订单:', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         a = time.time()
         result = []
         count = 0
@@ -67,9 +67,10 @@ def getOrderNumber(driver, trs, account):
         outx.write('一共 ' + str(count) + '订单\n')
         for i in result:
             outx.write(str(i['order']).encode('utf-8') + '\n')
-        print u'结束获取订单:', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print u'获取所有任务需要审核的订单的时间为：', b - a
-        print u'一共：', count
+        debug.message('获取订单所用时间：' + str(b - a), os.path.basename(__file__))
+        # print u'结束获取订单:', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        # print u'获取所有任务需要审核的订单的时间为：', b - a
+        # print u'一共：', count
     except Exception, e:
         info = sys.exc_info()
         debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
@@ -153,7 +154,7 @@ def addRemarks(driver, trs, color):
                 except Exception, e:
                     info = sys.exc_info()
                     debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
-                    print u'打开淘宝搜索订单存在问题，尝试第二次打开'
+                    # print u'打开淘宝搜索订单存在问题，尝试第二次打开'
                     time.sleep(2)
                     driver.get(tbhost)
                 time.sleep(2)
@@ -200,7 +201,9 @@ def addRemarks(driver, trs, color):
                             out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '资金保订单号:' + i.encode('utf-8') + '\n')
                         elif u'交易关闭' in status:
                             if verify(driver, skhost + tr['passlink'], i, False):
-                                print 'error-----------'
+                                #print 'error----------
+                                debug.message('退款成功且关闭的交易：' + i.encode('utf-8'), os.path.basename(__file__))
+                                
                             out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '退款成功且交易关闭单号:' + i.encode('utf-8') + '\n')
                     else:
                         href = page.find_all(id='flag')[0].get('href')
@@ -259,12 +262,13 @@ def addRemarks(driver, trs, color):
                                 continue
                         if u'交易关闭' in status:
                             if verify(driver, skhost + tr['passlink'], i, False):
-                                print u'订单错误'
+                                # print u'订单错误'
+                                debug.message('交易关闭的订单：' + i.encode('utf-8'), os.path.basename(__file__))
                             out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '交易关闭单号:' + i + '\n')
                         out2.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '订单号：' + i.encode('utf-8') + '\n')
                 else:
                     if verify(driver, skhost + tr['passlink'], i, False):
-                        print u'订单错误'
+                        debug.message('不存在的订单：' + i.encode('utf-8'), os.path.basename(__file__))
         conn.close()
         process.write('-----' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
         process.close()
@@ -464,17 +468,17 @@ def artificial(driver, orders, color):
                 caveat = ''.join(td[3].text.split())
                 if caveat != '' and caveat != u'退款关闭':
                     if u'买家已付款' in status:
-                        out.write(caveat.encode('utf-8') + '已付款订单号:' + order + '\n')
+                        out.write(caveat.encode('utf-8') + '已付款订单号:' + order.encode('utf-8') + '\n')
                     elif u'卖家已发货' in status:
-                        out.write(caveat.encode('utf-8') + '已发货订单号:' + order + '\n')
+                        out.write(caveat.encode('utf-8') + '已发货订单号:' + order.encode('utf-8') + '\n')
                     elif u'交易成功' in status:
-                        out.write(caveat.encode('utf-8') + '已完成订单号:' + order + '\n')
+                        out.write(caveat.encode('utf-8') + '已完成订单号:' + order.encode('utf-8') + '\n')
                     elif u'资金保护中' in status:
-                        out.write(caveat.encode('utf-8') + '资金保订单号:' + order + '\n')
+                        out.write(caveat.encode('utf-8') + '资金保订单号:' + order.encode('utf-8') + '\n')
                     elif u'交易关闭' in status:
                         if verify(driver, skhost + tr['passlink'], order, False):
-                            print 'error-----------'
-                        out.write(caveat.encode('utf-8') + '退款成功且交易关闭单号:' + order + '\n')
+                            debug.message('手动添加订单任务退款成功且交易关闭单号：' + order.encode('utf-8'), os.path.basename(__file__))
+                        out.write(caveat.encode('utf-8') + '退款成功且交易关闭单号:' + order.encode('utf-8') + '\n')
                 else:
                     href = page.find_all(id='flag')[0].get('href')
                     if u'买家已付款' in status:

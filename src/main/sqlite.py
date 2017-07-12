@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
-import sqlite3, time, datetime
-
+import sqlite3, time, datetime, debug
+import os
 class DataBaseControl(object):
     def __init__(self):
-        print 'init'
+        debug.message('连接数据库', os.path.basename(__file__))
         self.open()
 
     def open(self):
@@ -12,7 +12,7 @@ class DataBaseControl(object):
     def close(self):
         if(self.conn != None):
             self.conn.close()
-            print 'close'
+            debug.message('关闭数据库', os.path.basename(__file__))
     
     def save(self, obj):
         if(self.conn == None):
@@ -143,3 +143,5 @@ class DataBaseControl(object):
         elif TYPE == 1:
             self.conn.execute('UPDATE orders SET time="' + obj['time'] + '" WHERE id=' + str(obj['id']))
         self.conn.commit()
+if __name__ == '__main__':
+    DataBaseControl()

@@ -50,7 +50,7 @@ def loginTaobao(driver, username, password):
         driver.find_element_by_id('TPL_password_1').send_keys(password)
     
         if is_element_exist(driver, '#nc_1_n1z'):
-            print u'滑块验证中'
+            debug.message('存在滑块等待8s：', os.path.basename(__file__))
             time.sleep(8)
         driver.find_element_by_id('J_SubmitStatic').click()
         time.sleep(5)
@@ -139,7 +139,7 @@ def judgeSysData(t, sys):
     except Exception, e:
         info = sys.exc_info()
         debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
-        print u'判断有误调过此账号' 
+        debug.message('判断账号能否通过存在问题，调过此账号：', os.path.basename(__file__))
     if count == 4:
         return True
     else:
@@ -299,5 +299,6 @@ def executeActivity(driver, try_list, tasks, tri):
             debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
         b = time.time()
         out.write('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(round(b - a, 2)) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
-        print u'活动' + name + u'通过 ' + str(count) + u' 人，用时' + str(round(b - a, 2)) + u'，' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        debug.message('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(round(b - a, 2)) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), os.path.basename(__file__))
+        #print u'活动' + name + u'通过 ' + str(count) + u' 人，用时' + str(round(b - a, 2)) + u'，' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     conn.close()

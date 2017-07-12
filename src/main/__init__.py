@@ -107,7 +107,9 @@ class window(QtGui.QMainWindow):
             user.autoLogin(self.driver, self.Account)
             self.AUTOLogin = True
         else:
-            print u'数据库没存账号密码吧！'
+            # info = sys.exc_info()
+            debug.message('没找到账号密码', os.path.basename(__file__))
+            # print u'数据库没存账号密码吧！'
 
     def initDriver(self):
         self.orders = []
@@ -131,7 +133,7 @@ class window(QtGui.QMainWindow):
             {'name': str(a).upper(), 'num': int(b), 'time': t})
 
     def clearActive(self):
-        print self.taskList
+        # print self.taskList
         self.taskList = []
         self.tableNumber = 0
         self.ui.model.removeRows(0, self.ui.model.rowCount())
@@ -167,7 +169,7 @@ class window(QtGui.QMainWindow):
                 break
 
     def executeActivity(self):
-        a = time.time()
+        # a = time.time()
         trialsNumber = self.ui.TrialsNumber.text()  # 近30日获得试用次数
         number = self.ui.Number.text()  # 近30天下单次数
         
@@ -188,8 +190,8 @@ class window(QtGui.QMainWindow):
             res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':unicode(account.toUtf8(), 'utf-8', 'ignore'), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
         
         sktb.executeActivity(self.driver, self.try_list, self.taskList, res)
-        b = time.time()
-        print u'执行任务时间', b - a
+        # b = time.time()
+        # print u'执行任务时间', b - a
     def addGift(self):
         gift = self.ui.Gift.text()
         
@@ -198,7 +200,7 @@ class window(QtGui.QMainWindow):
                               QtGui.QStandardItem(unicode(gift.toUtf8(), 'utf-8', 'ignore')))
         self.tableNumber1 = self.tableNumber1 + 1
     def clearGift(self):
-        print self.giftList
+        # print self.giftList
         self.giftList = []
         self.tableNumber1 = 0
         self.ui.giftmodel.removeRows(0, self.ui.model.rowCount())

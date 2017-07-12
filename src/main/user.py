@@ -1,7 +1,6 @@
 import sqlite
 import sktb
 import time
-import os
 
 def getByName(obj):
     cont = sqlite.DataBaseControl()
