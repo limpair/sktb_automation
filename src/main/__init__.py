@@ -44,6 +44,10 @@ class window(QtGui.QMainWindow):
         self.ui.AbandonNumber.setText('')
         self.ui.Number.setText('')
         self.ui.ViolationsNumber.setText('')
+        
+        now_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        self.ui.dateTimeEdit.setDateTime(QtCore.QDateTime.fromString(now_time, 'yyyy-MM-dd hh:mm:ss'))
+        print str(self.ui.dateTimeEdit.dateTime())
 
     def closeEvent(self, event):
         self.driver.close()

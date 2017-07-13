@@ -124,7 +124,7 @@ def addRemarks(driver, trs, color):
     try:
         text = '开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n'
         out4.write('开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
-        trs = getOrderNumber(driver, trs, color['account'])
+        trs = getOrderNumber(driver, trs, tbname)
         text = text + '结束获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n'
         out4.write('结束获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
         out4.close()

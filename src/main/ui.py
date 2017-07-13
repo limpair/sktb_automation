@@ -247,6 +247,15 @@ class Ui_mainWindow(object):
         self.resetOrder.setGeometry(QtCore.QRect(260, 10, 41, 24))
         self.resetOrder.setObjectName(_fromUtf8("resetOrder"))
         
+        self.timer = QtGui.QPushButton(self.tab_2)
+        self.timer.setGeometry(QtCore.QRect(560, 60, 75, 23))
+        self.timer.setObjectName(_fromUtf8("timer"))
+        
+        self.dateTimeEdit = QtGui.QDateTimeEdit(self.tab_2)
+        self.dateTimeEdit.setGeometry(QtCore.QRect(500, 10, 131, 22))
+        self.dateTimeEdit.setObjectName(_fromUtf8("dateTimeEdit"))
+        
+        
         self.violationLabel.raise_()
         self.placeAnOrderLabel.raise_()
         self.abandonLabel.raise_()
@@ -332,6 +341,9 @@ class Ui_mainWindow(object):
         self.resetOrder.setText(_translate("mainWindow", "重置", None))
         self.allData.setText(_translate("mainWindow", "全部", None))
         self.partData.setText(_translate("mainWindow", "部分", None))
+        self.timer.setText(_translate("mainWindow", "定时执行", None))
+        
+        
         
         self.partData.click()
         
