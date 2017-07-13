@@ -226,13 +226,13 @@ def executeActivity(driver, try_list, tasks, tri):
             tbname = tri['tbuser'].replace(u':', u'：')
             if not os.path.exists(tbname):
                 os.makedirs(tbname)
-                #fp = open(tri['account'] + '/' + tri['tbuser'].replace(u':', u'：'), 'w')
-                #fp.write('1')
-                #fp.close()
+                # fp = open(tri['account'] + '/' + tri['tbuser'].replace(u':', u'：'), 'w')
+                # fp.write('1')
+                # fp.close()
             out = open(tbname + u'/10.审批会员统计.txt', 'a')
             a = time.time()
             for tr in try_list:
-                if tr['num'] == 0:
+                if tr['num'] <= 0:
                     continue
                 if count >= num:
                     break
@@ -241,7 +241,7 @@ def executeActivity(driver, try_list, tasks, tri):
                     driver.get(host + tr['link'] + '/0')
                     time.sleep(2)
                     if judgeNum(driver):
-                        break
+                        continue
                     if is_element_exist(driver, '#total'):
                         total = int(driver.find_element_by_id('total').text)
                         n = int(math.ceil(total / 20.0))
@@ -282,7 +282,7 @@ def executeActivity(driver, try_list, tasks, tri):
                                 'span')[0].attrs['title'], 'time': t[2].text, 'skname':t[1].find_all('img')[0].attrs['art']})
     
                     for user in users:
-                        if count == tr['num'] or count >= num:
+                        if tr['num'] <= 0 or count >= num:
                             break
                         dbUsers = conn.getByName(user['name'], tri['account'])
                         user['account'] = tri['account']
@@ -294,16 +294,26 @@ def executeActivity(driver, try_list, tasks, tri):
                                 nowtime = round((time.time() - dbUsers[0]['mktime']) / 86400.0, 4)
                                 if nowtime >= 3.0:
                                     if judgeTaobao(driver, user['name'], ''.join(tri['days'].split())):
+                                        driver.get(host + tr['link'])
+                                        time.sleep(0.2)
+                                        if judgeNum(driver):
+                                            break
                                         if passUser(driver, host + tr['link'], user['skname']):
+                                            tr['num'] = tr['num'] - 1
                                             count = count + 1
                                             user['passtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                                             conn.save(user)
                                     continue
                         elif judgeTaobao(driver, user['name'], ''.join(tri['days'].split())):
+                            driver.get(host + tr['link'])
+                            time.sleep(0.2)
+                            if judgeNum(driver):
+                                break
                             if passUser(driver, host + tr['link'], user['skname']):
+                                tr['num'] = tr['num'] - 1
                                 count = count + 1
                                 user['passtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                                conn.save(user)
+                                conn.save(user)    
         except Exception, e:
             result = False
             info = sys.exc_info()
