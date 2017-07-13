@@ -9,6 +9,7 @@ import sktb
 import review
 import user
 import debug
+import thread
 
 class window(QtGui.QMainWindow):
     def __init__(self):
@@ -28,15 +29,8 @@ class window(QtGui.QMainWindow):
         self.initButton()
         self.initDriver()
         self.AUTOLogin = False
-        self.ui.TaobaoUserName.setText(u'tb22765774:毛毛')
-        # self.ui.TaobaoPassword.setText('qqh983468869')
-        
-        # self.ui.TaobaoPassword.setEchoMode(QtGui.QLineEdit.Password) 
-        # self.ui.ShikeePassword.setEchoMode(QtGui.QLineEdit.Password) 
-        
+        self.ui.TaobaoUserName.setText(u'tb22765774:毛毛') 
         self.ui.ShikeeUserName.setText('18814726078')
-        # self.ui.ShikeePassword.setText('kyd0920')
-
         self.ui.InvalidOrders.setText('')
         self.ui.AverageTime.setText('')
         self.ui.Total.setText('')
@@ -45,18 +39,20 @@ class window(QtGui.QMainWindow):
         self.ui.Number.setText('')
         self.ui.ViolationsNumber.setText('')
         
-        now_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        self.ui.dateTimeEdit.setDateTime(QtCore.QDateTime.fromString(now_time, 'yyyy-MM-dd hh:mm:ss'))
-        print str(self.ui.dateTimeEdit.dateTime())
-
+        # now_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        # self.ui.dateTimeEdit.setDateTime(QtCore.QDateTime.fromString(now_time, 'yyyy-MM-dd hh:mm:ss'))
+        # print str(self.ui.dateTimeEdit.dateTime())
+        
+        self.ui.Browser.insertItem(0, 'chrome')
+        self.ui.Browser.insertItem(1, 'firefox')
+        self.ui.Browser.insertItem(2, 'ie')
+    
+    
     def closeEvent(self, event):
-        self.driver.close()
         event.accept()
 
     def initButton(self):
         self.ui.AddActivity.clicked.connect(self.addActive)
-        # self.ui.loginTaobao.clicked.connect(self.loginTaobao)
-        # self.ui.loginShikee.clicked.connect(self.loginShikee)
         self.ui.GetShikeeData.clicked.connect(self.getShikeeData)
         self.ui.resetActivity.clicked.connect(self.clearActive)
         self.ui.ExecuteActivity.clicked.connect(self.executeActivity)
@@ -64,15 +60,46 @@ class window(QtGui.QMainWindow):
         self.ui.addGift.clicked.connect(self.addGift)
         self.ui.resetGift.clicked.connect(self.clearGift)
         self.ui.executeRemarks.clicked.connect(self.executeRemarks)
-        
-        # self.ui.autoAccount.clicked.connect(self.saveAccount)
         self.ui.autoLogin.clicked.connect(self.autoLogin)
         self.ui.rectifyRemarks.clicked.connect(self.rectifyRemarks)
-        
         self.ui.addOrder.clicked.connect(self.addOrder)
         self.ui.resetOrder.clicked.connect(self.clearOrder)
         self.ui.Execute0.clicked.connect(self.artificial)
+        self.ui.openBrowser.clicked.connect(self.openBrowser)
+        self.ui.closeBrowser.clicked.connect(self.closeBrowser)
     
+    def initDriver(self):
+        self.orders = []
+        self.taskList = []
+        self.giftList = []
+        self.try_list = []
+        self.driver = []
+        self.driverCount = 0 
+        
+    def openBrowser(self):
+        # thread.start_new_thread(test, ())  
+        browser = str(self.ui.Browser.currentText())
+        if browser == 'chrome':
+            driver = webdriver.Chrome()
+            self.driver.append(driver)
+            self.driverCount = self.driverCount + 1
+            self.ui.BrowserNumber.addItem(str(self.driverCount))
+        elif browser == 'firefox':
+            driver = webdriver.Firefox()
+            self.driver.append(driver)
+            self.driverCount = self.driverCount + 1
+            self.ui.BrowserNumber.addItem(str(self.driverCount))
+        elif browser == 'ie':
+            driver = webdriver.Ie()
+            self.driver.append(driver)
+            self.driverCount = self.driverCount + 1
+            self.ui.BrowserNumber.addItem(str(self.driverCount))
+    def closeBrowser(self):
+        index = self.ui.BrowserNumber.currentIndex()
+        browser = int(str(self.ui.BrowserNumber.currentText()))
+        self.driver[browser - 1].close()
+        self.ui.BrowserNumber.removeItem(index)
+            
     def addOrder(self):
         order = self.ui.orderLine.text()
         self.orders.append(unicode(order.toUtf8(), 'utf-8', 'ignore'))
@@ -85,36 +112,24 @@ class window(QtGui.QMainWindow):
         self.ui.orderModel.removeRows(0, self.ui.orderModel.rowCount())
         self.ui.orderTable.setModel(self.ui.orderModel)
         self.ui.initOrderTable()
-#     def saveAccount(self):
-#         tname = unicode(self.ui.TaobaoUserName.text().toUtf8(), 'utf-8', 'ignore')
-#         tpswd = str(self.ui.TaobaoPassword.text())
-#         sname = unicode(self.ui.ShikeeUserName.text().toUtf8(), 'utf-8', 'ignore')
-#         spswd = str(self.ui.ShikeePassword.text())
-#         obj = {'su':sname, 'sp':spswd, 'tu':tname, 'tp':tpswd}
-#         user.saveAccount(obj)
+        
     def autoLogin(self):
+        browser = int(str(self.ui.BrowserNumber.currentText()))
+        driver = self.driver[browser - 1]
         tname = unicode(self.ui.TaobaoUserName.text().toUtf8(), 'utf-8', 'ignore')
         sname = unicode(self.ui.ShikeeUserName.text().toUtf8(), 'utf-8', 'ignore')
         obj = {'su':sname, 'tu':tname}
         account = user.getAccount(obj)
         if len(account) == 1:
             self.Account = account[0]
-            if user.autoLogin(self.driver, self.Account):
+            if user.autoLogin(driver, self.Account):
                 QtGui.QMessageBox.information(self, u'登录提示', u'登录成功')
             else:
                 QtGui.QMessageBox.critical(self, u'登录提示', u'登录失败 ')
             self.AUTOLogin = True
         else:
-            # info = sys.exc_info()
             debug.message('没找到账号密码', os.path.basename(__file__))
-            # print u'数据库没存账号密码吧！'
 
-    def initDriver(self):
-        self.orders = []
-        self.taskList = []
-        self.giftList = []
-        self.try_list = []
-        self.driver = webdriver.Chrome('..\driver\chromedriver.exe')
 
     def addActive(self):
         a = self.ui.ActivityNumber.text()
@@ -131,39 +146,23 @@ class window(QtGui.QMainWindow):
             {'name': str(a).upper(), 'num': int(b), 'time': t})
 
     def clearActive(self):
-        # print self.taskList
         self.taskList = []
         self.tableNumber = 0
         self.ui.model.removeRows(0, self.ui.model.rowCount())
         self.ui.tableView.setModel(self.ui.model)
         self.ui.initTable()
 
-#     def loginTaobao(self):
-#         name = self.ui.TaobaoUserName.text()
-#         pswd = self.ui.TaobaoPassword.text()
-#         sktb.loginTaobao(self.driver, unicode(
-#             name.toUtf8(), 'utf-8', 'ignore'), str(pswd))
-
-#     def loginShikee(self):
-#         name = self.ui.ShikeeUserName.text()
-#         pswd = self.ui.ShikeePassword.text()
-#         sktb.loginShikee(self.driver, unicode(
-#             name.toUtf8(), 'utf-8', 'ignore'), str(pswd))
-
     def getShikeeData(self):
-        # a = time.time()
+        browser = int(str(self.ui.BrowserNumber.currentText()))
+        driver = self.driver[browser - 1]
         self.try_list 
-        res = sktb.saveActiveList(self.driver)
+        res = sktb.saveActiveList(driver)
         if res[1]:
             self.try_list = res[0]
             self.try_list.sort(key=lambda obj: obj.get('time'), reverse=True)    
             QtGui.QMessageBox.information(self, u'获取试客活动数据提示', u'获取数据成功')
         else:
             QtGui.QMessageBox.critical(self, u'获取试客活动数据提示', u'获取数据失败')
-        # self.try_list = sktb.saveTryList(self.driver, try_list)
-        # print self.try_list
-        # b = time.time()
-        # print round(b - a, 2)
 
     def deleteTryList(self):
         url = str(self.ui.Link.text())
@@ -172,7 +171,6 @@ class window(QtGui.QMainWindow):
                 self.try_list.remove(t)
                 break
 
-    
     def addGift(self):
         gift = self.ui.Gift.text()
         
@@ -181,16 +179,16 @@ class window(QtGui.QMainWindow):
                               QtGui.QStandardItem(unicode(gift.toUtf8(), 'utf-8', 'ignore')))
         self.tableNumber1 = self.tableNumber1 + 1
     def clearGift(self):
-        # print self.giftList
         self.giftList = []
         self.tableNumber1 = 0
         self.ui.giftmodel.removeRows(0, self.ui.model.rowCount())
         self.ui.GiftTable.setModel(self.ui.giftmodel)
         self.ui.initGiftTable()
-        # self.ui.initTable()
+
     
     def executeActivity(self):
-        # a = time.time()
+        browser = int(str(self.ui.BrowserNumber.currentText()))
+        driver = self.driver[browser - 1]
         trialsNumber = self.ui.TrialsNumber.text()  # 近30日获得试用次数
         number = self.ui.Number.text()  # 近30天下单次数
         
@@ -210,35 +208,37 @@ class window(QtGui.QMainWindow):
         else:
             res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':unicode(account.toUtf8(), 'utf-8', 'ignore'), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
         
-        if sktb.executeActivity(self.driver, self.try_list, self.taskList, res):
+        if sktb.executeActivity(driver, self.try_list, self.taskList, res):
             QtGui.QMessageBox.information(self, u'通过结果提示', u'通过完成')
         else:
             QtGui.QMessageBox.critical(self, u'通过结果提示', u'过程出错')
-        # b = time.time()
-        # print u'执行任务时间', b - a
     
     def executeRemarks(self):
+        browser = int(str(self.ui.BrowserNumber.currentText()))
+        driver = self.driver[browser - 1]
         account = self.ui.ShikeeUserName.text()
         name = self.ui.TaobaoUserName.text()
         if self.AUTOLogin:
             color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
         else:
             color = {'list':self.giftList, 'account':unicode(account.toUtf8(), 'utf-8', 'ignore'), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
-        if review.addRemarks(self.driver, self.try_list, color):
+        if review.addRemarks(driver, self.try_list, color):
             QtGui.QMessageBox.information(self, u'备注结果提示', u'备注完成')
         else:
             QtGui.QMessageBox.critical(self, u'备注结果提示', u'过程出错')
         
     def rectifyRemarks(self):
+        browser = int(str(self.ui.BrowserNumber.currentText()))
+        driver = self.driver[browser - 1]
         try:
             color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
             if self.ui.allData.isChecked():
-                if review.correct(self.driver, color, True):
+                if review.correct(driver, color, True):
                     QtGui.QMessageBox.information(self, u'纠正全部备注提示', u'纠正完成')
                 else:
                     QtGui.QMessageBox.critical(self, u'纠正全部备注提示', u'过程出错')
             elif self.ui.partData.isChecked():
-                if review.correct(self.driver, color, False):
+                if review.correct(driver, color, False):
                     QtGui.QMessageBox.information(self, u'纠正部分备注提示', u'纠正完成')
                 else:
                     QtGui.QMessageBox.critical(self, u'纠正部分备注提示', u'过程出错')
@@ -247,13 +247,15 @@ class window(QtGui.QMainWindow):
             debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
             
     def artificial(self):
+        browser = int(str(self.ui.BrowserNumber.currentText()))
+        driver = self.driver[browser - 1]
         account = self.ui.ShikeeUserName.text()
         name = self.ui.TaobaoUserName.text()
         if self.AUTOLogin:
             color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
         else:
             color = {'list':self.giftList, 'account':unicode(account.toUtf8(), 'utf-8', 'ignore'), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
-        if review.artificial(self.driver, self.orders, color):
+        if review.artificial(driver, self.orders, color):
             QtGui.QMessageBox.information(self, u'手动添加订单备注提示', u'备注完成')
         else:
             QtGui.QMessageBox.critical(self, u'手动添加订单备注提示', u'过程出错')

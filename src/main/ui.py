@@ -247,14 +247,29 @@ class Ui_mainWindow(object):
         self.resetOrder.setGeometry(QtCore.QRect(260, 10, 41, 24))
         self.resetOrder.setObjectName(_fromUtf8("resetOrder"))
         
-        self.timer = QtGui.QPushButton(self.tab_2)
-        self.timer.setGeometry(QtCore.QRect(560, 60, 75, 23))
-        self.timer.setObjectName(_fromUtf8("timer"))
+        #self.timer = QtGui.QPushButton(self.tab_2)
+        #self.timer.setGeometry(QtCore.QRect(560, 60, 75, 23))
+        #self.timer.setObjectName(_fromUtf8("timer"))
         
-        self.dateTimeEdit = QtGui.QDateTimeEdit(self.tab_2)
-        self.dateTimeEdit.setGeometry(QtCore.QRect(500, 10, 131, 22))
-        self.dateTimeEdit.setObjectName(_fromUtf8("dateTimeEdit"))
+        #self.dateTimeEdit = QtGui.QDateTimeEdit(self.tab_2)
+        #self.dateTimeEdit.setGeometry(QtCore.QRect(500, 10, 131, 22))
+        #self.dateTimeEdit.setObjectName(_fromUtf8("dateTimeEdit"))
         
+        
+        self.openBrowser = QtGui.QPushButton(self.centralwidget)
+        self.openBrowser.setGeometry(QtCore.QRect(570, 100, 75, 24))
+        self.openBrowser.setObjectName(_fromUtf8("openBrowser"))
+        self.Browser = QtGui.QComboBox(self.centralwidget)
+        self.Browser.setGeometry(QtCore.QRect(495, 100, 65, 24))
+        self.Browser.setObjectName(_fromUtf8("Browser"))
+        
+        self.BrowserNumber = QtGui.QComboBox(self.centralwidget)
+        self.BrowserNumber.setGeometry(QtCore.QRect(330, 100, 65, 24))
+        self.BrowserNumber.setObjectName(_fromUtf8("BrowserNumber"))
+        
+        self.closeBrowser = QtGui.QPushButton(self.centralwidget)
+        self.closeBrowser.setGeometry(QtCore.QRect(400, 100, 75, 24))
+        self.closeBrowser.setObjectName(_fromUtf8("openBrowser"))
         
         self.violationLabel.raise_()
         self.placeAnOrderLabel.raise_()
@@ -341,9 +356,10 @@ class Ui_mainWindow(object):
         self.resetOrder.setText(_translate("mainWindow", "重置", None))
         self.allData.setText(_translate("mainWindow", "全部", None))
         self.partData.setText(_translate("mainWindow", "部分", None))
-        self.timer.setText(_translate("mainWindow", "定时执行", None))
+        #self.timer.setText(_translate("mainWindow", "定时执行", None))
         
-        
+        self.openBrowser.setText(_translate("mainWindow", "启动浏览器", None))
+        self.closeBrowser.setText(_translate("mainWindow", "关闭浏览器", None))
         
         self.partData.click()
         

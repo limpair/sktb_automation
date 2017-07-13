@@ -284,7 +284,12 @@ def executeActivity(driver, try_list, tasks, tri):
                     for user in users:
                         if tr['num'] <= 0 or count >= num:
                             break
-                        dbUsers = conn.getByName(user['name'], tri['account'])
+                        try:
+                            dbUsers = conn.getByName(user['name'], tri['account'])
+                        except Exception, e:
+                            info = sys.exc_info()
+                            debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
+                            continue
                         user['account'] = tri['account']
                         user['activity'] = name
                         if judgeSysData(tri, user['sys']) == False:
