@@ -14,7 +14,6 @@ def getByName(obj):
         result['skusername'] = row[3]
         result['skpassword'] = row[4]
         res.append(result)
-        # self.conn.commit()
     cont.close()
     return res
 
@@ -30,7 +29,6 @@ def listAccount():
         result['skusername'] = row[3]
         result['skpassword'] = row[4]
         res.append(result)
-        # self.conn.commit()
     cont.close()
     return res
 def getAccount(obj):
@@ -45,7 +43,6 @@ def getAccount(obj):
         result['skusername'] = row[3]
         result['skpassword'] = row[4]
         res.append(result)
-        # self.conn.commit()
     cont.close()
     return res
 

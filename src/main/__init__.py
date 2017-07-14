@@ -20,7 +20,6 @@ class window(QtGui.QMainWindow):
         self.ui.initTable()
         self.ui.initOrderTable()
         self.ui.initGiftTable()
-        
         self.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint)
         self.setFixedSize(self.width(), self.height())
         self.tableNumber = 0
@@ -28,9 +27,6 @@ class window(QtGui.QMainWindow):
         self.tableorder = 0
         self.initButton()
         self.initDriver()
-        # self.AUTOLogin = False
-        # self.ui.TaobaoUserName.setText(u'tb22765774:毛毛') 
-        # self.ui.ShikeeUserName.setText('18814726078')
         self.ui.InvalidOrders.setText('')
         self.ui.AverageTime.setText('')
         self.ui.Total.setText('')
@@ -38,14 +34,8 @@ class window(QtGui.QMainWindow):
         self.ui.AbandonNumber.setText('')
         self.ui.Number.setText('')
         self.ui.ViolationsNumber.setText('')
-        
-        # now_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        # self.ui.dateTimeEdit.setDateTime(QtCore.QDateTime.fromString(now_time, 'yyyy-MM-dd hh:mm:ss'))
-        # print str(self.ui.dateTimeEdit.dateTime())
-        
         self.ui.Browser.insertItem(0, 'chrome')
         self.ui.Browser.insertItem(1, 'firefox')
-        # self.ui.Browser.insertItem(2, 'ie')
         self.initAccount()
     
     def closeEvent(self, event):
@@ -133,19 +123,11 @@ class window(QtGui.QMainWindow):
     def autoLogin(self):
         browser = int(str(self.ui.BrowserNumber.currentText()))
         driver = self.driver[browser - 1]
-        # tname = unicode(self.ui.TaobaoUserName.text().toUtf8(), 'utf-8', 'ignore')
-        # sname = unicode(self.ui.ShikeeUserName.text().toUtf8(), 'utf-8', 'ignore')
-        # obj = {'su':sname, 'tu':tname}
-        # account = user.getAccount(obj)
-        
         self.Account = self.getAccount()
         if user.autoLogin(driver, self.Account):
             QtGui.QMessageBox.information(self, u'登录提示', u'登录成功')
         else:
             QtGui.QMessageBox.critical(self, u'登录提示', u'登录失败 ')
-        # self.AUTOLogin = True
-        
-
 
     def addActive(self):
         a = self.ui.ActivityNumber.text()
@@ -217,9 +199,6 @@ class window(QtGui.QMainWindow):
         violationsNumber = self.ui.ViolationsNumber.text()  # 违规次数
         days = self.ui.Days.text()
         bilv = self.ui.Days_2.text()
-        # account = self.ui.ShikeeUserName.text()
-        # name = self.ui.TaobaoUserName.text()
-        # if self.AUTOLogin:
         res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
         
         if sktb.executeActivity(driver, self.try_list, self.taskList, res):
@@ -230,9 +209,6 @@ class window(QtGui.QMainWindow):
     def executeRemarks(self):
         browser = int(str(self.ui.BrowserNumber.currentText()))
         driver = self.driver[browser - 1]
-        # account = self.ui.ShikeeUserName.text()
-        # name = self.ui.TaobaoUserName.text()
-        # if self.AUTOLogin:
         color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
         
         if review.addRemarks(driver, self.try_list, color):
@@ -262,9 +238,6 @@ class window(QtGui.QMainWindow):
     def artificial(self):
         browser = int(str(self.ui.BrowserNumber.currentText()))
         driver = self.driver[browser - 1]
-        # account = self.ui.ShikeeUserName.text()
-        # name = self.ui.TaobaoUserName.text()
-        # if self.AUTOLogin:
         color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
         
         if review.artificial(driver, self.orders, color):

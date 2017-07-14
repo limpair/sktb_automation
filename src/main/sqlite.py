@@ -70,7 +70,6 @@ class DataBaseControl(object):
             result['account'] = row[5]
             result['mktime'] = time.mktime(time.strptime(row[3], '%Y-%m-%d %H:%M:%S'))
             res.append(result)
-        # self.conn.commit()
         return res
     def list(self, account):
         if(self.conn == None):
@@ -87,7 +86,6 @@ class DataBaseControl(object):
             res['account'] = row[5]
             res['mktime'] = time.mktime(time.strptime(row[3], '%Y-%m-%d %H:%M:%S'))
             result.append(res)
-        # self.conn.commit()
         return result
     def saveRemark(self, obj, TYPE):
         if(self.conn == None):

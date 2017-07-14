@@ -22,7 +22,6 @@ def getOrderNumber(driver, trs, account):
         tbname = account['tbuser'].replace(u':', u'：')
         outx = open(tbname + u'/1.每次获取的订单数据.txt', 'a')
         outx.write('开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
-        # print u'开始获取订单:', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         a = time.time()
         result = []
         count = 0
@@ -70,9 +69,6 @@ def getOrderNumber(driver, trs, account):
             for j in i['order']:
                 outx.write(j.encode('utf-8') + '\n')
         debug.message('获取订单所用时间：' + str(b - a), os.path.basename(__file__))
-        # print u'结束获取订单:', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        # print u'获取所有任务需要审核的订单的时间为：', b - a
-        # print u'一共：', count
     except Exception, e:
         info = sys.exc_info()
         debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
@@ -112,9 +108,6 @@ def addRemarks(driver, trs, color):
     tbname = color['tbuser'].replace(u':', u'：')
     if not os.path.exists(tbname):
         os.makedirs(tbname)
-        # fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
-        # fp.write('1')
-        # fp.close()
     
     process = open(tbname + u'/2.程序错误调过的订单统计.txt', 'a')
     out = open(tbname + u'/3.存在退款之类订单统计.txt', 'a')
@@ -158,7 +151,6 @@ def addRemarks(driver, trs, color):
                 except Exception, e:
                     info = sys.exc_info()
                     debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
-                    # print u'打开淘宝搜索订单存在问题，尝试第二次打开'
                     time.sleep(2)
                     driver.get(tbhost)
                 time.sleep(2)
@@ -265,7 +257,6 @@ def addRemarks(driver, trs, color):
                                 continue
                         if u'交易关闭' in status:
                             if verify(driver, skhost + tr['passlink'], i, False):
-                                # print u'订单错误'
                                 debug.message('交易关闭的订单：' + i.encode('utf-8'), os.path.basename(__file__))
                             out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '交易关闭单号:' + i + '\n')
                         out2.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '订单号：' + i.encode('utf-8') + '\n')
@@ -348,9 +339,6 @@ def correct(driver, color, FLAG):
         tbname = color['tbuser'].replace(u':', u'：')
         if not os.path.exists(tbname):
             os.makedirs(tbname)
-            # fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
-            # fp.write('1')
-            # fp.close()
         out = open(tbname + u'/8.纠正备注统计.txt', 'a')
         out.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
         count = {}
@@ -459,9 +447,6 @@ def artificial(driver, orders, color):
         tbname = color['tbuser'].replace(u':', u'：')
         if not os.path.exists(tbname):
             os.makedirs(tbname)
-            # fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
-            # fp.write('1')
-            # fp.close()
         
         out = open(tbname + u'/9.手动添加订单备注统计.txt', 'a')
         out.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')    

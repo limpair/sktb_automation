@@ -19,13 +19,10 @@ def toInt(s):
 def is_element_exist(driver, css):
     s = driver.find_elements_by_css_selector(css_selector=css)
     if len(s) == 0:
-        # print "Not find the element: %s" % css
         return False
     elif len(s) == 1:
         return True
-        # print "Find the element: %s" % css
     else:
-        # print "Find %s element: %s" % (len(s), css)
         return False
 
 def exists(Path):
@@ -226,9 +223,6 @@ def executeActivity(driver, try_list, tasks, tri):
             tbname = tri['tbuser'].replace(u':', u'：')
             if not os.path.exists(tbname):
                 os.makedirs(tbname)
-                # fp = open(tri['account'] + '/' + tri['tbuser'].replace(u':', u'：'), 'w')
-                # fp.write('1')
-                # fp.close()
             out = open(tbname + u'/10.审批会员统计.txt', 'a')
             a = time.time()
             for tr in try_list:
@@ -326,6 +320,5 @@ def executeActivity(driver, try_list, tasks, tri):
         b = time.time()
         out.write('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(round(b - a, 2)) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
         debug.message('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(round(b - a, 2)) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), os.path.basename(__file__))
-        # print u'活动' + name + u'通过 ' + str(count) + u' 人，用时' + str(round(b - a, 2)) + u'，' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     conn.close()
     return result
