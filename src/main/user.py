@@ -18,6 +18,21 @@ def getByName(obj):
     cont.close()
     return res
 
+def listAccount():
+    cont = sqlite.DataBaseControl()
+    cursor = cont.conn.execute('select * from account')
+    res = []
+    for row in cursor:
+        result = {}
+        result['id'] = row[0]
+        result['tbusername'] = row[1]
+        result['tbpassword'] = row[2]
+        result['skusername'] = row[3]
+        result['skpassword'] = row[4]
+        res.append(result)
+        # self.conn.commit()
+    cont.close()
+    return res
 def getAccount(obj):
     cont = sqlite.DataBaseControl()
     cursor = cont.conn.execute('select * from account where tbusername="' + obj['tu'].encode('utf-8') + '" or skusername="' + obj['su'].encode('utf-8') + '"')

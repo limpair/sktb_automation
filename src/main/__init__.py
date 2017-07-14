@@ -28,9 +28,9 @@ class window(QtGui.QMainWindow):
         self.tableorder = 0
         self.initButton()
         self.initDriver()
-        self.AUTOLogin = False
-        self.ui.TaobaoUserName.setText(u'tb22765774:毛毛') 
-        self.ui.ShikeeUserName.setText('18814726078')
+        # self.AUTOLogin = False
+        # self.ui.TaobaoUserName.setText(u'tb22765774:毛毛') 
+        # self.ui.ShikeeUserName.setText('18814726078')
         self.ui.InvalidOrders.setText('')
         self.ui.AverageTime.setText('')
         self.ui.Total.setText('')
@@ -45,8 +45,8 @@ class window(QtGui.QMainWindow):
         
         self.ui.Browser.insertItem(0, 'chrome')
         self.ui.Browser.insertItem(1, 'firefox')
-        self.ui.Browser.insertItem(2, 'ie')
-    
+        # self.ui.Browser.insertItem(2, 'ie')
+        self.initAccount()
     
     def closeEvent(self, event):
         event.accept()
@@ -67,6 +67,23 @@ class window(QtGui.QMainWindow):
         self.ui.Execute0.clicked.connect(self.artificial)
         self.ui.openBrowser.clicked.connect(self.openBrowser)
         self.ui.closeBrowser.clicked.connect(self.closeBrowser)
+    
+    
+    def account_cmp(self, a, b):
+        return cmp(a['tbusername'], b['tbusername']) * -1
+    def initAccount(self):
+        temp = user.listAccount()
+        self.account = sorted(temp, cmp=self.account_cmp)
+        for account in self.account:
+            self.ui.Account.addItem(account['tbusername'])
+    
+    def getAccount(self):
+        name = unicode(self.ui.Account.currentText().toUtf8(), 'utf-8', 'ignore')
+        for account in self.account:
+            if name == account['tbusername']:
+                user = account
+                break
+        return user
     
     def initDriver(self):
         self.orders = []
@@ -116,19 +133,18 @@ class window(QtGui.QMainWindow):
     def autoLogin(self):
         browser = int(str(self.ui.BrowserNumber.currentText()))
         driver = self.driver[browser - 1]
-        tname = unicode(self.ui.TaobaoUserName.text().toUtf8(), 'utf-8', 'ignore')
-        sname = unicode(self.ui.ShikeeUserName.text().toUtf8(), 'utf-8', 'ignore')
-        obj = {'su':sname, 'tu':tname}
-        account = user.getAccount(obj)
-        if len(account) == 1:
-            self.Account = account[0]
-            if user.autoLogin(driver, self.Account):
-                QtGui.QMessageBox.information(self, u'登录提示', u'登录成功')
-            else:
-                QtGui.QMessageBox.critical(self, u'登录提示', u'登录失败 ')
-            self.AUTOLogin = True
+        # tname = unicode(self.ui.TaobaoUserName.text().toUtf8(), 'utf-8', 'ignore')
+        # sname = unicode(self.ui.ShikeeUserName.text().toUtf8(), 'utf-8', 'ignore')
+        # obj = {'su':sname, 'tu':tname}
+        # account = user.getAccount(obj)
+        
+        self.Account = self.getAccount()
+        if user.autoLogin(driver, self.Account):
+            QtGui.QMessageBox.information(self, u'登录提示', u'登录成功')
         else:
-            debug.message('没找到账号密码', os.path.basename(__file__))
+            QtGui.QMessageBox.critical(self, u'登录提示', u'登录失败 ')
+        # self.AUTOLogin = True
+        
 
 
     def addActive(self):
@@ -201,12 +217,10 @@ class window(QtGui.QMainWindow):
         violationsNumber = self.ui.ViolationsNumber.text()  # 违规次数
         days = self.ui.Days.text()
         bilv = self.ui.Days_2.text()
-        account = self.ui.ShikeeUserName.text()
-        name = self.ui.TaobaoUserName.text()
-        if self.AUTOLogin:
-            res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
-        else:
-            res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':unicode(account.toUtf8(), 'utf-8', 'ignore'), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
+        # account = self.ui.ShikeeUserName.text()
+        # name = self.ui.TaobaoUserName.text()
+        # if self.AUTOLogin:
+        res = {'bilv':str(bilv), 'invalidOrders': str(invalidOrders), 'averageTime': str(averageTime), 'total': str(total), 'trialsNumber': str(trialsNumber), 'abandonNumber': str(abandonNumber), 'number': str(number), 'violationsNumber': str(violationsNumber), 'days': str(days), 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
         
         if sktb.executeActivity(driver, self.try_list, self.taskList, res):
             QtGui.QMessageBox.information(self, u'通过结果提示', u'通过完成')
@@ -216,12 +230,11 @@ class window(QtGui.QMainWindow):
     def executeRemarks(self):
         browser = int(str(self.ui.BrowserNumber.currentText()))
         driver = self.driver[browser - 1]
-        account = self.ui.ShikeeUserName.text()
-        name = self.ui.TaobaoUserName.text()
-        if self.AUTOLogin:
-            color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
-        else:
-            color = {'list':self.giftList, 'account':unicode(account.toUtf8(), 'utf-8', 'ignore'), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
+        # account = self.ui.ShikeeUserName.text()
+        # name = self.ui.TaobaoUserName.text()
+        # if self.AUTOLogin:
+        color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
+        
         if review.addRemarks(driver, self.try_list, color):
             QtGui.QMessageBox.information(self, u'备注结果提示', u'备注完成')
         else:
@@ -249,12 +262,11 @@ class window(QtGui.QMainWindow):
     def artificial(self):
         browser = int(str(self.ui.BrowserNumber.currentText()))
         driver = self.driver[browser - 1]
-        account = self.ui.ShikeeUserName.text()
-        name = self.ui.TaobaoUserName.text()
-        if self.AUTOLogin:
-            color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
-        else:
-            color = {'list':self.giftList, 'account':unicode(account.toUtf8(), 'utf-8', 'ignore'), 'tbuser':unicode(name.toUtf8(), 'utf-8', 'ignore')}
+        # account = self.ui.ShikeeUserName.text()
+        # name = self.ui.TaobaoUserName.text()
+        # if self.AUTOLogin:
+        color = {'list':self.giftList, 'account':self.Account['skusername'], 'tbuser':self.Account['tbusername']}
+        
         if review.artificial(driver, self.orders, color):
             QtGui.QMessageBox.information(self, u'手动添加订单备注提示', u'备注完成')
         else:

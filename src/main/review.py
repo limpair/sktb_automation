@@ -19,7 +19,8 @@ style = 'height:17px;width:1px;padding-left:17px;overflow:hidden;vertical-align:
 def getOrderNumber(driver, trs, account):
     try:
         cont = sqlite.DataBaseControl()
-        outx = open(account + u'/1.每次获取的订单数据.txt', 'a')
+        tbname = account['tbuser'].replace(u':', u'：')
+        outx = open(tbname + u'/1.每次获取的订单数据.txt', 'a')
         outx.write('开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
         # print u'开始获取订单:', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         a = time.time()
@@ -51,8 +52,8 @@ def getOrderNumber(driver, trs, account):
                         count = count + 1
                         order_num = ''.join(soup[j].find_all(class_='trade_number')[0].text.split())
                         order.append(order_num)
-                        obj = {'title':tr['title'], 'link':link.encode('utf-8'), 'order_num':order_num.encode('utf-8'), 'time':datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'account':account.encode('utf-8')}
-                        dborder = cont.getOrder(account.encode('utf-8'), order_num.encode('utf-8'))
+                        obj = {'title':tr['title'], 'link':link.encode('utf-8'), 'order_num':order_num.encode('utf-8'), 'time':datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'account':account['account'].encode('utf-8')}
+                        dborder = cont.getOrder(account['account'].encode('utf-8'), order_num.encode('utf-8'))
                         if len(dborder) == 1:
                             obj['id'] = dborder[0]['id']
                             cont.saveOrder(obj, 1)
@@ -124,7 +125,7 @@ def addRemarks(driver, trs, color):
     try:
         text = '开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n'
         out4.write('开始获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
-        trs = getOrderNumber(driver, trs, tbname)
+        trs = getOrderNumber(driver, trs, color)
         text = text + '结束获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n'
         out4.write('结束获取订单:' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
         out4.close()
@@ -354,10 +355,15 @@ def correct(driver, color, FLAG):
         out.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')
         count = {}
         for order in orders:
-            driver.find_element_by_id('bizOrderId').clear()
-            driver.find_element_by_id('bizOrderId').send_keys(order['order'])
-            time.sleep(1.5)
-            driver.find_element_by_css_selector('button.button-mod__button___2JAs3.button-mod__primary___3N5o1').click()
+            try:
+                driver.find_element_by_id('bizOrderId').clear()
+                driver.find_element_by_id('bizOrderId').send_keys(order['order'])
+                time.sleep(1.5)
+                driver.find_element_by_css_selector('button.button-mod__button___2JAs3.button-mod__primary___3N5o1').click()
+            except Exception, e:
+                    info = sys.exc_info()
+                    debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
+                    continue
             time.sleep(1.5)
             soup = BeautifulSoup(driver.page_source)
             page = soup.find_all(attrs={"data-reactid": ".0.5"})[0]
@@ -387,15 +393,15 @@ def correct(driver, color, FLAG):
                             driver.find_element_by_id('memo').clear()
                             driver.find_element_by_id('memo').send_keys(u'送' + cc)
                             break
-                    time.sleep(0.5)
+                    time.sleep(0.8)
                 try:
                     driver.find_element_by_xpath('//*[@id="form1"]/table[2]/tbody/tr[3]/td/div/button').click()
+                    driver.switch_to_alert().accept()
                 except Exception, e:
                     info = sys.exc_info()
                     debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
                     continue
                 time.sleep(1)
-                driver.switch_to_alert().accept()
                 if u'买家已付款' in status:
                     if correct_verify(driver, skhost + order['link'], order['order'], True):
                         count[title] = count[title] + 1
@@ -453,9 +459,9 @@ def artificial(driver, orders, color):
         tbname = color['tbuser'].replace(u':', u'：')
         if not os.path.exists(tbname):
             os.makedirs(tbname)
-            #fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
-            #fp.write('1')
-            #fp.close()
+            # fp = open(color['account'] + '/' + color['tbuser'].replace(u':', u'：'), 'w')
+            # fp.write('1')
+            # fp.close()
         
         out = open(tbname + u'/9.手动添加订单备注统计.txt', 'a')
         out.write('--------------' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '--------------\n')    
