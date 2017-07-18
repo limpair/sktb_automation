@@ -96,7 +96,8 @@ def saveActiveList(driver):
                 t = soup[i].find_all('td')
                 # 0,4,6
                 title = t[0].find_all('img')[0].attrs['art'].encode('utf-8')
-    
+                if u'已经屏蔽' in t[2].text:
+                    continue
                 ttt = time.mktime(time.strptime(
                     t[0].find_all('p')[0].text, '%Y-%m-%d %H:%M:%S'))
                 num = int(re.sub("\D", "", t[4].text))
@@ -271,10 +272,12 @@ def executeActivity(driver, try_list, tasks, tri):
                                     SP['InvalidNumber'] = int(temp[len(temp) - 1])
                                 elif u'试客总参与试用次数' == ss:
                                     SP['TrySum'] = int(temp[len(temp) - 1])
-                            
-                            users.append({'id': int(rows), 'sys': SP, 'name': t[1].find_all(
-                                'span')[0].attrs['title'], 'time': t[2].text, 'skname':t[1].find_all('img')[0].attrs['art']})
-    
+                            try:
+                                users.append({'id': int(rows), 'sys': SP, 'name': t[1].find_all('span')[0].attrs['title'], 'time': t[2].text, 'skname':t[1].find_all('img')[0].attrs['art']})
+                            except Exception, e:
+                                info = sys.exc_info()
+                                debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
+                                continue
                     for user in users:
                         if tr['num'] <= 0 or count >= num:
                             break
