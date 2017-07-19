@@ -258,7 +258,16 @@ def passUser(driver, link, name):
         return False
     return True
 
-
+def cmp_sort(a, b):
+    x1 = a['sys']['OrderNumber']
+    y1 = a['sys']['TryNumber']
+    x2 = b['sys']['OrderNumber']
+    y2 = b['sys']['TryNumber']
+    if y1 == 0 or y2 == 0:
+        return -1
+    x = int((x1 * 1.0) / (y1 * 1.0) * 10000)
+    y = int((x2 * 1.0) / (y2 * 1.0) * 10000)
+    return y - x
 def judgeNum(driver):
     driver.implicitly_wait(10)
     page = BeautifulSoup(driver.page_source)
@@ -344,6 +353,9 @@ def executeActivity(driver, try_list, tasks, tri):
                                 info = sys.exc_info()
                                 debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
                                 continue
+                    bilv = ''.join(tri['bilv'].split())
+                    if bilv != '':
+                        users = sorted(users, cmp=cmp_sort)
                     for user in users:
                         if tr['num'] <= 0 or count >= num:
                             break
