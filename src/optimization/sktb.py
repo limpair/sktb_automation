@@ -21,7 +21,7 @@ def toInt(s):
 
 
 def is_element_exist(driver, css):
-    #driver.implicitly_wait(10)
+    # driver.implicitly_wait(10)
     s = driver.find_elements_by_css_selector(css_selector=css)
     if len(s) == 0:
         # print "Not find the element: %s" % css
@@ -339,13 +339,10 @@ def executeActivity(driver, try_list, tasks, tri):
                                 elif u'试客总参与试用次数' == ss:
                                     SP['TrySum'] = int(temp[len(temp) - 1])
                             try:
-                                users.append({'id': int(rows), 'sys': SP, 'name': t[1].find_all('span')[
-                                             0].attrs['title'], 'time': t[2].text, 'skname': t[1].find_all('img')[0].attrs['art']})
+                                users.append({'id': int(rows), 'sys': SP, 'name': t[1].find_all('span')[0].attrs['title'], 'time': t[2].text, 'skname':t[1].find_all('img')[0].attrs['art']})
                             except Exception, e:
-                                #result = False
                                 info = sys.exc_info()
-                                debug.log(
-                                    str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
+                                debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
                                 continue
                     for user in users:
                         if tr['num'] <= 0 or count >= num:
