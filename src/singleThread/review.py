@@ -268,7 +268,7 @@ def addRemarks(driver, trs, color):
                             if verify(driver, skhost + tr['passlink'], i, False):
                                 # print u'订单错误'
                                 debug.message('交易关闭的订单：' + i.encode('utf-8'), os.path.basename(__file__))
-                            out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '交易关闭单号:' + i + '\n')
+                            out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '交易关闭单号:' + i.encode('utf-8') + '\n')
                         out2.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '订单号：' + i.encode('utf-8') + '\n')
                 else:
                     if verify(driver, skhost + tr['passlink'], i, False):

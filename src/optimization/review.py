@@ -97,7 +97,7 @@ def verify(driver, url, order, flag):
         load_list = WebDriverWait(driver, 10, 0.5).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="load_list"]/table/tbody/tr[2]/td[5]/a[2]')))
         load_list.click()
-        time.sleep(0.5)
+        #time.sleep(0.5)
         if flag:
             veri = WebDriverWait(driver, 10, 0.5).until(
             EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/form/table/tbody/tr[2]/td[3]/input[2]')))
@@ -257,7 +257,7 @@ def addRemarks(driver, trs, color):
                             try:
                                 flag11 = WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'flag1')))
                                 flag11.click()
-                                time.sleep(0.5)
+                                #time.sleep(0.5)
                                 vflag11 = WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located((By.XPATH, '//*[@id="form1"]/table[2]/tbody/tr[3]/td/div/button')))
                                 vflag11.click()
                                 time.sleep(0.5)
@@ -271,7 +271,7 @@ def addRemarks(driver, trs, color):
                             if verify(driver, skhost + tr['passlink'], i, False):
                                 # print u'订单错误'
                                 debug.message('交易关闭的订单：' + i.encode('utf-8'), os.path.basename(__file__))
-                            out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '交易关闭单号:' + i + '\n')
+                            out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '交易关闭单号:' + i.encode('utf-8') + '\n')
                         out2.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '订单号：' + i.encode('utf-8') + '\n')
                 else:
                     if verify(driver, skhost + tr['passlink'], i, False):
@@ -334,7 +334,7 @@ def correct_verify(driver, url, order, flag):
         else:
             vflag1 = WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/form/table/tbody/tr[2]/td[3]/input[3]')))
             vflag1.click()
-        time.sleep(0.5)
+        #time.sleep(0.5)
         sub_trade_number = WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'sub_trade_number')))
         sub_trade_number.click()
         time.sleep(1)
@@ -441,11 +441,11 @@ def artificial_verify(driver, order, FLAG):
         search_type = WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located((By.NAME, 'search_type')))
         select = Select(search_type)
         select.select_by_value('order_id')
-        time.sleep(0.2)
+        #time.sleep(0.2)
         key = WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'key')))
         key.clear()
         key.send_keys(order)
-        time.sleep(0.2)
+        #time.sleep(0.2)
         go_search = WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'go_search')))
         go_search.click()
         time.sleep(0.5)
@@ -457,14 +457,14 @@ def artificial_verify(driver, order, FLAG):
         title = td[0].text
         J_checkno = WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'J_checkno')))
         J_checkno.click()
-        time.sleep(0.5)
+        #time.sleep(0.5)
         if FLAG:
             vpass = WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/form/table/tbody/tr[2]/td[3]/input[2]')))
             vpass.click()
         else:
             vpass1 = WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/form/table/tbody/tr[2]/td[3]/input[3]')))           
             vpass1.click()            
-        time.sleep(0.5)
+        #time.sleep(0.5)
         asub_trade_number = WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'asub_trade_number')))
         asub_trade_number.click()
         time.sleep(1)
@@ -495,7 +495,7 @@ def artificial(driver, orders, color):
             bizOrderId = WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'bizOrderId')))
             bizOrderId.clear()
             bizOrderId.send_keys(order)
-            time.sleep(0.5)
+            #time.sleep(0.5)
             button = WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located((By.XPATH, '//*[@id="sold_container"]/div/div[1]/div[1]/form/div[7]/div/div/button[1]')))
             button.click()
             time.sleep(1.5)
