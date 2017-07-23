@@ -106,6 +106,7 @@ def verify(driver, url, order, flag):
             veri1 = WebDriverWait(driver, 10, 0.5).until(
             EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/form/table/tbody/tr[2]/td[3]/input[3]')))
             veri1.click()
+        time.sleep(0.5)
         sub_trade_number = WebDriverWait(driver, 10, 0.5).until(
             EC.presence_of_element_located((By.ID, 'sub_trade_number')))
         sub_trade_number.click()
@@ -214,6 +215,8 @@ def addRemarks(driver, trs, color):
                     else:
                         href = page.find_all(id='flag')[0].get('href')
                         driver.get(tb + href)
+                        if u'卖家已发货' in status:
+                            out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '旁边没字且已发货订单号:' + i.encode('utf-8') + '\n')
                         if u'买家已付款' in status:                        
                             obj = {'taskId':title, 'title':tr['title'], 'link':tr['passlink'], 'order_num':i, 'time':datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'account':color['account'], 'tbuser':color['tbuser']}   
                             flag1 = WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'flag1')))

@@ -213,6 +213,8 @@ def addRemarks(driver, trs, color):
                         href = page.find_all(id='flag')[0].get('href')
                         driver.get(tb + href)
                         time.sleep(2)
+                        if u'卖家已发货' in status:
+                            out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '旁边没字且已发货订单号:' + i.encode('utf-8') + '\n')
                         if u'买家已付款' in status:                        
                             obj = {'taskId':title, 'title':tr['title'], 'link':tr['passlink'], 'order_num':i, 'time':datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'account':color['account'], 'tbuser':color['tbuser']}   
                             driver.find_element_by_id('flag1').click()
