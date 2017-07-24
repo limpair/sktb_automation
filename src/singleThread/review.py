@@ -215,7 +215,7 @@ def addRemarks(driver, trs, color):
                         time.sleep(2)
                         if u'卖家已发货' in status:
                             out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '旁边没字且已发货订单号:' + i.encode('utf-8') + '\n')
-                        if u'买家已付款' in status:                        
+                        elif u'买家已付款' in status:                        
                             obj = {'taskId':title, 'title':tr['title'], 'link':tr['passlink'], 'order_num':i, 'time':datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'account':color['account'], 'tbuser':color['tbuser']}   
                             driver.find_element_by_id('flag1').click()
                             time.sleep(1)
@@ -254,7 +254,7 @@ def addRemarks(driver, trs, color):
                                 out1.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '订单号：' + i.encode('utf-8') + '\n')
                                 if not FLAG:
                                     out1.write('订单号：' + i.encode('utf-8') + '审核过了但没备注\n')
-                        if u'等待买家付款' in status:
+                        elif u'等待买家付款' in status:
                             try:
                                 driver.find_element_by_id('flag1').click()
                                 time.sleep(1)
@@ -266,11 +266,13 @@ def addRemarks(driver, trs, color):
                                 info = sys.exc_info()
                                 debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
                                 continue
-                        if u'交易关闭' in status:
+                        elif u'交易关闭' in status:
                             if verify(driver, skhost + tr['passlink'], i, False):
                                 # print u'订单错误'
                                 debug.message('交易关闭的订单：' + i.encode('utf-8'), os.path.basename(__file__))
                             out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '交易关闭单号:' + i.encode('utf-8') + '\n')
+                        else:
+                            out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + status.encode('utf-8') + '订单号:' + i.encode('utf-8') + '\n')
                         out2.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '订单号：' + i.encode('utf-8') + '\n')
                 else:
                     if verify(driver, skhost + tr['passlink'], i, False):

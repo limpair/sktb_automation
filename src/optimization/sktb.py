@@ -123,8 +123,7 @@ def saveActiveList(driver):
         for i in range(0, n):
             driver.get(listUrl + str(i * 10) + search)
             time.sleep(2)
-            soup = BeautifulSoup(driver.page_source).find_all(
-                id='load_list')[0].find_all('tr')
+            soup = BeautifulSoup(driver.page_source).find_all(id='load_list')[0].find_all('tr')
             k = len(soup)
             for i in range(1, k - 1):
                 t = soup[i].find_all('td')
@@ -136,8 +135,7 @@ def saveActiveList(driver):
                     t[0].find_all('p')[0].text, '%Y-%m-%d %H:%M:%S'))
                 num = int(re.sub("\D", "", t[4].text))
                 link = t[6].find_all('a')[0].attrs['href'].split('?')[0]
-                li.append({'title': title, 'num': num,
-                           'link': link, 'time': ttt})
+                li.append({'title': title, 'num': num, 'link': link, 'time': ttt})
     except Exception, e:
         result = False
         info = sys.exc_info()
