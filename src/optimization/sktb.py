@@ -357,11 +357,12 @@ def executeActivity(driver, try_list, tasks, tri):
                     if bilv != '':
                         users = sorted(users, cmp=cmp_sort)
                     for user in users:
+                        username = ''.join(user['name'].split())
+                        user['name'] = username
                         if tr['num'] <= 0 or count >= num:
                             break
                         try:
-                            dbUsers = conn.getByName(
-                                user['name'], tri['account'])
+                            dbUsers = conn.getByName(username, tri['account'])
                         except Exception, e:
                             info = sys.exc_info()
                             debug.log(
@@ -372,23 +373,23 @@ def executeActivity(driver, try_list, tasks, tri):
                         if judgeSysData(tri, user['sys']) == False:
                             continue
                         if len(dbUsers) > 0:
-                            if dbUsers[0]['name'] == user['name']:
-                                nowtime = round(
-                                    (time.time() - dbUsers[0]['mktime']) / 86400.0, 4)
+                            dbname = ''.join(dbUsers[0]['name'].split())
+                            if dbname == username:
+                                nowtime = round((time.time() - dbUsers[0]['mktime']) / 86400.0, 4)
                                 if nowtime >= 3.0:
-                                    if judgeTaobao(driver, user['name'], ''.join(tri['days'].split())):
+                                    if judgeTaobao(driver, username, ''.join(tri['days'].split())):
                                         driver.get(host + tr['link'])
                                         time.sleep(0.2)
                                         if judgeNum(driver):
                                             break
                                         if passUser(driver, host + tr['link'], user['skname']):
+                                            user['id'] = dbUsers[0]['id']
                                             tr['num'] = tr['num'] - 1
                                             count = count + 1
-                                            user['passtime'] = datetime.datetime.now(
-                                            ).strftime('%Y-%m-%d %H:%M:%S')
+                                            user['passtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                                             conn.save(user)
                                     continue
-                        elif judgeTaobao(driver, user['name'], ''.join(tri['days'].split())):
+                        elif judgeTaobao(driver, username, ''.join(tri['days'].split())):
                             driver.get(host + tr['link'])
                             time.sleep(0.2)
                             if judgeNum(driver):
@@ -396,8 +397,7 @@ def executeActivity(driver, try_list, tasks, tri):
                             if passUser(driver, host + tr['link'], user['skname']):
                                 tr['num'] = tr['num'] - 1
                                 count = count + 1
-                                user['passtime'] = datetime.datetime.now(
-                                ).strftime('%Y-%m-%d %H:%M:%S')
+                                user['passtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                                 conn.save(user)
         except Exception, e:
             result = False

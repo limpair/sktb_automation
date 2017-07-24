@@ -23,7 +23,7 @@ class DataBaseControl(object):
     def update(self, obj):
         if(self.conn == None):
             self.open()
-        self.conn.execute('update osm set time = "' + obj['time'] + '" where id = ' + str(obj['id']))
+        self.conn.execute('update osm set time = "' + obj['passtime'] + '" where id = ' + str(obj['id']))
         self.conn.commit()
     
     def delete(self, obj):
@@ -58,7 +58,7 @@ class DataBaseControl(object):
     def getByName(self, name, account):
         if(self.conn == None):
             self.open()
-        cursor = self.conn.execute('select * from osm where name = "' + name + '" and account = "' + account + '"')
+        cursor = self.conn.execute('select * from osm where name like "%' + name + '%" and account = "' + account + '" order by time desc')
         res = []
         for row in cursor:
             result = {}
@@ -70,7 +70,6 @@ class DataBaseControl(object):
             result['account'] = row[5]
             result['mktime'] = time.mktime(time.strptime(row[3], '%Y-%m-%d %H:%M:%S'))
             res.append(result)
-        # self.conn.commit()
         return res
     def list(self, account):
         if(self.conn == None):
@@ -87,7 +86,6 @@ class DataBaseControl(object):
             res['account'] = row[5]
             res['mktime'] = time.mktime(time.strptime(row[3], '%Y-%m-%d %H:%M:%S'))
             result.append(res)
-        # self.conn.commit()
         return result
     def saveRemark(self, obj, TYPE):
         if(self.conn == None):
@@ -143,5 +141,3 @@ class DataBaseControl(object):
         elif TYPE == 1:
             self.conn.execute('UPDATE orders SET time="' + obj['time'] + '" WHERE id=' + str(obj['id']))
         self.conn.commit()
-if __name__ == '__main__':
-    DataBaseControl()
