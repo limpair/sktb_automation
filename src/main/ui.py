@@ -221,6 +221,27 @@ class Ui_mainWindow(object):
         self.Account.setGeometry(QtCore.QRect(370, 45, 180, 24))
         self.Account.setObjectName(_fromUtf8("Account"))
         
+        self.approvedTimer = QtGui.QPushButton(self.centralwidget)
+        self.approvedTimer.setGeometry(QtCore.QRect(560, 120, 80, 24))
+        self.approvedTimer.setObjectName(_fromUtf8("approvedTimer"))
+        self.remarksTimer = QtGui.QPushButton(self.centralwidget)
+        self.remarksTimer.setGeometry(QtCore.QRect(560, 150, 80, 24))
+        self.remarksTimer.setObjectName(_fromUtf8("remarksTimer"))
+        self.taskTimer = QtGui.QPushButton(self.centralwidget)
+        self.taskTimer.setGeometry(QtCore.QRect(560, 180, 80, 24))
+        self.taskTimer.setObjectName(_fromUtf8("taskTimer"))
+        
+        self.second_1 = QtGui.QLineEdit(self.centralwidget)
+        self.second_1.setGeometry(QtCore.QRect(515, 120, 40, 24))
+        self.second_1.setObjectName(_fromUtf8("second_1"))
+        self.second_2 = QtGui.QLineEdit(self.centralwidget)
+        self.second_2.setGeometry(QtCore.QRect(515, 150, 40, 24))
+        self.second_2.setObjectName(_fromUtf8("second_2"))
+        self.second_3 = QtGui.QLineEdit(self.centralwidget)
+        self.second_3.setGeometry(QtCore.QRect(515, 180, 40, 24))
+        self.second_3.setObjectName(_fromUtf8("second_3"))
+        
+        
         self.violationLabel.raise_()
         self.placeAnOrderLabel.raise_()
         self.abandonLabel.raise_()
@@ -245,6 +266,13 @@ class Ui_mainWindow(object):
         self.Days.raise_()
         self.DayLabel_2.raise_()
         self.Days_2.raise_()
+        
+        self.approvedTimer.raise_()
+        self.remarksTimer.raise_()
+        self.taskTimer.raise_()
+        self.second_1.raise_()
+        self.second_2.raise_()
+        self.second_3.raise_()
         mainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(mainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -265,7 +293,7 @@ class Ui_mainWindow(object):
         self.timeLabel.setText(_translate("mainWindow", "近30内填写订单号的平均时长", None))
         self.shikeeUsernameLabel.setText(_translate("mainWindow", "账号", None))
 
-        self.autoLogin.setText(_translate("mainWindow", "自动登陆登陆", None))
+        self.autoLogin.setText(_translate("mainWindow", "自动登陆", None))
 
         self.GetShikeeData.setText(_translate("mainWindow", "获取试客数据", None))
         self.AddActivity.setText(_translate("mainWindow", "添加任务", None))
@@ -290,7 +318,9 @@ class Ui_mainWindow(object):
         
         self.openBrowser.setText(_translate("mainWindow", "启动浏览器", None))
         self.closeBrowser.setText(_translate("mainWindow", "关闭浏览器", None))
-        
+        self.approvedTimer.setText(_translate("mainWindow", "定时审批会员", None))
+        self.remarksTimer.setText(_translate("mainWindow", "定时备注审核", None))
+        self.taskTimer.setText(_translate("mainWindow", "定时任务", None))
         self.partData.click()
         
     def initTable(self):
