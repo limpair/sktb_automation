@@ -21,11 +21,15 @@ class window(QtGui.QMainWindow):
         self.ui.initTable()
         self.ui.initOrderTable()
         self.ui.initGiftTable()
+        self.ui.initTimerTable()
         self.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint)
         self.setFixedSize(self.width(), self.height())
         self.tableNumber = 0
         self.tableNumber1 = 0
         self.tableorder = 0
+        
+        self.timer_id = 0
+        
         self.initButton()
         self.initDriver()
         self.ui.InvalidOrders.setText('')
@@ -39,6 +43,8 @@ class window(QtGui.QMainWindow):
         self.ui.Browser.insertItem(1, 'firefox')
         self.initAccount()
         self.ids = []
+        
+        self.timerList = []
     
     def closeEvent(self, event):
         event.accept()
@@ -62,6 +68,10 @@ class window(QtGui.QMainWindow):
         self.ui.Execute0.clicked.connect(self.artificial)
         self.ui.BrowserNumber.activated.connect(self.change)
         self.ui.approvedTimer.clicked.connect(self.approvedTimer)
+        self.ui.remarksTimer.clicked.connect(self.remarksTimer)
+        
+        self.ui.taskTimer.clicked.connect(self.taskTimer)
+        self.ui.cancelTimer.clicked.connect(self.cancelTimer)
         
         
     def account_cmp(self, a, b):
@@ -360,9 +370,22 @@ class window(QtGui.QMainWindow):
     def artificial(self):
         thread.start_new_thread(self.atf, ())
         
-    def approved(self):
-        name = unicode(self.ui.Account.currentText().toUtf8(), 'utf-8', 'ignore')
-        Id = self.getId()
+    def approved(self, bid, tbname, taskList, orders, gifts):
+        Id = {}
+        
+        for i in self.ids:
+            if i['id'] == bid:
+                Id = i
+        
+        for account in self.account:
+            if tbname == account['tbusername']:
+                Id['account'] = account
+                name = account['tbusername']
+                break
+        Id['orders'] = orders
+        Id['gifts'] = gifts
+        Id['tasks'] = taskList
+
         if user.autoLogin(Id['driver'], Id['account']):
             print name + u'登录成功'
             res = sktb.saveActiveList(Id['driver'])
@@ -399,11 +422,38 @@ class window(QtGui.QMainWindow):
         
     def approvedTimer(self):
         second_1 = int(self.ui.second_1.text())
-        threading.Timer(second_1 * 1.0, self.approved).start()
-        
-    def remarks(self):
         name = unicode(self.ui.Account.currentText().toUtf8(), 'utf-8', 'ignore')
-        Id = self.getId()
+        n = int(str(self.ui.BrowserNumber.currentText()))
+        now_t = time.time()
+        t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now_t))
+        t1 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now_t + second_1 * 1.0))
+        self.ui.model3.setItem(self.timer_id, 0, QtGui.QStandardItem(ui._fromUtf8(name)))
+        self.ui.model3.setItem(self.timer_id, 1, QtGui.QStandardItem(str(n)))
+        self.ui.model3.setItem(self.timer_id, 2, QtGui.QStandardItem(t))
+        self.ui.model3.setItem(self.timer_id, 3, QtGui.QStandardItem(str(second_1)))
+        self.ui.model3.setItem(self.timer_id, 4, QtGui.QStandardItem(t1))
+        
+        self.timer_id = self.timer_id + 1
+        timer = threading.Timer(second_1 * 1.0, self.approved, (n, name, self.taskList, self.orders, self.giftList))
+        timer.start()
+        
+        self.timerList.append(timer)
+        
+    def remarks(self, bid, tbname, taskList, orders, gifts):
+        Id = {}
+        
+        for i in self.ids:
+            if i['id'] == bid:
+                Id = i
+        
+        for account in self.account:
+            if tbname == account['tbusername']:
+                Id['account'] = account
+                name = account['tbusername']
+                break
+        Id['orders'] = orders
+        Id['gifts'] = gifts
+        Id['tasks'] = taskList
         if user.autoLogin(Id['driver'], Id['account']):
             print name + u'登录成功'
             res = sktb.saveActiveList(Id['driver'])
@@ -428,11 +478,38 @@ class window(QtGui.QMainWindow):
             print name + u'登录失败'
     def remarksTimer(self):
         second_2 = int(self.ui.second_2.text())
-        threading.Timer(second_2 * 1.0, self.remarks).start()
-    
-    def task(self):
         name = unicode(self.ui.Account.currentText().toUtf8(), 'utf-8', 'ignore')
-        Id = self.getId()
+        n = int(str(self.ui.BrowserNumber.currentText()))
+        now_t = time.time()
+        t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now_t))
+        t1 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now_t + second_2 * 1.0))
+        self.ui.model3.setItem(self.timer_id, 0, QtGui.QStandardItem(ui._fromUtf8(name)))
+        self.ui.model3.setItem(self.timer_id, 1, QtGui.QStandardItem(str(n)))
+        self.ui.model3.setItem(self.timer_id, 2, QtGui.QStandardItem(t))
+        self.ui.model3.setItem(self.timer_id, 3, QtGui.QStandardItem(str(second_2)))
+        self.ui.model3.setItem(self.timer_id, 4, QtGui.QStandardItem(t1))
+        
+        self.timer_id = self.timer_id + 1
+        timer = threading.Timer(second_2 * 1.0, self.approved, (n, name, self.taskList, self.orders, self.giftList))
+        timer.start()
+        
+        self.timerList.append(timer)
+    
+    def task(self, bid, tbname, taskList, orders, gifts):
+        Id = {}
+        
+        for i in self.ids:
+            if i['id'] == bid:
+                Id = i
+        
+        for account in self.account:
+            if tbname == account['tbusername']:
+                Id['account'] = account
+                name = account['tbusername']
+                break
+        Id['orders'] = orders
+        Id['gifts'] = gifts
+        Id['tasks'] = taskList
         if user.autoLogin(Id['driver'], Id['account']):
             print name + u'登录成功'
             res = sktb.saveActiveList(Id['driver'])
@@ -476,8 +553,30 @@ class window(QtGui.QMainWindow):
             print name + u'登录失败'    
     def taskTimer(self):
         second_3 = int(self.ui.second_3.text())
-        threading.Timer(second_3 * 1.0, self.task).start()
-
+        name = unicode(self.ui.Account.currentText().toUtf8(), 'utf-8', 'ignore')
+        n = int(str(self.ui.BrowserNumber.currentText()))
+        now_t = time.time()
+        t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now_t))
+        t1 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now_t + second_3 * 1.0))
+        self.ui.model3.setItem(self.timer_id, 0, QtGui.QStandardItem(ui._fromUtf8(name)))
+        self.ui.model3.setItem(self.timer_id, 1, QtGui.QStandardItem(str(n)))
+        self.ui.model3.setItem(self.timer_id, 2, QtGui.QStandardItem(t))
+        self.ui.model3.setItem(self.timer_id, 3, QtGui.QStandardItem(str(second_3)))
+        self.ui.model3.setItem(self.timer_id, 4, QtGui.QStandardItem(t1))
+        
+        self.timer_id = self.timer_id + 1
+        timer = threading.Timer(second_3 * 1.0, self.approved, (n, name, self.taskList, self.orders, self.giftList))
+        timer.start()
+        
+        self.timerList.append(timer)
+    
+    def cancelTimer(self):
+        self.timer_id = 0
+        for i in self.timerList:
+            i.cancel()
+        self.timerList = []
+        # threading.Timer.cancel()
+        self.ui.initTimerTable()
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     window = window()

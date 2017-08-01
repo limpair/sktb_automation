@@ -231,6 +231,10 @@ class Ui_mainWindow(object):
         self.taskTimer.setGeometry(QtCore.QRect(560, 180, 80, 24))
         self.taskTimer.setObjectName(_fromUtf8("taskTimer"))
         
+        self.cancelTimer = QtGui.QPushButton(self.centralwidget)
+        self.cancelTimer.setGeometry(QtCore.QRect(560, 210, 80, 24))
+        self.cancelTimer.setObjectName(_fromUtf8("cancelTimer"))
+        
         self.second_1 = QtGui.QLineEdit(self.centralwidget)
         self.second_1.setGeometry(QtCore.QRect(515, 120, 40, 24))
         self.second_1.setObjectName(_fromUtf8("second_1"))
@@ -241,6 +245,13 @@ class Ui_mainWindow(object):
         self.second_3.setGeometry(QtCore.QRect(515, 180, 40, 24))
         self.second_3.setObjectName(_fromUtf8("second_3"))
         
+        
+        self.tab_3 = QtGui.QWidget()
+        self.tab_3.setObjectName(_fromUtf8("tab_3"))
+        self.timer_table = QtGui.QTableView(self.tab_3)
+        self.timer_table.setGeometry(QtCore.QRect(5, 10, 621, 201))
+        self.timer_table.setObjectName(_fromUtf8("timer_table"))
+        self.tabWidget.addTab(self.tab_3, _fromUtf8(""))
         
         self.violationLabel.raise_()
         self.placeAnOrderLabel.raise_()
@@ -270,6 +281,7 @@ class Ui_mainWindow(object):
         self.approvedTimer.raise_()
         self.remarksTimer.raise_()
         self.taskTimer.raise_()
+        self.cancelTimer.raise_()
         self.second_1.raise_()
         self.second_2.raise_()
         self.second_3.raise_()
@@ -321,6 +333,11 @@ class Ui_mainWindow(object):
         self.approvedTimer.setText(_translate("mainWindow", "定时审批会员", None))
         self.remarksTimer.setText(_translate("mainWindow", "定时备注审核", None))
         self.taskTimer.setText(_translate("mainWindow", "定时任务", None))
+        
+        self.cancelTimer.setText(_translate("mainWindow", "清除定时任务", None))
+        
+        
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("mainWindow", "定时列表", None))
         self.partData.click()
         
     def initTable(self):
@@ -337,6 +354,27 @@ class Ui_mainWindow(object):
         self.tableView.setColumnWidth(0, 120) 
         self.tableView.setColumnWidth(1, 120) 
         self.tableView.setColumnWidth(2, 150)
+        
+    def initTimerTable(self):
+        self.model3 = QtGui.QStandardItemModel(self.timer_table)
+        self.model3.setRowCount(10)    
+        self.model3.setColumnCount(5) 
+        self.model3.setHeaderData(0, QtCore.Qt.Horizontal, _fromUtf8("淘宝账号"))
+        self.model3.setHeaderData(1, QtCore.Qt.Horizontal, _fromUtf8("浏览器"))
+        self.model3.setHeaderData(2, QtCore.Qt.Horizontal, _fromUtf8("添加时间"))
+        self.model3.setHeaderData(3, QtCore.Qt.Horizontal, _fromUtf8("延迟秒数"))
+        self.model3.setHeaderData(4, QtCore.Qt.Horizontal, _fromUtf8("执行时间"))
+        
+        self.timer_table.setModel(self.model3)
+        self.timer_table.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignCenter) 
+        self.timer_table.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.timer_table.setColumnWidth(0, 150) 
+        self.timer_table.setColumnWidth(1, 50) 
+        self.timer_table.setColumnWidth(2, 150) 
+        self.timer_table.setColumnWidth(3, 80)    
+        self.timer_table.setColumnWidth(4, 150)    
+    
+    
     def initGiftTable(self):
         self.giftmodel = QtGui.QStandardItemModel(self.GiftTable)
         
