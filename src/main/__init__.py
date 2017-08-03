@@ -434,7 +434,10 @@ class window(QtGui.QMainWindow):
         self.ui.model3.setItem(self.timer_id, 4, QtGui.QStandardItem(t1))
         
         self.timer_id = self.timer_id + 1
-        timer = threading.Timer(second_1 * 1.0, self.approved, (n, name, self.taskList, self.orders, self.giftList))
+        task_temp = self.taskList
+        orders_temp = self.orders
+        gift_temp = self.giftList
+        timer = threading.Timer(second_1 * 1.0, self.approved, (n, name, task_temp, orders_temp, gift_temp))
         timer.start()
         
         self.timerList.append(timer)
@@ -490,7 +493,10 @@ class window(QtGui.QMainWindow):
         self.ui.model3.setItem(self.timer_id, 4, QtGui.QStandardItem(t1))
         
         self.timer_id = self.timer_id + 1
-        timer = threading.Timer(second_2 * 1.0, self.approved, (n, name, self.taskList, self.orders, self.giftList))
+        task_temp = self.taskList
+        orders_temp = self.orders
+        gift_temp = self.giftList
+        timer = threading.Timer(second_2 * 1.0, self.remarks, (n, name, task_temp, orders_temp, gift_temp))
         timer.start()
         
         self.timerList.append(timer)
@@ -565,7 +571,10 @@ class window(QtGui.QMainWindow):
         self.ui.model3.setItem(self.timer_id, 4, QtGui.QStandardItem(t1))
         
         self.timer_id = self.timer_id + 1
-        timer = threading.Timer(second_3 * 1.0, self.approved, (n, name, self.taskList, self.orders, self.giftList))
+        task_temp = self.taskList
+        orders_temp = self.orders
+        gift_temp = self.giftList
+        timer = threading.Timer(second_3 * 1.0, self.task, (n, name, task_temp, orders_temp, gift_temp))
         timer.start()
         
         self.timerList.append(timer)
