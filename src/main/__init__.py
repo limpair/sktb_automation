@@ -12,6 +12,9 @@ import debug
 import thread
 import threading
 
+tbseller = 'https://myseller.taobao.com/seller_admin.htm'
+mlseller = 'https://mai.taobao.com/seller_admin.htm'
+
 class window(QtGui.QMainWindow):
     def __init__(self):
         super(window, self).__init__()
@@ -387,6 +390,9 @@ class window(QtGui.QMainWindow):
         Id['tasks'] = taskList
 
         if user.autoLogin(Id['driver'], Id['account']):
+            while Id['driver'].current_url != tbseller and Id['driver'].current_url != mlseller:
+                print Id['driver'].current_url
+                time.sleep(2)
             print name + u'登录成功'
             res = sktb.saveActiveList(Id['driver'])
             if res[1]:
@@ -429,14 +435,19 @@ class window(QtGui.QMainWindow):
         t1 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now_t + second_1 * 1.0))
         self.ui.model3.setItem(self.timer_id, 0, QtGui.QStandardItem(ui._fromUtf8(name)))
         self.ui.model3.setItem(self.timer_id, 1, QtGui.QStandardItem(str(n)))
-        self.ui.model3.setItem(self.timer_id, 2, QtGui.QStandardItem(t))
-        self.ui.model3.setItem(self.timer_id, 3, QtGui.QStandardItem(str(second_1)))
-        self.ui.model3.setItem(self.timer_id, 4, QtGui.QStandardItem(t1))
+        self.ui.model3.setItem(self.timer_id, 2, QtGui.QStandardItem(t + '\n' + t1))
+        # self.ui.model3.setItem(self.timer_id, 3, QtGui.QStandardItem(str(second_1)))
+        # self.ui.model3.setItem(self.timer_id, 4, QtGui.QStandardItem(t1))
         
-        self.timer_id = self.timer_id + 1
+        
         task_temp = self.taskList
         orders_temp = self.orders
         gift_temp = self.giftList
+        temp = ''
+        for i in task_temp:
+            temp = temp + '(' + i['name'] + ',' + str(i['num']) + ')'
+        self.ui.model3.setItem(self.timer_id, 3, QtGui.QStandardItem(temp))
+        self.timer_id = self.timer_id + 1
         timer = threading.Timer(second_1 * 1.0, self.approved, (n, name, task_temp, orders_temp, gift_temp))
         timer.start()
         
@@ -458,6 +469,9 @@ class window(QtGui.QMainWindow):
         Id['gifts'] = gifts
         Id['tasks'] = taskList
         if user.autoLogin(Id['driver'], Id['account']):
+            while Id['driver'].current_url != tbseller and Id['driver'].current_url != mlseller:
+                print Id['driver'].current_url
+                time.sleep(2)
             print name + u'登录成功'
             res = sktb.saveActiveList(Id['driver'])
             if res[1]:
@@ -488,14 +502,18 @@ class window(QtGui.QMainWindow):
         t1 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now_t + second_2 * 1.0))
         self.ui.model3.setItem(self.timer_id, 0, QtGui.QStandardItem(ui._fromUtf8(name)))
         self.ui.model3.setItem(self.timer_id, 1, QtGui.QStandardItem(str(n)))
-        self.ui.model3.setItem(self.timer_id, 2, QtGui.QStandardItem(t))
-        self.ui.model3.setItem(self.timer_id, 3, QtGui.QStandardItem(str(second_2)))
-        self.ui.model3.setItem(self.timer_id, 4, QtGui.QStandardItem(t1))
+        self.ui.model3.setItem(self.timer_id, 2, QtGui.QStandardItem(t + '\n' + t1))
+        # self.ui.model3.setItem(self.timer_id, 3, QtGui.QStandardItem(str(second_2)))
+        # self.ui.model3.setItem(self.timer_id, 4, QtGui.QStandardItem(t1))
         
-        self.timer_id = self.timer_id + 1
         task_temp = self.taskList
         orders_temp = self.orders
         gift_temp = self.giftList
+        temp = ''
+        for i in task_temp:
+            temp = temp + '(' + i['name'] + ',' + str(i['num']) + ')'
+        self.ui.model3.setItem(self.timer_id, 3, QtGui.QStandardItem(temp))
+        self.timer_id = self.timer_id + 1
         timer = threading.Timer(second_2 * 1.0, self.remarks, (n, name, task_temp, orders_temp, gift_temp))
         timer.start()
         
@@ -517,7 +535,11 @@ class window(QtGui.QMainWindow):
         Id['gifts'] = gifts
         Id['tasks'] = taskList
         if user.autoLogin(Id['driver'], Id['account']):
+            while Id['driver'].current_url != tbseller and Id['driver'].current_url != mlseller:
+                print Id['driver'].current_url
+                time.sleep(2)
             print name + u'登录成功'
+            
             res = sktb.saveActiveList(Id['driver'])
             if res[1]:
                 Id['skdata'] = res[0]
@@ -566,14 +588,18 @@ class window(QtGui.QMainWindow):
         t1 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now_t + second_3 * 1.0))
         self.ui.model3.setItem(self.timer_id, 0, QtGui.QStandardItem(ui._fromUtf8(name)))
         self.ui.model3.setItem(self.timer_id, 1, QtGui.QStandardItem(str(n)))
-        self.ui.model3.setItem(self.timer_id, 2, QtGui.QStandardItem(t))
-        self.ui.model3.setItem(self.timer_id, 3, QtGui.QStandardItem(str(second_3)))
-        self.ui.model3.setItem(self.timer_id, 4, QtGui.QStandardItem(t1))
+        self.ui.model3.setItem(self.timer_id, 2, QtGui.QStandardItem(t + '\n' + t1))
+        # self.ui.model3.setItem(self.timer_id, 3, QtGui.QStandardItem(str(second_3)))
+        # self.ui.model3.setItem(self.timer_id, 4, QtGui.QStandardItem(t1))
         
-        self.timer_id = self.timer_id + 1
         task_temp = self.taskList
         orders_temp = self.orders
         gift_temp = self.giftList
+        temp = ''
+        for i in task_temp:
+            temp = temp + '(' + i['name'] + ',' + str(i['num']) + ')'
+        self.ui.model3.setItem(self.timer_id, 3, QtGui.QStandardItem(temp))
+        self.timer_id = self.timer_id + 1
         timer = threading.Timer(second_3 * 1.0, self.task, (n, name, task_temp, orders_temp, gift_temp))
         timer.start()
         

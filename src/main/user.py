@@ -59,6 +59,6 @@ def saveAccount(obj):
 def autoLogin(driver, obj):
     result = False
     result = sktb.loginShikee(driver, obj['skusername'], obj['skpassword'])
-    time.sleep(2)
+    time.sleep(4)
     result = sktb.loginTaobao(driver, obj['tbusername'], obj['tbpassword'])
     return result

@@ -357,22 +357,22 @@ class Ui_mainWindow(object):
         
     def initTimerTable(self):
         self.model3 = QtGui.QStandardItemModel(self.timer_table)
-        self.model3.setRowCount(10)    
-        self.model3.setColumnCount(5) 
+        self.model3.setRowCount(10)  
+        self.model3.setColumnCount(4) 
         self.model3.setHeaderData(0, QtCore.Qt.Horizontal, _fromUtf8("淘宝账号"))
         self.model3.setHeaderData(1, QtCore.Qt.Horizontal, _fromUtf8("浏览器"))
-        self.model3.setHeaderData(2, QtCore.Qt.Horizontal, _fromUtf8("添加时间"))
-        self.model3.setHeaderData(3, QtCore.Qt.Horizontal, _fromUtf8("延迟秒数"))
-        self.model3.setHeaderData(4, QtCore.Qt.Horizontal, _fromUtf8("执行时间"))
+        self.model3.setHeaderData(2, QtCore.Qt.Horizontal, _fromUtf8("起止时间"))
+        #self.model3.setHeaderData(3, QtCore.Qt.Horizontal, _fromUtf8(""))
+        self.model3.setHeaderData(3, QtCore.Qt.Horizontal, _fromUtf8("任务"))
         
         self.timer_table.setModel(self.model3)
         self.timer_table.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignCenter) 
         self.timer_table.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
         self.timer_table.setColumnWidth(0, 150) 
         self.timer_table.setColumnWidth(1, 50) 
-        self.timer_table.setColumnWidth(2, 150) 
-        self.timer_table.setColumnWidth(3, 80)    
-        self.timer_table.setColumnWidth(4, 150)    
+        self.timer_table.setColumnWidth(2, 150)
+        self.timer_table.setColumnWidth(3, 230) 
+        #self.timer_table.setColumnWidth(4, 150)    
     
     
     def initGiftTable(self):
