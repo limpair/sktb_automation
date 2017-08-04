@@ -452,7 +452,7 @@ class window(QtGui.QMainWindow):
         timer.start()
         
         self.timerList.append(timer)
-        
+        self.taskList = []
     def remarks(self, bid, tbname, taskList, orders, gifts):
         Id = {}
         
@@ -516,9 +516,8 @@ class window(QtGui.QMainWindow):
         self.timer_id = self.timer_id + 1
         timer = threading.Timer(second_2 * 1.0, self.remarks, (n, name, task_temp, orders_temp, gift_temp))
         timer.start()
-        
         self.timerList.append(timer)
-    
+        self.taskList = []
     def task(self, bid, tbname, taskList, orders, gifts):
         Id = {}
         
@@ -604,7 +603,7 @@ class window(QtGui.QMainWindow):
         timer.start()
         
         self.timerList.append(timer)
-    
+        self.taskList = []
     def cancelTimer(self):
         self.timer_id = 0
         for i in self.timerList:
