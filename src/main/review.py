@@ -108,7 +108,7 @@ def addRemarks(driver, trs, color):
     tbname = color['tbuser'].replace(u':', u'：')
     if not os.path.exists(tbname):
         os.makedirs(tbname)
-    
+    error_flags = False
     process = open(tbname + u'/2.程序错误调过的订单统计.txt', 'a')
     out = open(tbname + u'/3.存在退款之类订单统计.txt', 'a')
     out1 = open(tbname + u'/4.备注且审核订单统计.txt', 'a')
@@ -188,6 +188,7 @@ def addRemarks(driver, trs, color):
                     status = td[5].text
                     caveat = ''.join(td[3].text.split())
                     if caveat != '' and caveat != u'退款关闭':
+                        error_flags = True
                         if u'买家已付款' in status:
                             out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '已付款订单号:' + i.encode('utf-8') + '\n')
                         elif u'卖家已发货' in status:
@@ -259,10 +260,12 @@ def addRemarks(driver, trs, color):
                                 debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
                                 continue
                         elif u'交易关闭' in status:
+                            error_flags = True
                             if verify(driver, skhost + tr['passlink'], i, False):
                                 debug.message('交易关闭的订单：' + i.encode('utf-8'), os.path.basename(__file__))
                             out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '交易关闭单号:' + i.encode('utf-8') + '\n')
                         else:
+                            error_flags = True
                             out.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + status.encode('utf-8') + '订单号:' + i.encode('utf-8') + '\n')
                         out2.write('活动 ' + title + ' 链接：' + tr['passlink'].encode('utf-8') + '订单号：' + i.encode('utf-8') + '\n')
                 else:
