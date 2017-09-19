@@ -15,3 +15,5 @@ driver = webdriver.PhantomJS(executable_path='phantomjs.exe')
 ```python  
 driver = webdriver.Chrome()
 ```  
+  
+pyinstaller -i main.ico -F __init__.py
