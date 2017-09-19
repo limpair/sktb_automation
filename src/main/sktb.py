@@ -16,6 +16,7 @@ host = 'http://user.shikee.com'
 def toInt(s):
     return s == '' and -1 or int(s)
 
+
 def is_element_exist(driver, css):
     s = driver.find_elements_by_css_selector(css_selector=css)
     if len(s) == 0:
@@ -25,6 +26,7 @@ def is_element_exist(driver, css):
     else:
         return False
 
+
 def exists(Path):
     if os.path.exists(Path):
         return True
@@ -33,7 +35,7 @@ def exists(Path):
         if os.path.exists(Path):
             return True
     return False
-   
+
 
 def loginTaobao(driver, username, password):
     result = True
@@ -46,7 +48,7 @@ def loginTaobao(driver, username, password):
         driver.find_element_by_id('TPL_username_1').send_keys(username)
         time.sleep(3)
         driver.find_element_by_id('TPL_password_1').send_keys(password)
-    
+
         if is_element_exist(driver, '#nc_1_n1z'):
             debug.message('存在滑块等待8s：', os.path.basename(__file__))
             time.sleep(8)
@@ -55,8 +57,11 @@ def loginTaobao(driver, username, password):
     except Exception, e:
         result = False
         info = sys.exc_info()
-        debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
+        debug.log(str(sys.exc_info()[2].tb_lineno),
+                  e.message, info[1], os.path.basename(__file__))
     return result
+
+
 def loginShikee(driver, username, password):
     result = True
     try:
@@ -71,8 +76,11 @@ def loginShikee(driver, username, password):
     except Exception, e:
         result = False
         info = sys.exc_info()
-        debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
-    return  result
+        debug.log(str(sys.exc_info()[2].tb_lineno),
+                  e.message, info[1], os.path.basename(__file__))
+    return result
+
+
 def saveActiveList(driver):
     result = True
     try:
@@ -102,11 +110,13 @@ def saveActiveList(driver):
                     t[0].find_all('p')[0].text, '%Y-%m-%d %H:%M:%S'))
                 num = int(re.sub("\D", "", t[4].text))
                 link = t[6].find_all('a')[0].attrs['href'].split('?')[0]
-                li.append({'title': title, 'num': num, 'link': link, 'time': ttt})
+                li.append({'title': title, 'num': num,
+                           'link': link, 'time': ttt})
     except Exception, e:
         result = False
         info = sys.exc_info()
-        debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
+        debug.log(str(sys.exc_info()[2].tb_lineno),
+                  e.message, info[1], os.path.basename(__file__))
     return li, result
 
 # {'title': title, 'num': num, 'link': link, 'time': ttt}
@@ -143,19 +153,22 @@ def judgeSysData(t, sys):
             count = count + 1
     except Exception, e:
         info = sys.exc_info()
-        debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
+        debug.log(str(sys.exc_info()[2].tb_lineno),
+                  e.message, info[1], os.path.basename(__file__))
         debug.message('判断账号能否通过存在问题，调过此账号：', os.path.basename(__file__))
     if count == 4:
         return True
     else:
         return False
 
+
 def judgeTaobao(driver, name, day):
     try:
         driver.get('https://trade.taobao.com/trade/itemlist/list_sold_items.htm')
         time.sleep(1.5)
         driver.find_element_by_id('buyerNick').send_keys(name)
-        driver.find_element_by_xpath('//*[@id="sold_container"]/div/div[1]/div[1]/form/div[7]/div/div/button[1]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="sold_container"]/div/div[1]/div[1]/form/div[7]/div/div/button[1]').click()
         time.sleep(1)
         soup = BeautifulSoup(driver.page_source)
         page = soup.find_all(attrs={"data-reactid": ".0.5"})[0]
@@ -180,8 +193,11 @@ def judgeTaobao(driver, name, day):
             return False
     except Exception, e:
         info = sys.exc_info()
-        debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
+        debug.log(str(sys.exc_info()[2].tb_lineno),
+                  e.message, info[1], os.path.basename(__file__))
         return False
+
+
 def passUser(driver, link, name):
     try:
         driver.get(link)
@@ -195,15 +211,19 @@ def passUser(driver, link, name):
         time.sleep(1)
         driver.find_element_by_xpath('//input[@type="submit"]').click()
         time.sleep(1.5)
-        driver.find_element_by_xpath('//*[@id="load-buyer-list"]/tbody/tr[2]/td[5]/a[1]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="load-buyer-list"]/tbody/tr[2]/td[5]/a[1]').click()
         time.sleep(1)
-        driver.find_element_by_xpath('/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/div/div/p[2]/input[1]').click()
+        driver.find_element_by_xpath(
+            '/html/body/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[2]/div/div/div/p[2]/input[1]').click()
         time.sleep(0.2)
     except Exception, e:
         info = sys.exc_info()
-        debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
+        debug.log(str(sys.exc_info()[2].tb_lineno),
+                  e.message, info[1], os.path.basename(__file__))
         return False
     return True
+
 
 def judgeNum(driver):
     page = BeautifulSoup(driver.page_source)
@@ -212,6 +232,8 @@ def judgeNum(driver):
     if int(''.join(bs[l - 1].text.split())) == 0:
         return True
     return False
+
+
 def cmp_sort(a, b):
     x1 = a['sys']['OrderNumber']
     y1 = a['sys']['TryNumber']
@@ -222,6 +244,16 @@ def cmp_sort(a, b):
     x = int((x1 * 1.0) / (y1 * 1.0) * 10000)
     y = int((x2 * 1.0) / (y2 * 1.0) * 10000)
     return y - x
+
+
+def get_title(arg):
+    title = ''
+    for i in arg:
+        t = ord(i)
+        if (t >= 48 and t <= 57) or (t >= 65 and t <= 90) or (t >= 97 and t <= 122):
+            title = title + i
+
+
 def executeActivity(driver, try_list, tasks, tri):
     result = True
     conn = sqlite.DataBaseControl()
@@ -240,7 +272,7 @@ def executeActivity(driver, try_list, tasks, tri):
                     continue
                 if count >= num:
                     break
-                title = ''.join(tr['title'][0:3].split())
+                title = get_title(tr['title'][0:3])
                 if name.upper() == title.upper():
                     driver.get(host + tr['link'] + '/0')
                     time.sleep(2)
@@ -253,12 +285,13 @@ def executeActivity(driver, try_list, tasks, tri):
                         n = 1
                     users = []
                     for i in range(0, n):
-                        driver.get(host + tr['link'] + '/' + str(i * 20) + '?sysarrs%5B%5D=order_count&sysarrs%5B%5D=join_count&sysarrs%5B%5D=completion_count')
+                        driver.get(host + tr['link'] + '/' + str(
+                            i * 20) + '?sysarrs%5B%5D=order_count&sysarrs%5B%5D=join_count&sysarrs%5B%5D=completion_count')
                         time.sleep(2)
                         soup = BeautifulSoup(driver.page_source).find_all(
                             id='load-buyer-list')[0].find_all('tr')
                         k = len(soup)
-        
+
                         for l in range(1, k):
                             rows = soup[l].attrs['id'].split('_')[1]
                             t = soup[l].find_all('td')
@@ -268,24 +301,31 @@ def executeActivity(driver, try_list, tasks, tri):
                                 temp = re.findall(r'(\w*[0-9]+)\w*', x.text)
                                 ss = x.text.split('(')[0]
                                 if u'近30内填写订单号的平均时长' == ss:
-                                    SP['AverageTime'] = int(temp[len(temp) - 1])
+                                    SP['AverageTime'] = int(
+                                        temp[len(temp) - 1])
                                 elif u'违规次数' == ss:
-                                    SP['ViolationNumber'] = int(temp[len(temp) - 1])
+                                    SP['ViolationNumber'] = int(
+                                        temp[len(temp) - 1])
                                 elif u'近30日下单次数' == ss:
-                                    SP['OrderNumber'] = int(temp[len(temp) - 1])
+                                    SP['OrderNumber'] = int(
+                                        temp[len(temp) - 1])
                                 elif u'近30日获得试用次数' == ss:
                                     SP['TryNumber'] = int(temp[len(temp) - 1])
                                 elif u'试客放弃试用次数' == ss:
-                                    SP['AbandonNumber'] = int(temp[len(temp) - 1])
+                                    SP['AbandonNumber'] = int(
+                                        temp[len(temp) - 1])
                                 elif u'试客提交无效订单号次数' == ss:
-                                    SP['InvalidNumber'] = int(temp[len(temp) - 1])
+                                    SP['InvalidNumber'] = int(
+                                        temp[len(temp) - 1])
                                 elif u'试客总参与试用次数' == ss:
                                     SP['TrySum'] = int(temp[len(temp) - 1])
                             try:
-                                users.append({'id': int(rows), 'sys': SP, 'name': t[1].find_all('span')[0].attrs['title'], 'time': t[2].text, 'skname':t[1].find_all('img')[0].attrs['art']})
+                                users.append({'id': int(rows), 'sys': SP, 'name': t[1].find_all('span')[
+                                             0].attrs['title'], 'time': t[2].text, 'skname': t[1].find_all('img')[0].attrs['art']})
                             except Exception, e:
                                 info = sys.exc_info()
-                                debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
+                                debug.log(
+                                    str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
                                 continue
                     bilv = ''.join(tri['bilv'].split())
                     if bilv != '':
@@ -299,7 +339,8 @@ def executeActivity(driver, try_list, tasks, tri):
                             dbUsers = conn.getByName(username, tri['account'])
                         except Exception, e:
                             info = sys.exc_info()
-                            debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
+                            debug.log(
+                                str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
                             continue
                         user['account'] = tri['account']
                         user['activity'] = name
@@ -308,7 +349,8 @@ def executeActivity(driver, try_list, tasks, tri):
                         if len(dbUsers) > 0:
                             dbname = ''.join(dbUsers[0]['name'].split())
                             if username == dbname:
-                                nowtime = round((time.time() - dbUsers[0]['mktime']) / 86400.0, 4)
+                                nowtime = round(
+                                    (time.time() - dbUsers[0]['mktime']) / 86400.0, 4)
                                 if nowtime >= 3.0:
                                     if judgeTaobao(driver, username, ''.join(tri['days'].split())):
                                         driver.get(host + tr['link'])
@@ -319,7 +361,8 @@ def executeActivity(driver, try_list, tasks, tri):
                                             user['id'] = dbUsers[0]['id']
                                             tr['num'] = tr['num'] - 1
                                             count = count + 1
-                                            user['passtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                                            user['passtime'] = datetime.datetime.now(
+                                            ).strftime('%Y-%m-%d %H:%M:%S')
                                             conn.update(user)
                                     continue
                         elif judgeTaobao(driver, username, ''.join(tri['days'].split())):
@@ -330,14 +373,18 @@ def executeActivity(driver, try_list, tasks, tri):
                             if passUser(driver, host + tr['link'], user['skname']):
                                 tr['num'] = tr['num'] - 1
                                 count = count + 1
-                                user['passtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                                user['passtime'] = datetime.datetime.now(
+                                ).strftime('%Y-%m-%d %H:%M:%S')
                                 conn.save(user)
         except Exception, e:
             result = False
             info = sys.exc_info()
-            debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
+            debug.log(str(sys.exc_info()[2].tb_lineno),
+                      e.message, info[1], os.path.basename(__file__))
         b = time.time()
-        out.write('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(round(b - a, 2)) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
-        debug.message('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(round(b - a, 2)) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), os.path.basename(__file__))
+        out.write('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(
+            round(b - a, 2)) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')
+        debug.message('活动' + name + '，预计通过 ' + str(num) + ' 人，已通过 ' + str(count) + ' 人，用时 ' + str(round(b - a, 2)
+                                                                                                  ) + '。' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), os.path.basename(__file__))
     conn.close()
     return result
