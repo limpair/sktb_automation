@@ -7,6 +7,7 @@ class DataBaseControl(object):
         self.open()
 
     def open(self):
+        #self.conn = sqlite3.connect('c:\sktb_automation\src\main\oms.db')
         self.conn = sqlite3.connect('oms.db')
     
     def close(self):

@@ -168,6 +168,7 @@ class window(QtGui.QMainWindow):
         # thread.start_new_thread(test, ())  
         browser = str(self.ui.Browser.currentText())
         if browser == 'chrome':
+            #driver = webdriver.Chrome('c:\sktb_automation\src\main\chromedriver.exe')
             driver = webdriver.Chrome()
             self.driver.append(driver)
             self.driverCount = self.driverCount + 1

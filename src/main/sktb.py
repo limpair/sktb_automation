@@ -252,6 +252,7 @@ def get_title(arg):
         t = ord(i)
         if (t >= 48 and t <= 57) or (t >= 65 and t <= 90) or (t >= 97 and t <= 122):
             title = title + i
+    return title
 
 
 def executeActivity(driver, try_list, tasks, tri):
@@ -299,7 +300,7 @@ def executeActivity(driver, try_list, tasks, tri):
                             SP = {}
                             for x in sp:
                                 temp = re.findall(r'(\w*[0-9]+)\w*', x.text)
-                                ss = x.text.split('(')[0]
+                                ss = x.text.split('(')[0].replace('\n','').replace(' ','')
                                 if u'近30内填写订单号的平均时长' == ss:
                                     SP['AverageTime'] = int(
                                         temp[len(temp) - 1])

@@ -5,8 +5,7 @@ import time
 import math
 import os, sys
 import datetime
-import sktb, sqlite
-from main import debug
+import sktb, sqlite,debug
 
 
 skhost = 'http://user.shikee.com'
@@ -15,6 +14,14 @@ tbhost = 'https://trade.taobao.com/trade/itemlist/list_sold_items.htm'
 tb = 'https://trade.taobao.com'
 
 style = 'height:17px;width:1px;padding-left:17px;overflow:hidden;vertical-align:middle;font-size:0px;display:inline-block;visibility:visible;background:url(//img.alicdn.com/tps/i1/TB1heyGFVXXXXXpXXXXR3Ey7pXX-550-260.png) no-repeat -100px -207px;'
+
+def get_title(arg):
+    title = ''
+    for i in arg:
+        t = ord(i)
+        if (t >= 48 and t <= 57) or (t >= 65 and t <= 90) or (t >= 97 and t <= 122):
+            title = title + i
+    return title
 
 def getOrderNumber(driver, trs, account):
     try:
@@ -134,6 +141,7 @@ def addRemarks(driver, trs, color):
         
         for tr in trs:
             title = ''.join(tr['title'][0:3].split())
+            title = get_title(title)
             if len(title) == 2:
                 title = title[0] + '0' + title[1]
             countSum[title] = 0
@@ -142,6 +150,7 @@ def addRemarks(driver, trs, color):
         for tr in trs:
             orderlen = orderlen + len(tr['order'])
             title = ''.join(tr['title'][0:3].split())
+            title = get_title(title)
             if len(title) == 2:
                 title = title[0] + '0' + title[1]
             count[title + tr['passlink']] = 0
