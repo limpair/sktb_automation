@@ -1,6 +1,7 @@
 # coding=utf-8
 
 from bs4 import BeautifulSoup
+from selenium.common.exceptions import TimeoutException
 import sqlite
 import time
 import math
@@ -10,7 +11,34 @@ import os
 import debug
 import sys
 
+
 host = 'http://user.shikee.com'
+
+
+
+def get(driver,url):
+    driver.set_page_load_timeout(3)
+    try:
+        driver.get(url)
+    except TimeoutException:  
+        print 'get-page time out after 3 seconds when loading page'  
+        driver.execute_script('window.stop()')
+
+def xpath_click(driver,xpath):
+    driver.set_page_load_timeout(3)
+    try:
+        driver.find_element_by_xpath(xpath).click()
+    except TimeoutException:  
+        print 'x-path time out after 3 seconds when loading page'  
+        driver.execute_script('window.stop()')
+
+def id_click(driver,hid):
+    driver.set_page_load_timeout(3)
+    try:
+        driver.find_element_by_id(hid).click()
+    except TimeoutException:  
+        print 'id time out after 3 seconds when loading page'  
+        driver.execute_script('window.stop()')
 
 
 def toInt(s):
@@ -40,19 +68,21 @@ def exists(Path):
 def loginTaobao(driver, username, password):
     result = True
     try:
-        driver.get('https://login.taobao.com/member/login.jhtml')
-        time.sleep(1.5)
+        get(driver,'https://www.taobao.com')
+        time.sleep(1)
+        xpath_click(driver, '/html/body/div[1]/div[1]/div/ul[1]/li[2]/div[1]/div[1]/a[1]')
+        time.sleep(1)
         if is_element_exist(driver, '.module-quick'):
-            driver.find_element_by_id('J_Quick2Static').click()
-        time.sleep(3)
+            id_click(driver, 'J_Quick2Static')
+        time.sleep(1.5)
         driver.find_element_by_id('TPL_username_1').send_keys(username)
-        time.sleep(3)
+        time.sleep(1.5)
         driver.find_element_by_id('TPL_password_1').send_keys(password)
 
         if is_element_exist(driver, '#nc_1_n1z'):
             debug.message('存在滑块等待8s：', os.path.basename(__file__))
             time.sleep(8)
-        driver.find_element_by_id('J_SubmitStatic').click()
+        id_click(driver, 'J_SubmitStatic')
         time.sleep(5)
     except Exception, e:
         result = False
@@ -65,6 +95,7 @@ def loginTaobao(driver, username, password):
 def loginShikee(driver, username, password):
     result = True
     try:
+        
         driver.get('http://login.shikee.com/')
         time.sleep(5)
         driver.find_element_by_xpath('//i[@class="iconimg pc"]').click()
@@ -100,16 +131,26 @@ def saveActiveList(driver):
             soup = BeautifulSoup(driver.page_source).find_all(
                 id='load_list')[0].find_all('tr')
             k = len(soup)
-            for i in range(1, k - 1):
+            for i in range(1, k - 2):
                 t = soup[i].find_all('td')
-                # 0,4,6
-                title = t[0].find_all('img')[0].attrs['art'].encode('utf-8')
-                if u'已经屏蔽' in t[2].text:
+                # 0,4,6旧版本
+#                 title = t[0].find_all('img')[0].attrs['art'].encode('utf-8')
+#                 if u'已经屏蔽' in t[2].text:
+#                     continue
+#                 ttt = time.mktime(time.strptime(
+#                     t[0].find_all('p')[0].text, '%Y-%m-%d %H:%M:%S'))
+#                 num = int(re.sub("\D", "", t[4].text))
+#                 link = t[6].find_all('a')[0].attrs['href'].split('?')[0]
+#                 li.append({'title': title, 'num': num,
+#                            'link': link, 'time': ttt})
+                title = t[1].find_all('img')[0].attrs['art'].encode('utf-8')
+                if u'已经屏蔽' in t[3].text:
                     continue
                 ttt = time.mktime(time.strptime(
-                    t[0].find_all('p')[0].text, '%Y-%m-%d %H:%M:%S'))
+                    t[1].find_all('p')[0].text, '%Y-%m-%d %H:%M'))
+                #'%Y-%m-%d %H:%M:%S'
                 num = int(re.sub("\D", "", t[4].text))
-                link = t[6].find_all('a')[0].attrs['href'].split('?')[0]
+                link = t[7].find_all('a')[0].attrs['href'].split('?')[0]
                 li.append({'title': title, 'num': num,
                            'link': link, 'time': ttt})
     except Exception, e:
@@ -127,7 +168,10 @@ def saveActiveList(driver):
 # abandonNumber    # 放弃试用次数
 # number           # 近30天下单次数
 # violationsNumber # 违规次数
-
+#     x1 = a['sys']['OrderNumber']
+#     y1 = a['sys']['TryNumber']
+#     x2 = b['sys']['OrderNumber']
+#     y2 = b['sys']['TryNumber']
 
 def judgeSys(c, a, b):
     if a >= 0:
@@ -164,8 +208,27 @@ def judgeSysData(t, sys):
 
 def judgeTaobao(driver, name, day):
     try:
-        driver.get('https://trade.taobao.com/trade/itemlist/list_sold_items.htm')
+        driver.set_page_load_timeout(3)
+        try:
+            driver.get('https://myseller.taobao.com/home.htm')
+        except TimeoutException:  
+            print 'time out after 3 seconds when loading page'  
+            driver.execute_script('window.stop()')
         time.sleep(1.5)
+        current_url=driver.current_url
+        try:
+            if 'mai' in current_url:
+                driver.find_element_by_xpath('/html/body/div[2]/div[3]/div/div[2]/div[2]/div/div[4]/div[2]/ul/li[1]/span/a').click()
+            else:
+                driver.find_element_by_xpath('/html/body/div[5]/div/div[2]/div/div[3]/div[1]/ul/li[1]/a').click()
+                time.sleep(1)
+                driver.close()
+                driver.switch_to.window(driver.window_handles[0])
+            time.sleep(2)
+        except TimeoutException:  
+            print 'time out after 3 seconds when loading page'  
+            driver.execute_script('window.stop()')
+
         driver.find_element_by_id('buyerNick').send_keys(name)
         driver.find_element_by_xpath(
             '//*[@id="sold_container"]/div/div[1]/div[1]/form/div[7]/div/div/button[1]').click()
@@ -301,6 +364,7 @@ def executeActivity(driver, try_list, tasks, tri):
                             for x in sp:
                                 temp = re.findall(r'(\w*[0-9]+)\w*', x.text)
                                 ss = x.text.split('(')[0].replace('\n','').replace(' ','')
+                                ss = ss.replace(' ','').replace('\n','')
                                 if u'近30内填写订单号的平均时长' == ss:
                                     SP['AverageTime'] = int(
                                         temp[len(temp) - 1])

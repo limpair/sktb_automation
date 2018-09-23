@@ -1,6 +1,7 @@
 # coding=utf-8
 from bs4 import BeautifulSoup
 from selenium.webdriver.support.select import Select
+from selenium.common.exceptions import TimeoutException
 import time
 import math
 import os, sys
@@ -107,6 +108,7 @@ def verify(driver, url, order, flag):
     return True
 
 def addRemarks(driver, trs, color):
+    driver.set_page_load_timeout(3)
     result = True
     
     if len(color['list']) == 0:
@@ -157,18 +159,21 @@ def addRemarks(driver, trs, color):
             for i in tr['order']:
                 try:
                     driver.get(tbhost)
-                except Exception, e:
-                    info = sys.exc_info()
-                    debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
-                    time.sleep(2)
-                    driver.get(tbhost)
+                except TimeoutException:  
+                    print 'time out after 3 seconds when loading page'  
+                    driver.execute_script('window.stop()')
+                
                 time.sleep(2)
                 error_count = 0
                 try:
-                    driver.find_element_by_id('bizOrderId').send_keys(i)
-                    time.sleep(1.5)
-                    driver.find_element_by_xpath('//*[@id="sold_container"]/div/div[1]/div[1]/form/div[7]/div/div/button[1]').click()
-                    time.sleep(1.5)
+                    try:
+                        driver.find_element_by_id('bizOrderId').send_keys(i)
+                        time.sleep(1.5)
+                        driver.find_element_by_xpath('//*[@id="sold_container"]/div/div[1]/div[1]/form/div[7]/div/div/button[1]').click()
+                        time.sleep(1.5)
+                    except TimeoutException:  
+                        print 'time out after 3 seconds when loading page'  
+                        driver.execute_script('window.stop()')
                 except Exception, e:
                     info = sys.exc_info()
                     debug.log(str(sys.exc_info()[2].tb_lineno), e.message, info[1], os.path.basename(__file__))
@@ -191,6 +196,10 @@ def addRemarks(driver, trs, color):
                 if llen > 0:
                     di1 = page.find_all(class_='item-mod__trade-order___2LnGB')
                     orderTime = di1[0].find_all('label')[0].find_all('span')[5].text
+                    searchorderNumber = di1[0].find_all('label')[0].find_all('span')[2].text
+                    if i not in searchorderNumber:
+                        process.write('订单成精->'+searchorderNumber.encode('utf-8') + '，跳过了订单->' + i.encode('utf-8') + '\n')
+                        continue
                     if orderTime[0:10] not in everyDay.keys():
                         everyDay[orderTime[0:10]] = {'sum':{}, 'order':[], 'count':{}}
                     td = div[0].find_all('td')
@@ -345,6 +354,7 @@ def correct_verify(driver, url, order, flag):
 
 def correct(driver, color, FLAG):
     result = True
+    driver.set_page_load_timeout(3)
     try:
         conn = sqlite.DataBaseControl()
         if FLAG:
@@ -352,7 +362,12 @@ def correct(driver, color, FLAG):
         else:
             orders = conn.getRemarks(color['account'])
         conn.close()
-        driver.get(tbhost)
+        try:
+            driver.get(tbhost)
+        except TimeoutException:  
+            print 'time out after 3 seconds when loading page'  
+            driver.execute_script('window.stop()')
+        time.sleep(2)
         tbname = color['tbuser'].replace(u':', u'：')
         if not os.path.exists(tbname):
             os.makedirs(tbname)
@@ -411,8 +426,14 @@ def correct(driver, color, FLAG):
                 if u'买家已付款' in status:
                     if correct_verify(driver, skhost + order['link'], order['order'], True):
                         count[title] = count[title] + 1
-                driver.get(tbhost)
-                time.sleep(0.5)
+                try:
+                    driver.get(tbhost)
+                    time.sleep(0.5)
+                except TimeoutException:  
+                    print 'time out after 3 seconds when loading page'  
+                    driver.execute_script('window.stop()')
+
+                
         
         cc = sorted(count.keys())
         for i in cc:
@@ -460,6 +481,7 @@ def artificial_verify(driver, order, FLAG):
     
 
 def artificial(driver, orders, color):
+    driver.set_page_load_timeout(3)
     result = True
     try:
         tbname = color['tbuser'].replace(u':', u'：')
@@ -471,7 +493,12 @@ def artificial(driver, orders, color):
         count = {}
         skcount = {}
         for order in orders:
-            driver.get(tbhost)
+            try:
+                driver.get(tbhost)
+            except TimeoutException:  
+                print 'time out after 3 seconds when loading page'  
+                driver.execute_script('window.stop()')
+            
             driver.find_element_by_id('bizOrderId').clear()
             driver.find_element_by_id('bizOrderId').send_keys(order)
             time.sleep(1.5)

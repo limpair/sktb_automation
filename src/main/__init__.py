@@ -12,9 +12,11 @@ import debug
 import thread
 import threading
 
+
+
 tbseller = 'https://myseller.taobao.com/seller_admin.htm'
 mlseller = 'https://mai.taobao.com/seller_admin.htm'
-
+home = 'https://myseller.taobao.com/home.htm'
 class window(QtGui.QMainWindow):
     def __init__(self):
         super(window, self).__init__()
@@ -170,18 +172,21 @@ class window(QtGui.QMainWindow):
         if browser == 'chrome':
             #driver = webdriver.Chrome('c:\sktb_automation\src\main\chromedriver.exe')
             driver = webdriver.Chrome()
+            driver.maximize_window()
             self.driver.append(driver)
             self.driverCount = self.driverCount + 1
             self.ui.BrowserNumber.addItem(str(self.driverCount))
             self.ids.append({'id':self.driverCount, 'driver':driver, 'browser':'chrome', 'skdata':[], 'tasks':[], 'orders':[], 'gifts':[], 'account':{'tbusername':''}})
         elif browser == 'firefox':
             driver = webdriver.Firefox()
+            driver.maximize_window()
             self.driver.append(driver)
             self.driverCount = self.driverCount + 1
             self.ui.BrowserNumber.addItem(str(self.driverCount))
             self.ids.append({'id':self.driverCount, 'driver':driver, 'browser':'firefox', 'skdata':[], 'tasks':[], 'orders':[], 'gifts':[], 'account':{'tbusername':''}})
         elif browser == 'ie':
             driver = webdriver.Ie()
+            driver.maximize_window()
             self.driver.append(driver)
             self.driverCount = self.driverCount + 1
             self.ui.BrowserNumber.addItem(str(self.driverCount))
@@ -391,7 +396,7 @@ class window(QtGui.QMainWindow):
         Id['tasks'] = taskList
 
         if user.autoLogin(Id['driver'], Id['account']):
-            while Id['driver'].current_url != tbseller and Id['driver'].current_url != mlseller:
+            while Id['driver'].current_url != tbseller and Id['driver'].current_url != mlseller and Id['driver'].current_url != home:
                 print Id['driver'].current_url
                 time.sleep(2)
             print name + u'登录成功'
@@ -470,7 +475,7 @@ class window(QtGui.QMainWindow):
         Id['gifts'] = gifts
         Id['tasks'] = taskList
         if user.autoLogin(Id['driver'], Id['account']):
-            while Id['driver'].current_url != tbseller and Id['driver'].current_url != mlseller:
+            while Id['driver'].current_url != tbseller and Id['driver'].current_url != mlseller and Id['driver'].current_url != home:
                 print Id['driver'].current_url
                 time.sleep(2)
             print name + u'登录成功'
@@ -535,7 +540,7 @@ class window(QtGui.QMainWindow):
         Id['gifts'] = gifts
         Id['tasks'] = taskList
         if user.autoLogin(Id['driver'], Id['account']):
-            while Id['driver'].current_url != tbseller and Id['driver'].current_url != mlseller:
+            while Id['driver'].current_url != tbseller and Id['driver'].current_url != mlseller and Id['driver'].current_url != home:
                 print Id['driver'].current_url
                 time.sleep(2)
             print name + u'登录成功'

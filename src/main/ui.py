@@ -295,7 +295,7 @@ class Ui_mainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(mainWindow)
 
     def retranslateUi(self, mainWindow):
-        mainWindow.setWindowTitle(_translate("mainWindow", "自动化多线程 Beta V1.1.0", None))
+        mainWindow.setWindowTitle(_translate("mainWindow", "自动化多线程 v1.3.1", None))
         self.violationLabel.setText(_translate("mainWindow", "违规次数", None))
         self.placeAnOrderLabel.setText(_translate("mainWindow", "近30日下单次数", None))
         self.abandonLabel.setText(_translate("mainWindow", "试客放弃试用次数", None))
